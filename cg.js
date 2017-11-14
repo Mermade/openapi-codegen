@@ -29,9 +29,11 @@ for (let t in config.transformations) {
     actions.push(tx);
 }
 
-mkdirp('./out/'+configName);
+mkdirp('./out/'+configName,function(){
+    for (let action of actions) {
+        let content = renderer.render(action.template, model, config.partials);
+        fs.writeFileSync('./out/'+configName+'/'+action.output,content,'utf8');
+    }
+    fs.writeFileSync('./out/'+configName+'/LICENSE',fs.readFileSync('./templates/_common/LICENSE','utf8'),'utf8');
+});
 
-for (let action of actions) {
-    let content = renderer.render(action.template, model, config.partials);
-    fs.writeFileSync('./out/'+configName+'/'+action.output,content,'utf8');
-}
