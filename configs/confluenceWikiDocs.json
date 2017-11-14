@@ -1,0 +1,10 @@
+{
+    "defaults": {
+    },
+    "partials": {
+        "param": "param.mustache"
+    },
+    "transformations": [
+        { "input": "index.mustache", "output": "index.md" }
+    ]
+}
