@@ -2,8 +2,8 @@
 
 const mustache = require('mustache');
 
-function render(template, model) {
-    return mustache.render(template, model);
+function render(template, model, partials) {
+    return mustache.render(template, model, partials);
 }
 
 module.exports = {

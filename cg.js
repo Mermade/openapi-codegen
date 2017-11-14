@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs');
+const util = require('util');
 
 const yaml = require('js-yaml');
 const mkdirp = require('mkdirp');
@@ -17,6 +18,10 @@ let config = require('./configs/'+configName+'.json');
 
 let model = adaptor.transform(o, config.defaults);
 
+for (let p in config.partials) {
+    let partial = config.partials[p];
+    config.partials[p] = fs.readFileSync('./templates/'+configName+'/'+partial,'utf8');
+}
 let actions = [];
 for (let t in config.transformations) {
     let tx = config.transformations[t];
@@ -27,6 +32,6 @@ for (let t in config.transformations) {
 mkdirp('./out/'+configName);
 
 for (let action of actions) {
-    let content = renderer.render(action.template, model);
+    let content = renderer.render(action.template, model, config.partials);
     fs.writeFileSync('./out/'+configName+'/'+action.output,content,'utf8');
 }
