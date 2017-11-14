@@ -24,7 +24,10 @@
   "homepage": "https://github.com/Mermade/openapi-codegen#readme",
   "dependencies": {
     "js-yaml": "^3.10.0",
+    "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
-    "swagger2openapi": "^2.11.0"
+    "reftools": "0.0.18",
+    "swagger2openapi": "^2.11.0",
+    "yargs": "^10.0.3"
   }
 }
