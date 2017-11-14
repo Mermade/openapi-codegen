@@ -1,0 +1,9 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "transformations": [
+        { "input": "openapi.mustache", "output": "openapi.json" }
+    ]
+}

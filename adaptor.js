@@ -10,10 +10,10 @@ const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 function transform(api, defaults) {
     let obj = Object.assign({},defaults);
 
-    obj["swagger-yaml"] = yaml.safeDump(api, {lineWidth:-1});
+    obj["swagger-yaml"] = yaml.safeDump(api, {lineWidth:-1}); // set to original if converted v2.0
     obj["swagger-json"] = JSON.stringify(api, null, 2);
-    
-    obj.implFolder = 'nodejs';
+    obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1}); // set to original if converted v2.0
+    obj["openapi-json"] = JSON.stringify(api, null, 2);
     
     obj.projectName = api.info.title;
     obj.appVersion = api.info.version;
