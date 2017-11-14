@@ -1,0 +1,30 @@
+{
+  "name": "openapi-codegen",
+  "version": "1.0.0",
+  "description": "OpenAPI 3.0 CodeGen",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mermade/openapi-codegen.git"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "openapi3",
+    "codegen"
+  ],
+  "author": "Mike Ralphson",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Mermade/openapi-codegen/issues"
+  },
+  "homepage": "https://github.com/Mermade/openapi-codegen#readme",
+  "dependencies": {
+    "js-yaml": "^3.10.0",
+    "mustache": "^2.3.0",
+    "swagger2openapi": "^2.11.0"
+  }
+}
