@@ -75,6 +75,8 @@ function transform(api, defaults) {
     obj.apiInfo.apis = [];
     obj.apiInfo.apis.push( { operations: obj.operations } );
 
+    obj.debugOperations = JSON.stringify(obj,null,2);
+
     obj.models = [];
     if (api.components) {
         for (let s in api.components.schemas) {
@@ -103,6 +105,8 @@ function transform(api, defaults) {
             obj.models.push(container);
         }
     }
+
+    obj.debugModels = JSON.stringify(obj.models,null,2);
 
     return obj;
 }

@@ -1,0 +1,9 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "transformations": [
+        { "input": "debug.mustache", "output": "debug.json" }
+    ]
+}
