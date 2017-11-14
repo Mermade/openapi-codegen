@@ -1,0 +1,16 @@
+{
+    "defaults": {
+        "serverPort": "3000",
+        "implFolder": "nodejs"
+    },
+    "transformations": [
+        { "input": "controller.mustache", "output": "controller.js" },
+        { "input": "index.mustache", "output": "index.js" },
+        { "input": "index-gcf.mustache", "output": "index-gcf.js" },
+        { "input": "package.mustache", "output": "package.json" },
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "service.mustache", "output": "service.js" },
+        { "input": "swagger.mustache", "output": "swagger.yaml" },
+        { "input": "writer.mustache", "output": "writer.js" }
+    ]
+}

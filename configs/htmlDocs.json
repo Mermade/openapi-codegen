@@ -1,0 +1,13 @@
+{
+    "defaults": {
+    },
+    "transformations": [
+        { "input": "bodyParam.mustache", "output": "bp.html" },
+        { "input": "formParam.mustache", "output": "fp.html" },
+        { "input": "headerParam.mustache", "output": "hp.html" },
+        { "input": "index.mustache", "output": "index.html" },
+        { "input": "pathParam.mustache", "output": "pp.html" },
+        { "input": "queryParam.mustache", "output": "qp.html" },
+        { "input": "style.css.mustache", "output": "style.css" }
+    ]
+}
