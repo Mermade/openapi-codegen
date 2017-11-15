@@ -20,17 +20,31 @@ function transform(api, defaults) {
     obj.projectName = api.info.title;
     obj.appVersion = api.info.version;
     obj.apiVersion = api.info.version;
+    obj.packageVersion = api.info.version;
     obj.version = api.info.version;
     obj.swaggerVersion = api.openapi;
     obj.appDescription = api.info.description||'No description';
     obj.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
+    obj.classVarName = 'default'; //? possibly an array of these based on tags (a la widdershins)
     obj.exportedName = obj.classname;
     obj.infoEmail = api.info.contact ? api.info.contact.email : null;
     obj.infoUrl = api.info.contact ? api.info.contact.url : null;
     obj.licenseInfo = api.info.license ? api.info.license.name : null;
     obj.licenseUrl = api.info.license ? api.info.license.url : null;
+    obj.appName = api.info.title;
     obj.host = ''
     obj.basePath = '/';
+    obj.contextPath = '/';
+    obj.packageName = 'IO.OpenAPI';
+    obj.hasImport = true;
+    obj.modelPackage = 'IO.OpenAPI';
+    obj.package = 'IO.OpenAPI.Api';
+    obj.clientPackage = 'IO.OpenAPI.Client';
+    obj.importPath = 'IO.OpenAPI.Api.Default';
+    obj.hasMore = true;
+    obj.generatedDate = new Date().toString();
+    obj.generatorClass = 'class '+defaults.config;
+    obj.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
 
     api = deref(api,api);
 
@@ -78,13 +92,27 @@ function transform(api, defaults) {
                 let op = pathItem[o];
                 let operation = {};
                 operation.nickname = op.operationId;
-                operation.httpMethod = o;
+                operation.httpMethod = o; //o.toUpperCase();
                 operation.path = p;
                 operation.operationId = op.operationId;
                 operation.allParams = [];
+                operation.pathParams = [];
+                operation.queryParams = [];
+                operation.headerParams = [];
+                operation.formParams = [];
                 operation.summary = op.summary;
                 operation.notes = op.description;
+                operation.responseHeaders = [];
+                operation.hasProduces = true;
+                operation.hasMore = true; // TODO
+                operation.isResponseBinary = false; //TODO
+                operation.baseName = 'Default';
+                if (op.tags && op.tags.length) {
+                    operation.baseName = op.tags[0];
+                }
+                operation.produces = [];
                 for (let pa in op.parameters) {
+                    operation.hasParams = true;
                     let param = op.parameters[pa];
                     let parameter = {};
                     parameter.paramName = param.name;
@@ -94,7 +122,41 @@ function transform(api, defaults) {
                     parameter.required = param.required;
                     parameter.hasMore = (pa != op.parameters.length-1);
                     operation.allParams.push(parameter);
+                    if (param.in === 'path') {
+                        operation.pathParams.push(parameter);
+                        operation.hasPathParams = true;
+                    }
+                    if (param.in === 'query') {
+                        operation.queryParams.push(parameter);
+                        operation.hasQueryParams = true;
+                    }
+                    if (param.in === 'header') {
+                        operation.headerParams.push(parameter);
+                        operation.hasHeaderParams = true;
+                    }
+                    if (param.in === 'form') {
+                        operation.formParams.push(parameter);
+                        operation.hasFormParams = true;
+                    }
                 }
+                if (op.requestBody) {
+                    operation.hasBodyParam = true;
+                    operation.bodyParam = {};
+                    operation.bodyParam.isBodyParam = true;
+                    operation.bodyParam.baseName = 'body';
+                    operation.bodyParam.paramName = 'body';
+                    operation.bodyParam.dataType = 'object'; // TODO
+                    operation.bodyParam.description = op.requestBody.description;
+                    operation.bodyParam.jsonSchema = JSON.stringify(op.requestBody.schema,null,2); //?
+                    operation.bodyParam.isEnum = false;
+                    operation.bodyParam.vendorExtensions = {};
+                    operation.bodyParam.required = op.requestBody.required;
+                    operation.bodyParams = [];
+                    operation.bodyParams.push(operation.bodyParam);
+                }
+                operation.tags = op.tags;
+                operation.imports = op.tags;
+                operation.vendorExtensions = {};
                 let container = {};
                 container.classname = operation.nickname;
                 container.operation = operation;
@@ -116,6 +178,9 @@ function transform(api, defaults) {
             let container = {}
             let model = {};
             model.name = s;
+            model.classname = s;
+            model.classVarName = s;
+            model.modelJson = JSON.stringify(schema,null,2);
             model.title = schema.title;
             model.unescapedDescription = schema.description;
             model.vars = [];
@@ -126,12 +191,24 @@ function transform(api, defaults) {
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
                 }
+                entry.getter = 'get'+entry.name; // TODO camelCase
+                entry.setter = 'set'+entry.name; // TODO camelCase
                 entry.type = schema.type;
+                entry.datatype = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
+                if (!entry.required) entry.datatype += '?';
+                entry.datatypeWithEnum = entry.datatype; // ?
+                entry.jsonSchema = JSON.stringify(schema,null,2);
+                entry.hasMore = true;
                 entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
+                entry.isNotContainer = entry.isPrimitiveType;
                 entry.complexType = schema.type;
                 entry.dataFormat = schema.format;
-                if (entry.name) model.vars.push(entry);
+                entry.isEnum = false;
+                if (entry.name) {
+                    entry.baseName = entry.name.toLowerCase();
+                    model.vars.push(entry);
+                }
             });
             container.model = model;
             obj.models.push(container);

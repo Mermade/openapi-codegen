@@ -3,10 +3,10 @@
     },
     "partials": {
         "style.css": "style.css.mustache",
-        "bodyParam": "bodyParam.mustache" ,
-        "formParam": "formParam.mustache" ,
-        "headerParam": "headerParam.mustache" ,
-        "pathParam": "pathParam.mustache" ,
+        "bodyParam": "bodyParam.mustache",
+        "formParam": "formParam.mustache",
+        "headerParam": "headerParam.mustache",
+        "pathParam": "pathParam.mustache",
         "queryParam": "queryParam.mustache"
     },
     "transformations": [

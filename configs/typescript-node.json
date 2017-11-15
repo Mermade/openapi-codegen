@@ -1,0 +1,21 @@
+{
+    "defaults": {
+        "supportsES6": true,
+        "gitUserId": "mermade",
+        "gitRepoId": "change-me",
+        "releaseNote": "Initial commit",
+        "npmName": "change-me",
+        "npmVersion": "1.0.0",
+        "npmRepository": "https://github.com/mermade/change-me"
+    },
+    "partials": {
+        "licenseInfo": "licenseInfo.mustache"
+    },
+    "transformations": [
+        { "input": "api.mustache", "output": "api.ts" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "gitignore", "output": "gitignore" },
+        { "input": "package.mustache", "output": "package.json" },
+        { "input": "tsconfig.mustache", "output": "tsconfig.json" }
+    ]
+}
