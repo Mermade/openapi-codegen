@@ -13,9 +13,9 @@ const validator = require('swagger2openapi/validate').validateSync;
 function transform(api, defaults) {
     let obj = Object.assign({},defaults);
 
-    obj["swagger-yaml"] = yaml.safeDump(api, {lineWidth:-1}); // set to original if converted v2.0
-    obj["swagger-json"] = JSON.stringify(api, null, 2);
-    obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1}); // set to original if converted v2.0
+    obj["swagger-yaml"] = yaml.safeDump(defaults.swagger || api, {lineWidth:-1}); // set to original if converted v2.0
+    obj["swagger-json"] = JSON.stringify(defaults.swagger || api, null, 2); // set to original if converted 2.0
+    obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1});
     obj["openapi-json"] = JSON.stringify(api, null, 2);
     
     obj.projectName = api.info.title;

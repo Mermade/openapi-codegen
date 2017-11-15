@@ -3,6 +3,9 @@
         "serverPort": "3000",
         "implFolder": "nodejs"
     },
+    "directories": [
+        "api", "controllers"
+    ],
     "transformations": [
         { "input": "controller.mustache", "output": "controller.js" },
         { "input": "index.mustache", "output": "index.js" },
@@ -10,7 +13,7 @@
         { "input": "package.mustache", "output": "package.json" },
         { "input": "README.mustache", "output": "README.md" },
         { "input": "service.mustache", "output": "service.js" },
-        { "input": "swagger.mustache", "output": "swagger.yaml" },
+        { "input": "swagger.mustache", "output": "api/swagger.yaml" },
         { "input": "writer.mustache", "output": "writer.js" }
     ]
 }

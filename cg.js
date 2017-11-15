@@ -20,6 +20,7 @@ if (o.openapi) {
 }
 else {
     swagger2openapi.convertObj(o,{patch:true,warnOnly:true,direct:true},function(err,openapi){
+        config.defaults.swagger = o;
         processor.main(openapi,config,configName);
     });
 }

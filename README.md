@@ -65,7 +65,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  lumen
 *  MSF4J
 *  nancyfx
-*  ~~nodejs~~ - **untested**
+*  ~~nodejs~~ - **tested**
 *  objc
 *  ~~openapi~~ - *outputs the input definition (in OpenAPI 3.0.x form)*
 *  perl
