@@ -36,6 +36,7 @@ function transform(api, defaults) {
     obj.basePath = '/';
     obj.contextPath = '/';
     obj.packageName = 'IO.OpenAPI';
+    obj.invokerPackage = 'IO.OpenAPI';
     obj.hasImport = true;
     obj.modelPackage = 'IO.OpenAPI';
     obj.package = 'IO.OpenAPI.Api';
@@ -279,6 +280,7 @@ function transform(api, defaults) {
                 }
                 
                 entry.dataFormat = schema.format;
+                entry.defaultValue = schema.default;
                 entry.isEnum = false;
                 if (entry.name) {
                     entry.baseName = entry.name.toLowerCase();

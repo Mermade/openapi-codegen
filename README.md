@@ -46,7 +46,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  flaskConnexion
 *  go
 *  go-server
-*  Groovy
+*  ~~Groovy~~ - **untested**
 *  haskell-http-client
 *  haskell-servant
 *  ~~htmlDocs~~ - *appears to work*
