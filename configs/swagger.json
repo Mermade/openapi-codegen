@@ -4,6 +4,6 @@
     "partials": {
     },
     "transformations": [
-        { "template": "{{{openapi-json}}}", "output": "openapi.json" }
+        { "template": "{{{swagger-json}}}", "output": "swagger.json" }
     ]
 }

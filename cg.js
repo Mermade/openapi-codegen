@@ -28,7 +28,9 @@ for (let p in config.partials) {
 let actions = [];
 for (let t in config.transformations) {
     let tx = config.transformations[t];
-    tx.template = fs.readFileSync('./templates/'+configName+'/'+tx.input,'utf8');
+    if (tx.input) {
+        tx.template = fs.readFileSync('./templates/'+configName+'/'+tx.input,'utf8');
+    }
     actions.push(tx);
 }
 

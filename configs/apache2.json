@@ -1,0 +1,10 @@
+{
+    "defaults": {
+    },
+    "partials": {
+        "authConf": "authConf.mustache"
+    },
+    "transformations": [
+        { "input": "apache-config.mustache", "output": "apache-config" }
+    ]
+}
