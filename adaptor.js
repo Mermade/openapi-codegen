@@ -47,6 +47,9 @@ function transform(api, defaults) {
     obj.generatedDate = new Date().toString();
     obj.generatorClass = 'class '+defaults.config;
     obj.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
+    obj.name = obj.classname;
+    obj.jsModuleName = obj.classname;
+    obj.jsProjectName = obj.classname;
 
     if (api.components && api.components.securitySchemes) {
         obj.hasAuthMethods = true;
