@@ -1,0 +1,25 @@
+{
+    "defaults": {
+    },
+    "directories": [
+        "docs", "docs/assets", "docs/assets/css", "docs/assets/js", "docs/assets/images"
+    ],
+    "partials": {
+        "model": "model.mustache",
+        "operation": "operation.mustache"
+    },
+    "transformations": [
+        { "input": "index.mustache", "output": "docs/index.html" },
+        { "input": "main.mustache", "output": "main.js" },
+        { "input": "package.mustache", "output": "package.json" },
+        { "input": "pom.xml", "output": "pom.xml" },
+        { "input": "assets/css/bootstrap-responsive.css", "output": "docs/assets/css/bootstrap-responsive.css" },
+        { "input": "assets/css/bootstrap.css", "output": "docs/assets/css/bootstrap.css" },
+        { "input": "assets/css/site.css", "output": "docs/assets/css/site.css" },
+        { "input": "assets/css/style.css", "output": "docs/assets/css/style.css" },
+        { "input": "assets/images/logo.png", "output": "docs/assets/images/logo.png" },
+        { "input": "assets/js/bootstrap.js", "output": "docs/assets/js/bootstrap.js" },
+        { "input": "assets/js/jquery-1.8.3.min.js", "output": "docs/assets/js/jquery-1.8.3.min.js" },
+        { "input": "assets/js/main.js", "output": "docs/assets/js/main.js" }
+    ]
+}

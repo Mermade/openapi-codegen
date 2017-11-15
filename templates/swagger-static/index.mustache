@@ -51,6 +51,11 @@
         <h2>Getting Started</h2>
         <p>To begin using your fancy HTTP API, follow the steps below.</p>
         <p>You can add some helpful tips, here</p>
+        {{#apiInfo}}
+            {{#apis}}
+                {{>operation}}
+            {{/apis}}
+        {{/apiInfo}}
       </div>
     </div>
   </div>

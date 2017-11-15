@@ -21,7 +21,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 <details>
 <summary>Click here to expand...</summary>
 
-* ~~\_common~~
+* ~~\_common~~ *contains Apache-2.0 and Unlicense licenses*
 *  Ada
 *  akka-scala
 *  android
@@ -36,7 +36,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  csharp
 *  csharp-dotnet2
 *  dart
-*  ~~debug~~
+*  ~~debug~~ - *used for dumping the model state*
 *  Eiffel
 *  elixir
 *  erlang-client
@@ -88,7 +88,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  sinatra
 *  slim
 *  ~~swagger~~ - *outputs the input definition (in original form if OpenAPI 2.0)*
-*  swagger-static
+*  ~~swagger-static~~ - **tested** *template modified to include partials*
 *  swift
 *  swift3
 *  swift4
