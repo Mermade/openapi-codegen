@@ -26,12 +26,14 @@
   },
   "homepage": "https://github.com/Mermade/openapi-codegen#readme",
   "dependencies": {
+    "connect": "^3.6.5",
     "js-yaml": "^3.10.0",
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
     "reftools": "0.0.18",
     "rimraf": "^2.6.2",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
+    "swagger-tools": "^0.10.3",
     "swagger2openapi": "^2.11.0",
     "yargs": "^10.0.3"
   }
