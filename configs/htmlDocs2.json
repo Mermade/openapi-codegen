@@ -1,0 +1,33 @@
+{
+    "defaults": {
+    },
+    "directories": [
+    ],
+    "partials": {
+        "styles": "styles.mustache",
+        "marked": "marked.mustache",
+        "param": "param.mustache",
+        "paramB": "paramB.mustache",
+        "sample_android": "sample_android.mustache",
+        "sample_csharp": "sample_csharp.mustache",
+        "sample_java": "sample_java.mustache",
+        "sample_js": "sample_js.mustache",
+        "sample_objc": "sample_objc.mustache",
+        "sample_perl": "sample_perl.mustache",
+        "sample_php": "sample_php.mustache",
+        "sample_python": "sample_python.mustache",
+        "js_jquery": "js_jquery.mustache",
+        "js_prettify": "js_prettify.mustache",
+        "js_bootstrap": "js_bootstrap.mustache",
+        "js_json_schema_ref_parser": "js_json_schema_ref_parser.mustache",
+        "js_jsonschemaview": "js_jsonschemaview.mustache",
+        "js_json_stringify_safe": "js_json_stringify_safe.mustache",
+        "js_jsonformatter": "js_jsonformatter.mustache",
+        "js_webfontloader": "js_webfontloader.mustache",
+        "css_bootstrap": "css_bootstrap.mustache",
+        "css_prettify": "css_prettify.mustache"
+    },
+    "transformations": [
+        { "input": "index.mustache", "output": "index.html" }
+    ]
+}

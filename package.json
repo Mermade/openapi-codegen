@@ -27,6 +27,7 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
     "reftools": "0.0.18",
+    "rimraf": "^2.6.2",
     "swagger2openapi": "^2.11.0",
     "yargs": "^10.0.3"
   }

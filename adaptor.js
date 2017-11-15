@@ -46,7 +46,37 @@ function transform(api, defaults) {
     obj.generatorClass = 'class '+defaults.config;
     obj.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
 
-    api = deref(api,api);
+    if (api.components && api.components.securitySchemes) {
+        obj.hasAuthMethods = true;
+        obj.authMethods = [];
+        for (let s in api.components.securitySchemes) {
+            let scheme = api.components.securitySchemes[s];
+            let entry = {};
+            if (scheme.type === 'http') {
+                entry.isBasic = true;
+            }
+            else if (scheme.type === 'oauth2') {
+                entry.isOAuth = true;
+                let flow = Object.values(scheme.flows)[0];
+                entry.authorizationUrl = flow.authorizationUrl;
+                entry.tokenUrl = flow.tokenUrl;
+            }
+            else if (scheme.type == 'apiKey') {
+                entry.isApiKey = true;
+                entry.keyParamName = scheme.name;
+                entry.isKeyInQuery = (scheme.in === 'query');
+                entry.isKeyInHeader = (scheme.in === 'header');
+                entry.isKeyInCookie = (scheme.in === 'cookie'); // extension
+            }
+            else {
+                // TODO
+            }
+            obj.authMethods.push(entry);
+        }
+
+    }
+
+    api = deref(api,api,{$ref:'$oldref'});
 
     obj.messages = [];
     let message = {};
@@ -155,17 +185,51 @@ function transform(api, defaults) {
                     operation.bodyParam.paramName = 'body';
                     operation.bodyParam.dataType = 'object'; // TODO
                     operation.bodyParam.description = op.requestBody.description;
-                    operation.bodyParam.jsonSchema = JSON.stringify(op.requestBody.schema,null,2); //?
+                    operation.bodyParam.schema = {};
                     operation.bodyParam.isEnum = false;
                     operation.bodyParam.vendorExtensions = {};
                     operation.bodyParam.required = op.requestBody.required;
+                    if (op.requestBody.content) {
+                        let contentType = Object.values(op.requestBody.content)[0];
+                        operation.bodyParam.schema = contentType.schema;
+                    }
+                    operation.bodyParam.jsonSchema = JSON.stringify({schema: operation.bodyParam.schema},null,2);
                     operation.bodyParams = [];
                     operation.bodyParams.push(operation.bodyParam);
                 }
                 operation.tags = op.tags;
                 operation.imports = op.tags;
                 operation.vendorExtensions = {};
+
+                operation.responses = [];
+                for (let r in op.responses) {
+                    let response = op.responses[r];
+                    let entry = {};
+                    entry.code = r;
+                    entry.nickname = 'response'+r;
+                    entry.message = response.description;
+                    entry.simpleType = true;
+                    entry.schema = {};
+                    entry.jsonSchema = JSON.stringify({ schema: entry.schema },null,2);
+                    if (response.content) {
+                        entry.dataType = 'object';
+                        let contentType = Object.values(response.content)[0];
+                        if (contentType.schema) {
+                            entry.schema = contentType.schema;
+                            entry.schema.jsonSchema = JSON.stringify({schema:entry.schema},null,2);
+                            entry.jsonSchema = entry.schema.jsonSchema; // eh?
+                            entry.dataType = contentType.schema.type;
+                            if (contentType.schema.$oldref) {
+                                entry.dataType = contentType.schema.$oldref.replace('#/components/schemas/','');
+                            }
+                        }
+                    }
+                    // TODO examples
+                    operation.responses.push(entry);
+                }
+
                 let container = {};
+                container.baseName = operation.nickname;
                 container.classname = operation.nickname;
                 container.operation = operation;
                 obj.operations.push(container);
@@ -177,7 +241,7 @@ function transform(api, defaults) {
     obj.apiInfo.apis = [];
     obj.apiInfo.apis.push( { operations: obj.operations } );
 
-    obj.debugOperations = JSON.stringify(obj,null,2);
+    if (defaults.debug) obj.debugOperations = JSON.stringify(obj,null,2);
 
     obj.models = [];
     if (api.components) {
@@ -210,7 +274,10 @@ function transform(api, defaults) {
                 entry.hasMore = true;
                 entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
                 entry.isNotContainer = entry.isPrimitiveType;
-                entry.complexType = schema.type;
+                if ((schema.type === 'object') && schema.properties && schema.properties.$oldref) {
+                    entry.complexType = schema.properties.$oldref.replace('#/components/schemas/','');
+                }
+                
                 entry.dataFormat = schema.format;
                 entry.isEnum = false;
                 if (entry.name) {
@@ -223,7 +290,7 @@ function transform(api, defaults) {
         }
     }
 
-    obj.debugModels = JSON.stringify(obj.models,null,2);
+    if (defaults.debug) obj.debugModels = JSON.stringify(obj.models,null,2);
 
     return obj;
 }
