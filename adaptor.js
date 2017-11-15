@@ -218,8 +218,7 @@ function transform(api, defaults) {
                         let contentType = Object.values(response.content)[0];
                         if (contentType.schema) {
                             entry.schema = contentType.schema;
-                            entry.schema.jsonSchema = safeJson({schema:entry.schema},null,2);
-                            entry.jsonSchema = entry.schema.jsonSchema; // eh?
+                            entry.jsonSchema = safeJson({schema:entry.schema},null,2);
                             entry.dataType = contentType.schema.type;
                             if (contentType.schema.$oldref) {
                                 entry.dataType = contentType.schema.$oldref.replace('#/components/schemas/','');
