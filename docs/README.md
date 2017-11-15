@@ -1,5 +1,3 @@
-# OpenAPI-CodeGen
-
 ## Documentation
 
 ### Config file DSL
