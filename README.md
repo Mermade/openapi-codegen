@@ -6,6 +6,27 @@ Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-co
 
 Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
 
+## Usage
+
+### CLI
+
+```shell
+cg [options] {config} {openapi-definition}
+
+Options:
+  --help         Show help                                             [boolean]
+  --version      Show version number                                   [boolean]
+  -v, --verbose  Increase verbosity                                    [boolean]
+```
+
+### API
+
+```javascript
+const renderer = require('openapi-codegen');
+// load a config and a definition
+renderer.main(definition,config,configName);
+```
+
 ## Templates
 
 Templates are taken directly from `swagger-codegen`. This project is also licensed under [Apache-2.0](LICENSE) for this reason. Generated code is explicitly covered by the [Unlicense](templates/_common/UNLICENSE).
@@ -14,7 +35,7 @@ Templates are taken directly from `swagger-codegen`. This project is also licens
 
 See [here](https://github.com/swagger-api/swagger-codegen#template-creator) for a partial list of template contributors.
 
-## Status of the template configurations
+### Status of the template configurations
 
 The crossed-off templates have a working (if not tested) configuration in the **configs** directory.
 

@@ -94,7 +94,7 @@ function transform(api, defaults) {
         message.elementId = 'None';
         message.message = 'No validation errors detected';
         obj.messages.push(message);
-        console.log(message);
+        if (defaults.verbose) console.log(message);
     }
     catch (ex) {
         message.level = 'Error';
