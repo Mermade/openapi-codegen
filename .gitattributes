@@ -1,0 +1,2 @@
+*.mustache linguist-vendored=true
+templates/* linguist-vendored=true
