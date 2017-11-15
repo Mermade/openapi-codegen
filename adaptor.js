@@ -54,6 +54,7 @@ function transform(api, defaults) {
         validator(api,{});
         message.level = 'Valid';
         message.elementType = 'Context';
+        message.elementId = 'None';
         message.message = 'No errors detected';
         obj.messages.push(message);
     }
@@ -118,23 +119,30 @@ function transform(api, defaults) {
                     parameter.paramName = param.name;
                     parameter.baseName = param.name;
                     parameter.dataType = param.schema.type;
+                    parameter.dataFormat = param.schema.format;
                     parameter.description = param.description;
+                    parameter.unescapedDescription = param.description;
+                    parameter.defaultValue = param.default;
                     parameter.required = param.required;
                     parameter.hasMore = (pa != op.parameters.length-1);
                     operation.allParams.push(parameter);
                     if (param.in === 'path') {
+                        parameter.isPathParam = true;
                         operation.pathParams.push(parameter);
                         operation.hasPathParams = true;
                     }
                     if (param.in === 'query') {
+                        parameter.isQueryParam = true;
                         operation.queryParams.push(parameter);
                         operation.hasQueryParams = true;
                     }
                     if (param.in === 'header') {
+                        parameter.isHeaderParam = true;
                         operation.headerParams.push(parameter);
                         operation.hasHeaderParams = true;
                     }
                     if (param.in === 'form') {
+                        parameter.isFormParam = true;
                         operation.formParams.push(parameter);
                         operation.hasFormParams = true;
                     }
