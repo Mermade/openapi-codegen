@@ -1,6 +1,6 @@
 # OpenAPI-CodeGen
 
-Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-codegen) to Node.js
+Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-codegen) templates to Node.js. This project was initially a 24-hour hackathon. The model adaptor code is entirely original and has been reverse-engineered from documentation and template usage.
 
 **Work in progress**
 
@@ -8,7 +8,7 @@ Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
 
 ## Templates
 
-Templates are taken directly from `swagger-codegen`. This project is also licensed under Apache-2.0 for this reason. Generated code is explicitly covered by the Unlicense.
+Templates are taken directly from `swagger-codegen`. This project is also licensed under [Apache-2.0](LICENSE) for this reason. Generated code is explicitly covered by the [Unlicense](templates/_common/UNLICENSE).
 
 ### Contributors
 

@@ -4,6 +4,7 @@ const util = require('util');
 const url = require('url');
 
 const yaml = require('js-yaml');
+const safeJson = require('safe-json-stringify');
 const deref = require('reftools/lib/dereference.js').dereference;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
@@ -194,7 +195,7 @@ function transform(api, defaults) {
                         let contentType = Object.values(op.requestBody.content)[0];
                         operation.bodyParam.schema = contentType.schema;
                     }
-                    operation.bodyParam.jsonSchema = JSON.stringify({schema: operation.bodyParam.schema},null,2);
+                    operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
                     operation.bodyParams = [];
                     operation.bodyParams.push(operation.bodyParam);
                 }
@@ -211,13 +212,13 @@ function transform(api, defaults) {
                     entry.message = response.description;
                     entry.simpleType = true;
                     entry.schema = {};
-                    entry.jsonSchema = JSON.stringify({ schema: entry.schema },null,2);
+                    entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
                     if (response.content) {
                         entry.dataType = 'object';
                         let contentType = Object.values(response.content)[0];
                         if (contentType.schema) {
                             entry.schema = contentType.schema;
-                            entry.schema.jsonSchema = JSON.stringify({schema:entry.schema},null,2);
+                            entry.schema.jsonSchema = safeJson({schema:entry.schema},null,2);
                             entry.jsonSchema = entry.schema.jsonSchema; // eh?
                             entry.dataType = contentType.schema.type;
                             if (contentType.schema.$oldref) {
@@ -253,7 +254,7 @@ function transform(api, defaults) {
             model.name = s;
             model.classname = s;
             model.classVarName = s;
-            model.modelJson = JSON.stringify(schema,null,2);
+            model.modelJson = safeJson(schema,null,2);
             model.title = schema.title;
             model.unescapedDescription = schema.description;
             model.vars = [];
@@ -271,7 +272,7 @@ function transform(api, defaults) {
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
                 if (!entry.required) entry.datatype += '?';
                 entry.datatypeWithEnum = entry.datatype; // ?
-                entry.jsonSchema = JSON.stringify(schema,null,2);
+                entry.jsonSchema = safeJson(schema,null,2);
                 entry.hasMore = true;
                 entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
                 entry.isNotContainer = entry.isPrimitiveType;
