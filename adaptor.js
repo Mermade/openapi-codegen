@@ -62,9 +62,11 @@ function transform(api, defaults) {
             }
             else if (scheme.type === 'oauth2') {
                 entry.isOAuth = true;
-                let flow = Object.values(scheme.flows)[0];
-                entry.authorizationUrl = flow.authorizationUrl;
-                entry.tokenUrl = flow.tokenUrl;
+                if (scheme.flows) {
+                    let flow = Object.values(scheme.flows)[0];
+                    entry.authorizationUrl = flow.authorizationUrl;
+                    entry.tokenUrl = flow.tokenUrl;
+                }
             }
             else if (scheme.type == 'apiKey') {
                 entry.isApiKey = true;
@@ -81,7 +83,7 @@ function transform(api, defaults) {
 
     }
 
-    api = deref(api,api,{$ref:'$oldref'});
+    api = deref(api,api,{$ref:'x-oldref'});
 
     obj.messages = [];
     let message = {};
@@ -90,8 +92,9 @@ function transform(api, defaults) {
         message.level = 'Valid';
         message.elementType = 'Context';
         message.elementId = 'None';
-        message.message = 'No errors detected';
+        message.message = 'No validation errors detected';
         obj.messages.push(message);
+        console.log(message);
     }
     catch (ex) {
         message.level = 'Error';
@@ -101,6 +104,7 @@ function transform(api, defaults) {
         }
         message.message = ex.message;
         obj.messages.push(message);
+        console.error(message);
     }
 
     if (api.servers && api.servers.length) {
@@ -223,8 +227,8 @@ function transform(api, defaults) {
                             entry.schema = contentType.schema;
                             entry.jsonSchema = safeJson({schema:entry.schema},null,2);
                             entry.dataType = contentType.schema.type;
-                            if (contentType.schema.$oldref) {
-                                entry.dataType = contentType.schema.$oldref.replace('#/components/schemas/','');
+                            if (contentType.schema["x-oldref"]) {
+                                entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
                             }
                         }
                     }
@@ -278,8 +282,8 @@ function transform(api, defaults) {
                 entry.hasMore = true;
                 entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
                 entry.isNotContainer = entry.isPrimitiveType;
-                if ((schema.type === 'object') && schema.properties && schema.properties.$oldref) {
-                    entry.complexType = schema.properties.$oldref.replace('#/components/schemas/','');
+                if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
+                    entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
                 }
                 
                 entry.dataFormat = schema.format;
