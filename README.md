@@ -49,8 +49,8 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  Groovy
 *  haskell-http-client
 *  haskell-servant
-*  ~~htmlDocs~~ - appears to work
-*  ~~htmlDocs2~~ - appears to work, no console errors logged
+*  ~~htmlDocs~~ - *appears to work*
+*  ~~htmlDocs2~~ - *appears to work, no console errors logged*
 *  Java
 *  JavaInflector
 *  JavaJaxRS
@@ -65,12 +65,12 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  lumen
 *  MSF4J
 *  nancyfx
-*  ~~nodejs~~ - untested
+*  ~~nodejs~~ - **untested**
 *  objc
-*  ~~openapi~~ - outputs the input definition (in OpenAPI 3.0.x form)
+*  ~~openapi~~ - *outputs the input definition (in OpenAPI 3.0.x form)*
 *  perl
 *  php
-*  php-silex
+*  ~~php-silex~~ - **untested**
 *  php-symfony
 *  pistache-server
 *  powershell
@@ -87,7 +87,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  scalaz
 *  sinatra
 *  slim
-*  ~~swagger~~ - outputs the input definition (in original form if OpenAPI 2.0)
+*  ~~swagger~~ - *outputs the input definition (in original form if OpenAPI 2.0)*
 *  swagger-static
 *  swift
 *  swift3
@@ -98,9 +98,9 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  typescript-aurelia
 *  typescript-fetch
 *  typescript-jquery
-*  ~~typescript-node~~ - untested
+*  ~~typescript-node~~ - **untested**
 *  undertow
-*  validator
+*  ~~validator~~ - *uses swagger2openapi's OpenAPI 3.0 validator internally*
 *  ze-ph
 </details>
 

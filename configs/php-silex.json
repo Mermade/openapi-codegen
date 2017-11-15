@@ -1,0 +1,10 @@
+{
+    "defaults": {
+    },
+    "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "index.mustache", "output": "index.php" },
+        { "input": "composer.json", "output": "composer.json" },
+        { "input": ".htaccess", "output": ".htaccess" }
+    ]
+}
