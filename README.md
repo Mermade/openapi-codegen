@@ -64,7 +64,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  erlang-server
 *  finch
 *  flash
-*  flaskConnexion
+*  ~~flaskConnexion~~ - **needs testing**
 *  go
 *  go-server
 *  ~~Groovy~~ - **untested**
@@ -95,7 +95,7 @@ The crossed-off templates have a working (if not tested) configuration in the **
 *  php-symfony
 *  pistache-server
 *  powershell
-*  python
+*  ~~python~~ - **needs testing**
 *  qt5cpp
 *  r
 *  rails5

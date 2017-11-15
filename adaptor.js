@@ -45,9 +45,10 @@ function transform(api, defaults) {
     obj.importPath = 'IO.OpenAPI.Api.Default';
     obj.hasMore = true;
     obj.generatedDate = new Date().toString();
-    obj.generatorClass = 'class '+defaults.config;
+    obj.generatorClass = 'class '+defaults.configName;
     obj.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
     obj.name = obj.classname;
+    obj.classFilename = obj.classname;
     obj.jsModuleName = obj.classname;
     obj.jsProjectName = obj.classname;
 

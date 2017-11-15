@@ -1,0 +1,33 @@
+{
+    "defaults": {
+    },
+    "directories": [
+    ],
+    "partials": {
+        "param_type": "param_type.mustache"
+    },
+    "transformations": [
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "gitignore.mustache", "output": ".gitignore" },
+        { "input": "travis.mustache", "output": ".travis.yml" },
+        { "input": "tox.mustache", "output": "tox.ini" },
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "Dockerfile.mustache", "output": "Dockerfile" },
+        { "input": "dockerignore.mustache", "output": ".dockerignore" },
+        { "input": "requirements.mustache", "output": "requirements.txt" },
+        { "input": "test-requirements.mustache", "output": "test-requirements.txt" },
+        { "input": "swagger.mustache", "output": "swagger.yaml" },
+
+        { "input": "__init__.mustache", "output": "__init__.py" },
+        { "input": "__init__model.mustache", "output": "__init__model.py" },
+        { "input": "__init__test.mustache", "output": "__init__test.py" },
+        { "input": "__main__.mustache", "output": "__main__.py" },
+        { "input": "base_model_.mustache", "output": "base_model_.py" },
+        { "input": "controller.mustache", "output": "controller.py" },
+        { "input": "controller_test.mustache", "output": "controller_test.py" },
+        { "input": "encoder.mustache", "output": "encoder.py" },
+        { "input": "model.mustache", "output": "model.py" },
+        { "input": "setup.mustache", "output": "setup.py" },
+        { "input": "util.mustache", "output": "util.py" }
+    ]
+}

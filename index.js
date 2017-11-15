@@ -11,6 +11,7 @@ const adaptor = require('./adaptor.js');
 
 function main(o, config, configName) {
     let verbose = config.defaults.verbose;
+    config.defaults.configName = configName;
     let model = adaptor.transform(o, config.defaults);
 
     for (let p in config.partials) {
