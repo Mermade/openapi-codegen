@@ -11,7 +11,7 @@ Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
 ### CLI
 
 ```shell
-cg [options] {config} {openapi-definition}
+cg [options] {configName} {openapi-definition}
 
 Options:
   --help         Show help                                             [boolean]

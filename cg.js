@@ -9,7 +9,7 @@ const swagger2openapi = require('swagger2openapi');
 const processor = require('./index.js');
 
 var argv = require('yargs')
-    .usage('cg [options] {config} {openapi-definition}')
+    .usage('cg [options] {configName} {openapi-definition}')
     .boolean('verbose')
     .describe('verbose','Increase verbosity')
     .alias('v','verbose')
