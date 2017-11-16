@@ -1,2 +1,7 @@
 #!/bin/sh
-npx tsc -t ESNEXT out/typescript-node/api.ts > checkTs.log
+cd out/typescript-node
+npx tsc -t ES6 -m commonjs *.ts
+cd ../..
+cd out/typescript-fetch
+npx tsc -t ES6 -m commonjs *.ts
+

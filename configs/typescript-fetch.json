@@ -10,12 +10,18 @@
         "npmRepository": "https://github.com/mermade/change-me"
     },
     "partials": {
-        "licenseInfo": "licenseInfo.mustache"
+        "licenseInfo": "licenseInfo.mustache",
+        "modelEnum": "modelEnum.mustache",
+        "modelGeneric": "modelGeneric.mustache"
     },
     "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
         { "input": "api.mustache", "output": "api.ts" },
-        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "index.mustache", "output": "index.ts" },
+        { "input": "configuration.mustache", "output": "configuration.ts" },
+        { "input": "custom.d.mustache", "output": "custom.d.ts" },
         { "input": "gitignore", "output": ".gitignore" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
         { "input": "package.mustache", "output": "package.json" },
         { "input": "tsconfig.mustache", "output": "tsconfig.json" }
     ]
