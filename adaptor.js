@@ -64,6 +64,7 @@ function transform(api, defaults) {
         for (let s in api.components.securitySchemes) {
             let scheme = api.components.securitySchemes[s];
             let entry = {};
+            entry.name = s;
             if (scheme.type === 'http') {
                 entry.isBasic = true;
             }
