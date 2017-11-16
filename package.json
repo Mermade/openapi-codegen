@@ -7,7 +7,7 @@
     "cg": "./cg.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx mocha --delay"
   },
   "repository": {
     "type": "git",
@@ -36,5 +36,11 @@
     "swagger-tools": "^0.10.3",
     "swagger2openapi": "^2.11.0",
     "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "ajv": "^5.3.0",
+    "mocha": "^4.0.1",
+    "node-readfiles": "^0.2.0",
+    "should": "^13.1.3"
   }
 }

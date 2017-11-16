@@ -1,0 +1,52 @@
+{
+    "type": "object",
+    "properties": {
+        "type": {
+            "type": "string",
+            "enum": [
+                "client",
+                "server",
+                "documentation"
+            ]
+        },
+        "directories": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "defaults": {
+            "type": "object"
+        },
+        "partials": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "transformations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "template": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "type": "string"
+                    },
+                    "output": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "output"
+                ]
+            }
+        }
+    },
+    "required": [
+        "transformations"
+    ]
+}

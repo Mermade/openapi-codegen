@@ -4,7 +4,7 @@
     "transformations": [
         { "input": "build.gradle.mustache", "output": "build.gradle" },
         { "input": "api.mustache", "output": "api.groovy" },
-        { "input": "apiUtils.mustache", "output": "apiUtils.groovy" },
+        { "input": "ApiUtils.mustache", "output": "apiUtils.groovy" },
         { "input": "model.mustache", "output": "model.groovy" }
     ]
 }

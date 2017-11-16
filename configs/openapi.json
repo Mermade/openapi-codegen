@@ -4,6 +4,7 @@
     "partials": {
     },
     "transformations": [
+        { "input": "README.md", "output": "README.md" },
         { "template": "{{{openapi-json}}}", "output": "openapi.json" }
     ]
 }
