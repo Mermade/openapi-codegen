@@ -10,6 +10,9 @@ const processor = require('./index.js');
 
 var argv = require('yargs')
     .usage('cg [options] {configName} {openapi-definition}')
+    .boolean('debug')
+    .alias('d','debug')
+    .describe('debug','Turn on debugging information in the model')
     .boolean('lint')
     .alias('l','lint')
     .describe('lint','Lint input definition')
@@ -26,6 +29,7 @@ if (argv.verbose) {
     console.log('Loaded config '+configName);
 }
 if (argv.lint) config.defaults.lint = true;
+if (argv.debug) config.defaults.debug = true;
 
 let defName = argv._[1] || './defs/petstore3.json';
 let s = fs.readFileSync(defName,'utf8');

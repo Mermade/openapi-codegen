@@ -10,6 +10,12 @@ const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 const validator = require('swagger2openapi/validate').validateSync;
 
+String.prototype.toCamelCase = function camelize() {
+    return this.toLowerCase().replace(/[-_ \/\.](.)/g, function (match, group1) {
+        return group1.toUpperCase();
+    });
+}
+
 function transform(api, defaults) {
     let obj = Object.assign({},defaults);
 
@@ -77,7 +83,7 @@ function transform(api, defaults) {
                 entry.isKeyInCookie = (scheme.in === 'cookie'); // extension
             }
             else {
-                // TODO
+                // TODO OpenAPI 3 schemes
             }
             obj.authMethods.push(entry);
         }
@@ -144,7 +150,7 @@ function transform(api, defaults) {
                 operation.notes = op.description;
                 operation.responseHeaders = [];
                 operation.hasProduces = true;
-                operation.hasMore = true; // TODO
+                operation.hasMore = true; // last one gets reset to false
                 operation.isResponseBinary = false; //TODO
                 operation.baseName = 'Default';
                 if (op.tags && op.tags.length) {
@@ -192,7 +198,7 @@ function transform(api, defaults) {
                     operation.bodyParam.isBodyParam = true;
                     operation.bodyParam.baseName = 'body';
                     operation.bodyParam.paramName = 'body';
-                    operation.bodyParam.dataType = 'object'; // TODO
+                    operation.bodyParam.dataType = 'object'; // can be changed below
                     operation.bodyParam.description = op.requestBody.description;
                     operation.bodyParam.schema = {};
                     operation.bodyParam.isEnum = false;
@@ -201,6 +207,9 @@ function transform(api, defaults) {
                     if (op.requestBody.content) {
                         let contentType = Object.values(op.requestBody.content)[0];
                         operation.bodyParam.schema = contentType.schema;
+                        if (contentType.schema.type) {
+                            operation.bodyParam.type = contentType.schema.type;
+                        }
                     }
                     operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
                     operation.bodyParams = [];
@@ -245,6 +254,10 @@ function transform(api, defaults) {
         }
     }
 
+    if (obj.operations) {
+        obj.operations[obj.operations.length-1].operation.hasMore = false;
+    }
+
     obj.apiInfo = {};
     obj.apiInfo.apis = [];
     obj.apiInfo.apis.push( { operations: obj.operations } );
@@ -271,8 +284,8 @@ function transform(api, defaults) {
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
                 }
-                entry.getter = 'get'+entry.name; // TODO camelCase
-                entry.setter = 'set'+entry.name; // TODO camelCase
+                entry.getter = ('get_'+entry.name).toCamelCase();
+                entry.setter = ('set_'+entry.name).toCamelCase();
                 entry.type = schema.type;
                 entry.datatype = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);

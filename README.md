@@ -1,6 +1,8 @@
 # OpenAPI-CodeGen
 
-Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-codegen) templates to Node.js. This project was initially a 24-hour hackathon. The model adaptor code is entirely original and has been reverse-engineered from documentation and template usage.
+[![Build status](https://travis-ci.org/Mermade/openapi-codegen.svg?branch=master)](https://travis-ci.org/Mermade/openapi-codegen)
+
+Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-codegen) templates to Node.js. This project was initially a 24-hour hackathon. The model adaptor code is entirely original and has been reverse-engineered from the existing documentation and template usage.
 
 **Work in progress**
 
@@ -14,6 +16,7 @@ Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
 cg [options] {configName} {openapi-definition}
 
 Options:
+  -d, --debug    Turn on debugging information in the model            [boolean]
   --help         Show help                                             [boolean]
   -l, --lint     Lint input definition                                 [boolean]
   --version      Show version number                                   [boolean]
@@ -38,7 +41,7 @@ See [here](https://github.com/swagger-api/swagger-codegen#template-creator) for 
 
 ### Status of the template configurations
 
-The crossed-off templates have a working (if not tested) configuration in the **configs** directory.
+The crossed-off templates have a working (if not necessarily tested) configuration in the **configs** directory.
 
 <details>
 <summary>Click here to expand...</summary>
