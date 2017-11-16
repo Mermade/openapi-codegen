@@ -16,7 +16,7 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-function typeMap(type, required, language) {
+function typeMap(type, required, language, schema) {
     let result = type;
     language = (language||'').toLowerCase();
     if (language === 'java') {
@@ -27,7 +27,12 @@ function typeMap(type, required, language) {
     }
     if (language === 'typescript') {
         if (result === 'integer') result = 'number';
-        if (result === 'array') result = 'any[]';
+        if (result === 'array') {
+            result = 'Array';
+            if (schema.items && schema.items.type) {
+                result += '<'+typeMap(schema.items.type,false,language,schema.items)+'>';
+            }
+        }
     }
     return result;
 }
@@ -181,7 +186,7 @@ function transform(api, defaults) {
                     parameter.paramName = param.name;
                     parameter.baseName = param.name;
                     parameter.required = param.required;
-                    parameter.dataType = typeMap(param.schema.type,parameter.required,defaults.language);
+                    parameter.dataType = typeMap(param.schema.type,parameter.required,defaults.language,param.schema);
                     parameter.dataFormat = param.schema.format;
                     parameter.description = param.description;
                     parameter.unescapedDescription = param.description;
@@ -316,7 +321,7 @@ function transform(api, defaults) {
                 entry.setter = ('set_'+entry.name).toCamelCase();
                 entry.type = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
-                entry.type = typeMap(entry.type,entry.required,defaults.language);
+                entry.type = typeMap(entry.type,entry.required,defaults.language,schema);
                 entry.datatype = entry.type; //?
                 entry.datatypeWithEnum = entry.datatype; // ?
                 entry.jsonSchema = safeJson(schema,null,2);
