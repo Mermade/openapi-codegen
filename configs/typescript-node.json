@@ -1,5 +1,6 @@
 {
     "defaults": {
+        "language": "typescript",
         "supportsES6": true,
         "gitUserId": "mermade",
         "gitRepoId": "change-me",

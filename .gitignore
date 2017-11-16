@@ -1,6 +1,7 @@
 node_modules/
 templates/META-INF/
 templates/logback.xml
+*.log
 out/
 todo
 *.swp

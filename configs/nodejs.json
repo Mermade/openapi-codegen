@@ -4,16 +4,16 @@
         "implFolder": "nodejs"
     },
     "directories": [
-        "api", "controllers"
+        "api", "controllers", "utils"
     ],
     "transformations": [
-        { "input": "controller.mustache", "output": "controller.js" },
+        { "input": "controller.mustache", "output": "controllers/controller.js" },
         { "input": "index.mustache", "output": "index.js" },
         { "input": "index-gcf.mustache", "output": "index-gcf.js" },
         { "input": "package.mustache", "output": "package.json" },
         { "input": "README.mustache", "output": "README.md" },
         { "input": "service.mustache", "output": "service.js" },
         { "input": "swagger.mustache", "output": "api/swagger.yaml" },
-        { "input": "writer.mustache", "output": "writer.js" }
+        { "input": "writer.mustache", "output": "utils/writer.js" }
     ]
 }

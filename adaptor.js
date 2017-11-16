@@ -16,6 +16,22 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
+function typeMap(type, required, language) {
+    let result = type;
+    language = (language||'').toLowerCase();
+    if (language === 'java') {
+        if (!required) result += '?';
+    }
+    if (language === 'javascript') {
+        if (result === 'integer') result = 'number';
+    }
+    if (language === 'typescript') {
+        if (result === 'integer') result = 'number';
+        if (result === 'array') result = 'any[]';
+    }
+    return result;
+}
+
 function transform(api, defaults) {
     let obj = Object.assign({},defaults);
 
@@ -164,13 +180,13 @@ function transform(api, defaults) {
                     let parameter = {};
                     parameter.paramName = param.name;
                     parameter.baseName = param.name;
-                    parameter.dataType = param.schema.type;
+                    parameter.required = param.required;
+                    parameter.dataType = typeMap(param.schema.type,parameter.required,defaults.language);
                     parameter.dataFormat = param.schema.format;
                     parameter.description = param.description;
                     parameter.unescapedDescription = param.description;
                     parameter.defaultValue = param.default;
-                    parameter.required = param.required;
-                    parameter.hasMore = (pa != op.parameters.length-1);
+                    parameter.hasMore = true; // last one gets reset below after sorting
                     operation.allParams.push(parameter);
                     if (param.in === 'path') {
                         parameter.isPathParam = true;
@@ -215,6 +231,8 @@ function transform(api, defaults) {
                     operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
                     operation.bodyParams = [];
                     operation.bodyParams.push(operation.bodyParam);
+                    operation.bodyParam.hasMore = true;
+                    operation.allParams.push(operation.bodyParam);
                 }
                 operation.tags = op.tags;
                 operation.imports = op.tags;
@@ -244,6 +262,15 @@ function transform(api, defaults) {
                     }
                     // TODO examples
                     operation.responses.push(entry);
+                }
+
+                operation.allParams = operation.allParams.sort(function(a,b){
+                    if (a.required && !b.required) return -1;
+                    if (b.required && !a.required) return +1;
+                    return 0;
+                });
+                if (operation.allParams.length) {
+                    operation.allParams[operation.allParams.length-1].hasMore = false;
                 }
 
                 let container = {};
@@ -288,9 +315,9 @@ function transform(api, defaults) {
                 entry.getter = ('get_'+entry.name).toCamelCase();
                 entry.setter = ('set_'+entry.name).toCamelCase();
                 entry.type = schema.type;
-                entry.datatype = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
-                if (!entry.required) entry.datatype += '?';
+                entry.type = typeMap(entry.type,entry.required,defaults.language);
+                entry.datatype = entry.type; //?
                 entry.datatypeWithEnum = entry.datatype; // ?
                 entry.jsonSchema = safeJson(schema,null,2);
                 entry.hasMore = true;
@@ -303,7 +330,7 @@ function transform(api, defaults) {
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
                 entry.isEnum = false;
-                if (entry.name) {
+                if (entry.name && state.depth<=1) {
                     entry.baseName = entry.name.toLowerCase();
                     model.vars.push(entry);
                 }
