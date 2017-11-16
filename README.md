@@ -121,9 +121,9 @@ The crossed-off templates have a working (if not necessarily tested) configurati
 *  typescript-angular
 *  typescript-angularjs
 *  typescript-aurelia
-*  typescript-fetch
+*  ~~typescript-fetch~~ - **compiles with tsc ok**
 *  typescript-jquery
-*  ~~typescript-node~~ - **untested**
+*  ~~typescript-node~~ - **compiles with tsc ok**
 *  undertow
 *  ~~validator~~ - *uses swagger2openapi's OpenAPI 3.0 validator internally*
 *  ze-ph
