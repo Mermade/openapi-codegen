@@ -9,6 +9,8 @@ const mustache = require('mustache');
 
 const adaptor = require('./adaptor.js');
 
+const outputDir = './out/';
+
 function main(o, config, configName) {
     let verbose = config.defaults.verbose;
     config.defaults.configName = configName;
@@ -30,24 +32,24 @@ function main(o, config, configName) {
         actions.push(tx);
     }
 
-    if (verbose) console.log('Making and cleaning output directories');
-    mkdirp('./out/'+configName,function(){
-        rimraf('./out/'+configName+'/*',function(){
+    if (verbose) console.log('Making/cleaning output directories');
+    mkdirp(outputDir+configName,function(){
+        rimraf(outputDir+configName+'/*',function(){
             if (config.directories) {
                 for (let directory of config.directories) {
-                    mkdirp.sync('./out/'+configName+'/'+directory);
+                    mkdirp.sync(outputDir+configName+'/'+directory);
                 }
             }
             for (let action of actions) {
                 if (verbose) console.log('Rendering '+action.output);
                 let content = mustache.render(action.template, model, config.partials);
-                fs.writeFileSync('./out/'+configName+'/'+action.output,content,'utf8');
+                fs.writeFileSync(outputDir+configName+'/'+action.output,content,'utf8');
             }
             if (config.apache) {
-                fs.writeFileSync('./out/'+configName+'/LICENSE',fs.readFileSync('./templates/_common/LICENSE','utf8'),'utf8');
+                fs.writeFileSync(outputDir+configName+'/LICENSE',fs.readFileSync('./templates/_common/LICENSE','utf8'),'utf8');
             }
             else {
-                fs.writeFileSync('./out/'+configName+'/LICENSE',fs.readFileSync('./templates/_common/UNLICENSE','utf8'),'utf8');
+                fs.writeFileSync(outputDir+configName+'/LICENSE',fs.readFileSync('./templates/_common/UNLICENSE','utf8'),'utf8');
             }
         });
     });

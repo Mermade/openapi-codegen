@@ -91,7 +91,6 @@ async function main(){
         Object.keys(templates).forEach(function(configName){
             let tmp = templates[configName];
             let config = configs[configName];
-            console.log('**', configName, typeof config);
             if (config) {
             for (let name of tmp) {
                 it('template '+name+' should be accounted for in config '+configName,function(){

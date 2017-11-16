@@ -34,7 +34,7 @@
     "rimraf": "^2.6.2",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
     "swagger-tools": "^0.10.3",
-    "swagger2openapi": "^2.11.0",
+    "swagger2openapi": "^2.11.2",
     "yargs": "^10.0.3"
   },
   "devDependencies": {

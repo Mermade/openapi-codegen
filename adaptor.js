@@ -88,8 +88,9 @@ function transform(api, defaults) {
 
     obj.messages = [];
     let message = {};
+    let vOptions = {lint:defaults.lint};
     try {
-        validator(api,{});
+        validator(api,vOptions);
         message.level = 'Valid';
         message.elementType = 'Context';
         message.elementId = 'None';
@@ -100,9 +101,7 @@ function transform(api, defaults) {
     catch (ex) {
         message.level = 'Error';
         message.elementType = 'Context';
-        if (ex.options) {
-            message.elementId = ex.options.context.pop();
-        }
+        message.elementId = vOptions.context.pop();
         message.message = ex.message;
         obj.messages.push(message);
         console.error(message);

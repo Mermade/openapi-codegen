@@ -15,6 +15,7 @@ cg [options] {configName} {openapi-definition}
 
 Options:
   --help         Show help                                             [boolean]
+  -l, --lint     Lint input definition                                 [boolean]
   --version      Show version number                                   [boolean]
   -v, --verbose  Increase verbosity                                    [boolean]
 ```
