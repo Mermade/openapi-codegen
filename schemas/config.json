@@ -3,12 +3,16 @@
     "properties": {
         "type": {
             "type": "string",
-            "description": "At the moment this is not used",
+            "description": "A label for the generator API. Currently unused",
             "enum": [
                 "client",
                 "server",
                 "documentation"
             ]
+        },
+        "language": {
+            "type": "string",
+            "description": "A hint to the adaptor to tweak language-specific features of the model (casing etc). Currently unused."
         },
         "apache": {
             "type": "boolean",
@@ -23,7 +27,7 @@
         },
         "defaults": {
             "type": "object",
-            "description": "Any settings/overrides to be passed to the adaptor"
+            "description": "Any settings/overrides to be passed to the adaptor. Required even if empty"
         },
         "partials": {
             "type": "object",
