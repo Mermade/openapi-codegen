@@ -87,26 +87,43 @@ async function main(){
         });
     });
 
+    describe('check template dir for README etc',function(){
+        Object.values(configs).forEach(function(config){
+            let readme = false;
+            if (config.transformations) {
+                for (let tx of config.transformations) {
+                    if (tx.output.toLowerCase().indexOf('readme')>=0) {
+                        readme = true;
+                    }
+                }
+                it('should have README '+(config.name||''),function(){
+                    if (!readme) return this.skip('Boo');
+                    readme.should.be.exactly(true);
+                });
+            }
+        });
+    });
+
     describe('templates accounted for',function(){
         Object.keys(templates).forEach(function(configName){
             let tmp = templates[configName];
             let config = configs[configName];
             if (config) {
-            for (let name of tmp) {
-                it('template '+name+' should be accounted for in config '+configName,function(){
-                    let found = 0;
-                    if (config.partials) {
-                        for (let p in config.partials) {
-                           if (config.partials[p] === name) found++; 
+                for (let name of tmp) {
+                    it('template '+name+' should be accounted for in config '+configName,function(){
+                        let found = 0;
+                        if (config.partials) {
+                            for (let p in config.partials) {
+                            if (config.partials[p] === name) found++; 
+                            }
                         }
-                    }
-                    for (let tx of config.transformations) {
-                        if (name === tx.input) found++;
-                    }
-                    found.should.be.exactly(1);
-                });
+                        for (let tx of config.transformations) {
+                            if (name === tx.input) found++;
+                        }
+                        found.should.be.exactly(1);
+                    });
 
-            }
+                }
             }
         });
     });
