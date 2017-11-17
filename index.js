@@ -32,6 +32,8 @@ function main(o, config, configName) {
         actions.push(tx);
     }
 
+    // TODO other backends, such as a stream writer for .tar.gz files
+
     if (verbose) console.log('Making/cleaning output directories');
     mkdirp(outputDir+configName,function(){
         rimraf(outputDir+configName+'/*',function(){

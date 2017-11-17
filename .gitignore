@@ -3,5 +3,6 @@ templates/META-INF/
 templates/logback.xml
 *.log
 out/
-todo
+dev/
+dist/
 *.swp

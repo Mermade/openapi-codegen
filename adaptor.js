@@ -16,7 +16,7 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-// TODO add html and possibly termcap renderers
+// TODO add html and possibly termcap (https://www.npmjs.com/package/hermit) renderers
 const markdownPPs = {
     nop: function(markdown) {
         return markdown;
@@ -53,8 +53,14 @@ const typeMaps = {
 let typeMap = typeMaps.nop;
 let markdownPP = markdownPPs.nop;
 
+function getBase() {
+    let base = {};
+    return base;
+}
+
 function transform(api, defaults) {
-    let obj = Object.assign({},defaults);
+    let base = getBase();
+    let obj = Object.assign({},base,defaults);
 
     let lang = (defaults.language||'').toLowerCase();
     if (typeMaps[lang]) typeMap = typeMaps[lang];
@@ -109,7 +115,10 @@ function transform(api, defaults) {
         obj.tags = api.tags;
         obj.externalDocs = api.externalDocs;
         obj.swagger.paths = api.paths;
-        if (api.components && api.components.schemas) {
+        if (api.components) {
+            obj.swagger.parameters = api.components.parameters;
+            obj.swagger.headers = api.components.headers;
+            obj.swagger.responses = api.components.responses;
             obj.swagger.definitions = api.components.schemas;
         }
     }
