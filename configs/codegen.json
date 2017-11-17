@@ -1,0 +1,14 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "api.template", "output": "api.md" },
+        { "input": "generatorClass.mustache", "output": "generatorClass.java" },
+        { "input": "model.template", "output": "model.md" },
+        { "input": "pom.mustache", "output": "pom.xml" },
+        { "input": "services.mustache", "output": "services.md" }
+    ]
+}

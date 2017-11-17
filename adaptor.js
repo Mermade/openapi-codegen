@@ -70,6 +70,7 @@ function transform(api, defaults) {
     obj.packageVersion = api.info.version;
     obj.version = api.info.version;
     obj.swaggerVersion = api.openapi;
+    obj.swaggerCodegenVersion = 'openapi-codegen-v'+require('./package.json').version;
     obj.appDescription = api.info.description||'No description';
     obj.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
     obj.classVarName = 'default'; //? possibly an array of these based on tags (a la widdershins)
@@ -83,6 +84,7 @@ function transform(api, defaults) {
     obj.basePath = '/';
     obj.contextPath = '/';
     obj.packageName = 'IO.OpenAPI';
+    obj.generatorPackage = 'IO.OpenAPI';
     obj.invokerPackage = 'IO.OpenAPI';
     obj.hasImport = true;
     obj.modelPackage = 'IO.OpenAPI';
@@ -91,7 +93,7 @@ function transform(api, defaults) {
     obj.importPath = 'IO.OpenAPI.Api.Default';
     obj.hasMore = true;
     obj.generatedDate = new Date().toString();
-    obj.generatorClass = 'class '+defaults.configName;
+    obj.generatorClass = defaults.configName; // 'class ' prefix?
     obj.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
     obj.name = obj.classname;
     obj.classFilename = obj.classname;
@@ -111,6 +113,9 @@ function transform(api, defaults) {
             obj.swagger.definitions = api.components.schemas;
         }
     }
+
+    // openapi3 extensions
+    obj.servers = api.servers;
 
     if (api.components && api.components.securitySchemes) {
         obj.hasAuthMethods = true;

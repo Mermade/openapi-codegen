@@ -57,7 +57,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |aspnetcore||
 |bash|client|**needs testing**||@bkryza|@MikeRalphson
 |clojure||
-|codegen||
+|codegen|meta|**demo only**|||@MikeRalphson
 |**confluenceWikiDocs**|documentation|**needs testing**||
 |cpprest||
 |csharp||
