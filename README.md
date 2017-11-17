@@ -41,92 +41,94 @@ See [here](https://github.com/swagger-api/swagger-codegen#template-creator) for 
 
 ### Status of the template configurations
 
-The crossed-off templates have a working (if not necessarily tested) configuration in the **configs** directory.
+The templates with a status have a working (if not necessarily tested) configuration in the **configs** directory.
 
 <details>
 <summary>Click here to expand...</summary>
 
-* ~~\_common~~ *contains Apache-2.0 and Unlicense licenses*
-*  Ada
-*  akka-scala
-*  android
-*  ~~apache2~~ - **needs work**
-*  apex
-*  aspnetcore
-*  bash
-*  clojure
-*  codegen
-*  ~~confluenceWikiDocs~~ - **needs testing**
-*  cpprest
-*  csharp
-*  csharp-dotnet2
-*  dart
-*  ~~debug~~ - *used for dumping the model state*
-*  Eiffel
-*  elixir
-*  erlang-client
-*  erlang-server
-*  finch
-*  flash
-*  ~~flaskConnexion~~ - **needs testing**
-*  go
-*  go-server
-*  ~~Groovy~~ - **untested**
-*  haskell-http-client
-*  haskell-servant
-*  ~~htmlDocs~~ - *appears to work*
-*  ~~htmlDocs2~~ - *appears to work, no console errors logged*
-*  Java
-*  JavaInflector
-*  JavaJaxRS
-*  JavaPlayFramework
-*  Javascript
-*  Javascript-Closure-Angular
-*  JavaSpring
-*  JavaVertXServer
-*  JMeter
-*  kotlin-client
-*  lua
-*  lumen
-*  MSF4J
-*  nancyfx
-*  ~~nodejs~~ - **tested**
-*  objc
-*  ~~openapi~~ - *outputs the input definition (in OpenAPI 3.0.x form)*
-*  perl
-*  php
-*  ~~php-silex~~ - **untested**
-*  php-symfony
-*  pistache-server
-*  powershell
-*  ~~python~~ - **needs testing**
-*  qt5cpp
-*  r
-*  rails5
-*  restbed
-*  ruby
-*  rust
-*  rust-server
-*  scala
-*  scalatra
-*  scalaz
-*  sinatra
-*  slim
-*  ~~swagger~~ - *outputs the input definition (in original form if OpenAPI 2.0)*
-*  ~~swagger-static~~ - **tested** *template modified to include partials*
-*  swift
-*  swift3
-*  swift4
-*  tizen
-*  typescript-angular
-*  typescript-angularjs
-*  typescript-aurelia
-*  ~~typescript-fetch~~ - **compiles with tsc ok**
-*  typescript-jquery
-*  ~~typescript-node~~ - **compiles with tsc ok**
-*  undertow
-*  ~~validator~~ - *uses swagger2openapi's OpenAPI 3.0 validator internally*
-*  ze-ph
+|Template|Type|Status|README|Authors (TODO)|Config Maintainer|
+|---|---|---|---|---|---|
+|**\_common**|meta| *contains Apache-2.0 and Unlicense licenses*||
+|Ada||
+|akka-scala||
+|android||
+|**apache2**|configuration|**needs work**||
+|apex||
+|aspnetcore||
+|bash||
+|clojure||
+|codegen||
+|**confluenceWikiDocs**|documentation|**needs testing**||
+|cpprest||
+|csharp||
+|csharp-dotnet2||
+|dart||
+|**debug**|meta|*used for dumping the model state*||@Mermade|@MikeRalphson
+|Eiffel||
+|elixir||
+|erlang-client||
+|erlang-server||
+|finch||
+|flash||
+|**flaskConnexion**|server|**needs testing**||
+|go||
+|go-server||
+|**Groovy**|?|**untested**||
+|haskell-http-client||
+|haskell-servant||
+|**htmlDocs**|documentation|*appears to work*||
+|**htmlDocs2**|documentation|*appears to work, no console errors logged*||
+|Java||
+|JavaInflector||
+|JavaJaxRS||
+|JavaPlayFramework||
+|Javascript||
+|Javascript-Closure-Angular||
+|JavaSpring||
+|JavaVertXServer||
+|JMeter||
+|kotlin-client||
+|lua||
+|lumen||
+|MSF4J||
+|nancyfx||
+|**nodejs**|server|**tested** :white_check_mark:||@jfiala|@MikeRalphson|
+|objc||
+|**openapi**|meta|*outputs the input definition (in OpenAPI 3.0.x form)* :white_check_mark:||@Mermade|@MikeRalphson
+|perl||
+|php||
+|**php-silex**|?|**untested**||
+|php-symfony||
+|pistache-server||
+|powershell||
+|**python**|?|**needs testing**||
+|qt5cpp||
+|r||
+|rails5||
+|restbed||
+|ruby||
+|rust||
+|rust-server||
+|scala||
+|scalatra||
+|scalaz||
+|sinatra||
+|slim||
+|**swagger**|meta|*outputs the input definition (in original form if OpenAPI 2.0)* :white_check_mark:||
+|**swagger-static**|documentation|**tested** *template modified to include partials*||
+|swift||
+|swift3||
+|swift4||
+|tizen||
+|typescript-angular||
+|typescript-angularjs||
+|typescript-aurelia||
+|**typescript-fetch**|client|**compiles with tsc ok**||
+|typescript-jquery||
+|**typescript-node**|client|**compiles with tsc ok**||
+|undertow||
+|**validator**|meta|*uses swagger2openapi's OpenAPI 3.0 validator internally* :white_check_mark:||
+|ze-ph|
 </details>
 
 ## See also
