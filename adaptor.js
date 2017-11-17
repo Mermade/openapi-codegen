@@ -16,29 +16,40 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-function typeMap(type, required, language, schema) {
-    let result = type;
-    language = (language||'').toLowerCase();
-    if (language === 'java') {
+const typeMaps = {
+    nop: function(type,required,schema) {
+        return type;
+    },
+    java: function(type,required,schema) {
+        let result = type;
         if (!required) result += '?';
-    }
-    if (language === 'javascript') {
+        return result;
+    },
+    javascript: function(type,required,schema) {
+        let result = type;
         if (result === 'integer') result = 'number';
-    }
-    if (language === 'typescript') {
+        return result;
+    },
+    typescript: function(type,required,schema) {
+        let result = type;
         if (result === 'integer') result = 'number';
         if (result === 'array') {
             result = 'Array';
             if (schema.items && schema.items.type) {
-                result += '<'+typeMap(schema.items.type,false,language,schema.items)+'>';
+                result += '<'+typeMap(schema.items.type,false,schema.items)+'>';
             }
         }
+        return result;
     }
-    return result;
-}
+};
+
+let typeMap = typeMaps.nop;
 
 function transform(api, defaults) {
     let obj = Object.assign({},defaults);
+
+    let lang = (defaults.language||'').toLowerCase();
+    if (typeMaps[lang]) typeMap = typeMaps[lang];
 
     obj["swagger-yaml"] = yaml.safeDump(defaults.swagger || api, {lineWidth:-1}); // set to original if converted v2.0
     obj["swagger-json"] = JSON.stringify(defaults.swagger || api, null, 2); // set to original if converted 2.0
@@ -186,7 +197,7 @@ function transform(api, defaults) {
                     parameter.paramName = param.name;
                     parameter.baseName = param.name;
                     parameter.required = param.required;
-                    parameter.dataType = typeMap(param.schema.type,parameter.required,defaults.language,param.schema);
+                    parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
                     parameter.dataFormat = param.schema.format;
                     parameter.description = param.description;
                     parameter.unescapedDescription = param.description;
@@ -321,7 +332,7 @@ function transform(api, defaults) {
                 entry.setter = ('set_'+entry.name).toCamelCase();
                 entry.type = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
-                entry.type = typeMap(entry.type,entry.required,defaults.language,schema);
+                entry.type = typeMap(entry.type,entry.required,schema);
                 entry.datatype = entry.type; //?
                 entry.datatypeWithEnum = entry.datatype; // ?
                 entry.jsonSchema = safeJson(schema,null,2);
