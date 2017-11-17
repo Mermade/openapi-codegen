@@ -53,8 +53,54 @@ const typeMaps = {
 let typeMap = typeMaps.nop;
 let markdownPP = markdownPPs.nop;
 
+
 function getBase() {
     let base = {};
+    base.supportingFiles = [];
+    base.modelTests = [];
+    base.modelDocs = [];
+    base.apiTests = [];
+    base.apiDocs = [];
+    base.allowUnicodeIdentifiers = false; /* boolean, toggles whether unicode identifiers are allowed in names or not, default is false */
+    //base.developerName = x; /* developer name in generated pom.xml */
+    //base.developerEmail = x; /* developer email in generated pom.xml */
+    //base.developerOrganization = x; /* developer organization in generated pom.xml */
+    //base.developerOrganizationUrl = x; /* developer organization URL in generated pom.xml */
+    //base.gitUserId = x; /* Git user ID, e.g. swagger-api. */
+    //base.gitRepoId = x; /* Git repo ID, e.g. swagger-codegen. */
+    base.licenseName = 'Unlicense'; /* The name of the license */
+    base.licenseUrl = 'https://unlicense.org'; /* The URL of the license */
+    base.localVariablePrefix = ''; /* prefix for generated code members and local variables */
+    base.serializableModel = true; /* boolean - toggle "implements Serializable" for generated models */
+    base.bigDecimalAsString = false; /* Treat BigDecimal values as Strings to avoid precision loss. */
+    base.sortParamsByRequiredFlag = true; /* Sort method arguments to place required parameters before optional parameters. */
+    base.useDateTimeOffset = 0; /* Use DateTimeOffset to model date-time properties */
+    base.ensureUniqueParams = false; /* Whether to ensure parameter names are unique in an operation (rename parameters that are not). */
+    base.optionalMethodArgument = false; /* Optional method argument, e.g. void square(int x=10) (.net 4.0+ only). */
+    base.optionalAssemblyInfo = false; /* Generate AssemblyInfo.cs. */
+    base.netCoreProjectFile = true; /* Use the new format (.NET Core) for .NET project files (.csproj). */
+    base.useCollection = false; /* Deserialize array types to Collection<T> instead of List<T>. */
+    base.interfacePrefix = ''; /* Prefix interfaces with a community standard or widely accepted prefix. */
+    base.returnICollection = false; /* Return ICollection<T> instead of the concrete type. */
+    base.optionalProjectFile = false; /* Generate {PackageName}.csproj. */
+    base.modelPropertyNaming = 'original'; /* {camelCase, PascalCase, snake_case, original, UPPERCASE} */
+    base.targetFramework = 4; /* The target .NET framework version. */
+    base.modelNamePrefix = ''; /* Prefix that will be prepended to all model names. Default is the empty string. */
+    base.modelNameSuffix = ''; /* Suffix that will be appended to all model names. Default is the empty string. */
+    base.releaseNote = 'Minor update'; /* Release note, default to 'Minor update'. */
+    base.supportsES6 = true; /* Generate code that conforms to ES6. */
+    base.supportsAsync = true; /* Generate code that supports async operations. */
+    base.excludeTests = false; /* Specifies that no tests are to be generated. */
+    base.generateApiDocs = true; /* Not user-configurable. System provided for use in templates. */
+    base.generateApiTests = true; /* Specifies that api tests are to be generated. */
+    base.generateModelDocs = true; /* Not user-configurable. System provided for use in templates. */
+    base.generateModelTests = true; /* Specifies that model tests are to be generated. */
+    base.hideGenerationTimestamp = false; /* Hides the generation timestamp when files are generated. */
+    base.generatePropertyChanged = true; /* Specifies that models support raising property changed events. */
+    base.nonPublicApi = false; /* Generates code with reduced access modifiers; allows embedding elsewhere without exposing non-public API calls to consumers. */
+    base.validatable = true; /* Generates self-validatable models. */
+    base.ignoreFileOverride = '.swagger-codegen-ignore'; /* Specifies an override location for the .swagger-codegen-ignore file. Most useful on initial generation. */
+    base.removeOperationIdPrefix = false; /* Remove prefix of operationId, e.g. config_getId => getId */
     return base;
 }
 
@@ -90,11 +136,15 @@ function transform(api, defaults) {
     obj.basePath = '/';
     obj.contextPath = '/';
     obj.packageName = 'IO.OpenAPI';
+    obj.apiPackage = obj.packageName; /* package for generated api classes */
     obj.generatorPackage = 'IO.OpenAPI';
-    obj.invokerPackage = 'IO.OpenAPI';
+    obj.invokerPackage = 'IO.OpenAPI'; /* root package for generated code */
     obj.hasImport = true;
-    obj.modelPackage = 'IO.OpenAPI';
+    obj.modelPackage = 'IO.OpenAPI'; /* package for generated models */
     obj.package = 'IO.OpenAPI.Api';
+    obj.phpInvokerPackage = obj.invokerPackage; /* root package for generated php code */
+    obj.perlModuleName = obj.invokerPackage; /* root module name for generated perl code */
+    obj.pythonPackageName = obj.invokerPackage; /* package name for generated python code */
     obj.clientPackage = 'IO.OpenAPI.Client';
     obj.importPath = 'IO.OpenAPI.Api.Default';
     obj.hasMore = true;
@@ -105,6 +155,30 @@ function transform(api, defaults) {
     obj.classFilename = obj.classname;
     obj.jsModuleName = obj.classname;
     obj.jsProjectName = obj.classname;
+    obj.sourceFolder = './out/'+defaults.configName; /* source folder for generated code */
+    obj.templateDir = './templates/'+defaults.configName;
+    //obj.packageGuid = new Guid(); /* The GUID that will be associated with the C# project */
+
+//    obj.groupId = x; /* groupId in generated pom.xml */
+//    obj.artifactId = x; /* artifactId in generated pom.xml */
+//    obj.artifactVersion = x; /* artifact version in generated pom.xml */
+//    obj.artifactUrl = x; /* artifact URL in generated pom.xml */
+//    obj.scmConnection = x; /* SCM connection in generated pom.xml */
+//    obj.scmDeveloperConnection = x; /* SCM developer connection in generated pom.xml */
+//    obj.scmUrl = x; /* SCM URL in generated pom.xml */
+//    obj.implFolder = x; /* folder for generated implementation code */
+//    obj.library = x; /* library template (sub-template) */
+//    obj.projectName = x;
+//    obj.packageTitle = x; /* Specifies an AssemblyTitle for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+//    obj.packageProductName = x; /* Specifies an AssemblyProduct for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+//    obj.packageCompany = x; /* Specifies an AssemblyCompany for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+//    obj.packageAuthors = x; /* Specifies Authors property in the .NET Core project file. */
+//    obj.packageCopyright = x; /* Specifies an AssemblyCopyright for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+//    obj.podVersion = x;
+//    obj.optionalEmitDefaultValues = x; /* Set DataMember's EmitDefaultValue. */
+
+    obj.httpUserAgent = 'OpenAPI-Codegen/'+obj.packageVersion+'/'+defaults.configName; /* HTTP user agent, e.g. codegen_csharp_api_client, default to 'Swagger-Codegen/{packageVersion}}/{language}' */
+
     if (defaults.swagger) {
         obj.swagger = defaults.swagger;
     }
@@ -316,11 +390,13 @@ function transform(api, defaults) {
                     operation.responses.push(entry);
                 }
 
-                operation.allParams = operation.allParams.sort(function(a,b){
-                    if (a.required && !b.required) return -1;
-                    if (b.required && !a.required) return +1;
-                    return 0;
-                });
+                if (obj.sortParamsByRequiredFlag) {
+                    operation.allParams = operation.allParams.sort(function(a,b){
+                        if (a.required && !b.required) return -1;
+                        if (b.required && !a.required) return +1;
+                        return 0;
+                    });
+                }
                 if (operation.allParams.length) {
                     operation.allParams[operation.allParams.length-1].hasMore = false;
                 }
