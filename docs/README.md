@@ -2,22 +2,28 @@
 
 ### Config file DSL
 
+#### Schema
+
+[JSON Schema Draft 4](https://raw.githubusercontent.com/Mermade/openapi-codegen/master/schemas/config.json)
+
 #### Example
 
 ```json
 {
+    "type": "documentation",
     "defaults": {
       "exampleProperty": "exampleValue"
     },
     "directories": [
-        "docs", "docs/assets", "docs/assets/css", "docs/assets/js", "docs/assets/images"
+        "docs"
     ],
     "partials": {
         "model": "model.mustache",
         "operation": "operation.mustache"
     },
     "transformations": [
-        { "input": "index.mustache", "output": "docs/index.html" },
+        { "template": "Hello from {{projectName}}", "output": "README.md" },
+        { "input": "index.mustache", "output": "docs/index.html" }
     ]
 }
 ```
