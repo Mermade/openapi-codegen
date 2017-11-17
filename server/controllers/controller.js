@@ -1,7 +1,7 @@
 'use strict';
 
 var utils = require('../utils/writer.js');
-var clientOptions = require('../nodejs/clientOptionsService');
+var clientOptions = require('../services/gclientOptionsService');
 
 module.exports.clientOptions = function clientOptions (req, res, next) {
   clientOptions.clientOptions()
@@ -12,7 +12,7 @@ module.exports.clientOptions = function clientOptions (req, res, next) {
       utils.writeJson(res, response);
     });
 };
-var getClientOptions = require('../nodejs/getClientOptionsService');
+var getClientOptions = require('../services/ggetClientOptionsService');
 
 module.exports.getClientOptions = function getClientOptions (req, res, next) {
   var language = req.swagger.params['language'].value;
@@ -24,7 +24,7 @@ module.exports.getClientOptions = function getClientOptions (req, res, next) {
       utils.writeJson(res, response);
     });
 };
-var generateClient = require('../nodejs/generateClientService');
+var generateClient = require('../services/ggenerateClientService');
 
 module.exports.generateClient = function generateClient (req, res, next) {
   var language = req.swagger.params['language'].value;
@@ -36,7 +36,7 @@ module.exports.generateClient = function generateClient (req, res, next) {
       utils.writeJson(res, response);
     });
 };
-var downloadFile = require('../nodejs/downloadFileService');
+var downloadFile = require('../services/gdownloadFileService');
 
 module.exports.downloadFile = function downloadFile (req, res, next) {
   var fileId = req.swagger.params['fileId'].value;
@@ -48,7 +48,7 @@ module.exports.downloadFile = function downloadFile (req, res, next) {
       utils.writeJson(res, response);
     });
 };
-var serverOptions = require('../nodejs/serverOptionsService');
+var serverOptions = require('../services/gserverOptionsService');
 
 module.exports.serverOptions = function serverOptions (req, res, next) {
   serverOptions.serverOptions()
@@ -59,7 +59,7 @@ module.exports.serverOptions = function serverOptions (req, res, next) {
       utils.writeJson(res, response);
     });
 };
-var getServerOptions = require('../nodejs/getServerOptionsService');
+var getServerOptions = require('../services/ggetServerOptionsService');
 
 module.exports.getServerOptions = function getServerOptions (req, res, next) {
   var framework = req.swagger.params['framework'].value;
@@ -71,7 +71,7 @@ module.exports.getServerOptions = function getServerOptions (req, res, next) {
       utils.writeJson(res, response);
     });
 };
-var generateServerForLanguage = require('../nodejs/generateServerForLanguageService');
+var generateServerForLanguage = require('../services/ggenerateServerForLanguageService');
 
 module.exports.generateServerForLanguage = function generateServerForLanguage (req, res, next) {
   var framework = req.swagger.params['framework'].value;
