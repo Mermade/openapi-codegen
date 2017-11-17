@@ -55,7 +55,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |**apache2**|configuration|**needs work**||
 |apex||
 |aspnetcore||
-|bash||
+|bash|client|**needs testing**||@bkryza|@MikeRalphson
 |clojure||
 |codegen||
 |**confluenceWikiDocs**|documentation|**needs testing**||

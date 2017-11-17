@@ -1,0 +1,14 @@
+{
+    "defaults": {
+    },
+    "transformations": [
+        { "input": "api_doc.mustache", "output": "api_doc.md" },
+        { "input": "bash-completion.mustache", "output": "bash-completion.sh" },
+        { "input": "client.mustache", "output": "client.sh" },
+        { "input": "Dockerfile.mustache", "output": "Dockerfile" },
+        { "input": "model_doc.mustache", "output": "model_doc.md" },
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "README.md", "output": "CODEGEN.md" },
+        { "input": "zsh-completion.mustache", "output": "zsh-completion.sh" }
+    ]
+}

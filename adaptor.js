@@ -16,6 +16,13 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
+// TODO add html and possibly termcap renderers
+const markdownPPs = {
+    nop: function(markdown) {
+        return markdown;
+    }
+};
+
 const typeMaps = {
     nop: function(type,required,schema) {
         return type;
@@ -44,6 +51,7 @@ const typeMaps = {
 };
 
 let typeMap = typeMaps.nop;
+let markdownPP = markdownPPs.nop;
 
 function transform(api, defaults) {
     let obj = Object.assign({},defaults);
@@ -89,6 +97,20 @@ function transform(api, defaults) {
     obj.classFilename = obj.classname;
     obj.jsModuleName = obj.classname;
     obj.jsProjectName = obj.classname;
+    if (defaults.swagger) {
+        obj.swagger = defaults.swagger;
+    }
+    else {
+        obj.swagger = {};
+        obj.swagger.swagger = api.openapi;
+        obj.swagger.info = api.info;
+        obj.tags = api.tags;
+        obj.externalDocs = api.externalDocs;
+        obj.swagger.paths = api.paths;
+        if (api.components && api.components.schemas) {
+            obj.swagger.definitions = api.components.schemas;
+        }
+    }
 
     if (api.components && api.components.securitySchemes) {
         obj.hasAuthMethods = true;
