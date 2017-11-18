@@ -48,6 +48,19 @@ const typeMaps = {
             }
         }
         return result;
+    },
+    go: function(type,required,schema) {
+        let result = type;
+        if (result === 'integer') result = 'int';
+        if (result === 'boolean') result = 'bool';
+        if (result === 'object') result = 'struct{}';
+        if (result === 'array') {
+            result = '[100]'; //!
+            if (schema.items && schema.items.type) {
+                result += typeMap(schema.items.type,false,schema.items);
+            }
+        }
+        return result;
     }
 };
 
@@ -310,6 +323,7 @@ function transform(api, defaults) {
                     parameter.paramName = param.name;
                     parameter.baseName = param.name;
                     parameter.required = param.required;
+                    if (!parameter.required) operation.hasOptionalParams = true;
                     parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
                     parameter.dataFormat = param.schema.format;
                     parameter.description = param.description;
@@ -344,17 +358,19 @@ function transform(api, defaults) {
                     operation.bodyParam.isBodyParam = true;
                     operation.bodyParam.baseName = 'body';
                     operation.bodyParam.paramName = 'body';
-                    operation.bodyParam.dataType = 'object'; // can be changed below
+                    operation.bodyParam.required = op.requestBody.required;
+                    if (!operation.bodyParam.required) operation.hasOptionalParams = true;
+                    operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{}); // can be changed below
                     operation.bodyParam.description = op.requestBody.description;
                     operation.bodyParam.schema = {};
                     operation.bodyParam.isEnum = false;
                     operation.bodyParam.vendorExtensions = {};
-                    operation.bodyParam.required = op.requestBody.required;
                     if (op.requestBody.content) {
                         let contentType = Object.values(op.requestBody.content)[0];
                         operation.bodyParam.schema = contentType.schema;
                         if (contentType.schema.type) {
                             operation.bodyParam.type = contentType.schema.type;
+                            operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
                         }
                     }
                     operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);

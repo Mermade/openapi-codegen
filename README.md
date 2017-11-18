@@ -71,7 +71,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |finch||
 |flash||
 |**flaskConnexion**|server|**needs testing**||
-|go||
+|go|client|**builds with tweaks, needs testing**||
 |go-server||
 |**Groovy**|?|**untested**||
 |haskell-http-client||

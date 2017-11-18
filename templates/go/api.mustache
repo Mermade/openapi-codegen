@@ -1,7 +1,6 @@
 {{>partial_header}}
 package {{packageName}}
 
-{{#operations}}
 import (
 	"net/url"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 {{#imports}}	"{{import}}"
 {{/imports}}
 )
+{{#operations}}
 
 // Linger please
 var (

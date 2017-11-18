@@ -1,0 +1,22 @@
+{
+    "defaults": {
+        "language": "go",
+        "packageName": "OpenAPI",
+        "imports": [ { "import": "fmt" } ]
+    },
+    "partials": {
+        "partial_header": "partial_header.mustache"
+    },
+    "transformations": [
+        { "input": "api_client.mustache", "output": "api_client.go" },
+        { "input": "api_doc.mustache", "output": "api_doc.md" },
+        { "input": "api.mustache", "output": "api.go" },
+        { "input": "api_response.mustache", "output": "api_response.go" },
+        { "input": "configuration.mustache", "output": "configuration.go" },
+        { "input": "gitignore.mustache", "output": ".gitignore" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "model_doc.mustache", "output": "model_doc.md" },
+        { "input": "model.mustache", "output": "model.go" },
+        { "input": "README.mustache", "output": "README.md" }
+    ]
+}
