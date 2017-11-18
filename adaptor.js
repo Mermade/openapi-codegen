@@ -4,6 +4,7 @@ const util = require('util');
 const url = require('url');
 
 const yaml = require('js-yaml');
+const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
 const deref = require('reftools/lib/dereference.js').dereference;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
@@ -106,79 +107,81 @@ function getBase() {
 
 function transform(api, defaults) {
     let base = getBase();
-    let obj = Object.assign({},base,defaults);
 
     let lang = (defaults.language||'').toLowerCase();
     if (typeMaps[lang]) typeMap = typeMaps[lang];
+
+    let prime = {};
+    prime.projectName = api.info.title;
+    prime.appVersion = api.info.version;
+    prime.apiVersion = api.info.version;
+    prime.packageVersion = api.info.version;
+    prime.version = api.info.version;
+    prime.swaggerVersion = api.openapi;
+    prime.swaggerCodegenVersion = 'openapi-codegen-v'+require('./package.json').version;
+    prime.appDescription = api.info.description||'No description';
+    prime.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
+    prime.classVarName = 'default'; //? possibly an array of these based on tags (a la widdershins)
+    prime.exportedName = prime.classname;
+    prime.packageTitle = prime.classname; /* Specifies an AssemblyTitle for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+    prime.infoEmail = api.info.contact ? api.info.contact.email : null;
+    prime.infoUrl = api.info.contact ? api.info.contact.url : null;
+    prime.licenseInfo = api.info.license ? api.info.license.name : null;
+    prime.licenseUrl = api.info.license ? api.info.license.url : null;
+    prime.appName = api.info.title;
+    prime.host = ''
+    prime.basePath = '/';
+    prime.contextPath = '/';
+    prime.packageName = 'IO.OpenAPI';
+    prime.apiPackage = prime.packageName; /* package for generated api classes */
+    prime.generatorPackage = 'IO.OpenAPI';
+    prime.invokerPackage = 'IO.OpenAPI'; /* root package for generated code */
+    prime.hasImport = true;
+    prime.modelPackage = 'IO.OpenAPI'; /* package for generated models */
+    prime.package = 'IO.OpenAPI.Api';
+    prime.phpInvokerPackage = prime.invokerPackage; /* root package for generated php code */
+    prime.perlModuleName = prime.invokerPackage; /* root module name for generated perl code */
+    prime.podVersion = '1.0.0';
+    prime.pythonPackageName = prime.invokerPackage; /* package name for generated python code */
+    prime.clientPackage = 'IO.OpenAPI.Client';
+    prime.importPath = 'IO.OpenAPI.Api.Default';
+    prime.hasMore = true;
+    prime.generatedDate = new Date().toString();
+    prime.generatorClass = defaults.configName; // 'class ' prefix?
+    prime.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
+    prime.name = prime.classname;
+    prime.classFilename = prime.classname;
+    prime.jsModuleName = prime.classname;
+    prime.jsProjectName = prime.classname;
+    prime.sourceFolder = './out/'+defaults.configName; /* source folder for generated code */
+    prime.templateDir = './templates/'+defaults.configName;
+    prime.implFolder = prime.sourceFolder; /* folder for generated implementation code */
+    prime.library = ''; /* library template (sub-template) */
+    prime.packageGuid = uuidv4(); /* The GUID that will be associated with the C# project */
+    prime.optionalEmitDefaultValues = false; /* Set DataMember's EmitDefaultValue. */
+
+    prime.packageProductName = prime.projectName; /* Specifies an AssemblyProduct for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+    prime.packageCompany = 'Smartbear Software'; /* Specifies an AssemblyCompany for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+    prime.packageAuthors = 'Swagger-Codegen authors'; /* Specifies Authors property in the .NET Core project file. */
+    prime.packageCopyright = 'Copyright 2016 Smartbear Software'; /* Specifies an AssemblyCopyright for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
+
+//    prime.groupId = x; /* groupId in generated pom.xml */
+//    prime.artifactId = x; /* artifactId in generated pom.xml */
+//    prime.artifactVersion = x; /* artifact version in generated pom.xml */
+//    prime.artifactUrl = x; /* artifact URL in generated pom.xml */
+//    prime.scmConnection = x; /* SCM connection in generated pom.xml */
+//    prime.scmDeveloperConnection = x; /* SCM developer connection in generated pom.xml */
+//    prime.scmUrl = x; /* SCM URL in generated pom.xml */
+
+    prime.httpUserAgent = 'OpenAPI-Codegen/'+prime.packageVersion+'/'+defaults.configName; /* HTTP user agent, e.g. codegen_csharp_api_client, default to 'Swagger-Codegen/{packageVersion}}/{language}' */
+
+    let obj = Object.assign({},base,prime,defaults);
 
     obj["swagger-yaml"] = yaml.safeDump(defaults.swagger || api, {lineWidth:-1}); // set to original if converted v2.0
     obj["swagger-json"] = JSON.stringify(defaults.swagger || api, null, 2); // set to original if converted 2.0
     obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1});
     obj["openapi-json"] = JSON.stringify(api, null, 2);
     
-    obj.projectName = api.info.title;
-    obj.appVersion = api.info.version;
-    obj.apiVersion = api.info.version;
-    obj.packageVersion = api.info.version;
-    obj.version = api.info.version;
-    obj.swaggerVersion = api.openapi;
-    obj.swaggerCodegenVersion = 'openapi-codegen-v'+require('./package.json').version;
-    obj.appDescription = api.info.description||'No description';
-    obj.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
-    obj.classVarName = 'default'; //? possibly an array of these based on tags (a la widdershins)
-    obj.exportedName = obj.classname;
-    obj.infoEmail = api.info.contact ? api.info.contact.email : null;
-    obj.infoUrl = api.info.contact ? api.info.contact.url : null;
-    obj.licenseInfo = api.info.license ? api.info.license.name : null;
-    obj.licenseUrl = api.info.license ? api.info.license.url : null;
-    obj.appName = api.info.title;
-    obj.host = ''
-    obj.basePath = '/';
-    obj.contextPath = '/';
-    obj.packageName = 'IO.OpenAPI';
-    obj.apiPackage = obj.packageName; /* package for generated api classes */
-    obj.generatorPackage = 'IO.OpenAPI';
-    obj.invokerPackage = 'IO.OpenAPI'; /* root package for generated code */
-    obj.hasImport = true;
-    obj.modelPackage = 'IO.OpenAPI'; /* package for generated models */
-    obj.package = 'IO.OpenAPI.Api';
-    obj.phpInvokerPackage = obj.invokerPackage; /* root package for generated php code */
-    obj.perlModuleName = obj.invokerPackage; /* root module name for generated perl code */
-    obj.pythonPackageName = obj.invokerPackage; /* package name for generated python code */
-    obj.clientPackage = 'IO.OpenAPI.Client';
-    obj.importPath = 'IO.OpenAPI.Api.Default';
-    obj.hasMore = true;
-    obj.generatedDate = new Date().toString();
-    obj.generatorClass = defaults.configName; // 'class ' prefix?
-    obj.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
-    obj.name = obj.classname;
-    obj.classFilename = obj.classname;
-    obj.jsModuleName = obj.classname;
-    obj.jsProjectName = obj.classname;
-    obj.sourceFolder = './out/'+defaults.configName; /* source folder for generated code */
-    obj.templateDir = './templates/'+defaults.configName;
-    //obj.packageGuid = new Guid(); /* The GUID that will be associated with the C# project */
-
-//    obj.groupId = x; /* groupId in generated pom.xml */
-//    obj.artifactId = x; /* artifactId in generated pom.xml */
-//    obj.artifactVersion = x; /* artifact version in generated pom.xml */
-//    obj.artifactUrl = x; /* artifact URL in generated pom.xml */
-//    obj.scmConnection = x; /* SCM connection in generated pom.xml */
-//    obj.scmDeveloperConnection = x; /* SCM developer connection in generated pom.xml */
-//    obj.scmUrl = x; /* SCM URL in generated pom.xml */
-//    obj.implFolder = x; /* folder for generated implementation code */
-//    obj.library = x; /* library template (sub-template) */
-//    obj.projectName = x;
-//    obj.packageTitle = x; /* Specifies an AssemblyTitle for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
-//    obj.packageProductName = x; /* Specifies an AssemblyProduct for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
-//    obj.packageCompany = x; /* Specifies an AssemblyCompany for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
-//    obj.packageAuthors = x; /* Specifies Authors property in the .NET Core project file. */
-//    obj.packageCopyright = x; /* Specifies an AssemblyCopyright for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
-//    obj.podVersion = x;
-//    obj.optionalEmitDefaultValues = x; /* Set DataMember's EmitDefaultValue. */
-
-    obj.httpUserAgent = 'OpenAPI-Codegen/'+obj.packageVersion+'/'+defaults.configName; /* HTTP user agent, e.g. codegen_csharp_api_client, default to 'Swagger-Codegen/{packageVersion}}/{language}' */
-
     if (defaults.swagger) {
         obj.swagger = defaults.swagger;
     }
