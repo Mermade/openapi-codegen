@@ -88,7 +88,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |JavaVertXServer||
 |JMeter||
 |kotlin-client||
-|lua||
+|lua|client|**Needs model spliting**|
 |lumen||
 |MSF4J||
 |nancyfx||

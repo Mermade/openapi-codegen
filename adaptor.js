@@ -17,6 +17,16 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
+function convertArray(arr) {
+    let obj = {};
+    for (let i=0;i<arr.length;i++) {
+        if (i === 0) obj['-first'] = arr[0];
+        obj[i] = arr[i];
+        if (i === (arr.length-1)) obj['-last'] = arr[i];
+    }
+    return obj;
+}
+
 // TODO add html and possibly termcap (https://www.npmjs.com/package/hermit) renderers
 const markdownPPs = {
     nop: function(markdown) {
@@ -309,7 +319,6 @@ function transform(api, defaults) {
                 operation.summary = op.summary;
                 operation.notes = op.description;
                 operation.responseHeaders = [];
-                operation.hasProduces = true;
                 operation.hasMore = true; // last one gets reset to false
                 operation.isResponseBinary = false; //TODO
                 operation.baseName = 'Default';
@@ -317,6 +326,7 @@ function transform(api, defaults) {
                     operation.baseName = op.tags[0];
                 }
                 operation.produces = [];
+                operation.consumes = [];
                 for (let pa in op.parameters) {
                     operation.hasParams = true;
                     let param = op.parameters[pa];
@@ -368,6 +378,9 @@ function transform(api, defaults) {
                     operation.bodyParam.vendorExtensions = {};
                     if (op.requestBody.content) {
                         let contentType = Object.values(op.requestBody.content)[0];
+                        let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
+                        operation.consumes.push(mt);
+                        operation.hasConsumes = true;
                         operation.bodyParam.schema = contentType.schema;
                         if (contentType.schema.type) {
                             operation.bodyParam.type = contentType.schema.type;
@@ -397,6 +410,10 @@ function transform(api, defaults) {
                     if (response.content) {
                         entry.dataType = 'object';
                         let contentType = Object.values(response.content)[0];
+                        let mt = {};
+                        mt.mediaType = Object.keys(response.content)[0];
+                        operation.produces.push(mt);
+                        operation.hasProduces = true;
                         if (contentType.schema) {
                             entry.schema = contentType.schema;
                             entry.jsonSchema = safeJson({schema:entry.schema},null,2);
@@ -420,6 +437,9 @@ function transform(api, defaults) {
                 if (operation.allParams.length) {
                     operation.allParams[operation.allParams.length-1].hasMore = false;
                 }
+
+                operation.consumes = convertArray(operation.consumes);
+                operation.produces = convertArray(operation.produces);
 
                 let container = {};
                 container.baseName = operation.nickname;
@@ -483,6 +503,7 @@ function transform(api, defaults) {
                     model.vars.push(entry);
                 }
             });
+            model.vars[model.vars.length-1].hasMore = false;
             container.model = model;
             obj.models.push(container);
         }
