@@ -113,7 +113,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |scalatra||
 |scalaz||
 |sinatra||
-|slim||
+|**slim**|server|**Untested**||
 |**swagger**|meta|*outputs the input definition (in original form if OpenAPI 2.0)* :white_check_mark:||
 |**swagger-static**|documentation|**tested** *template modified to include partials*||
 |swift||
