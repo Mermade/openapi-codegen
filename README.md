@@ -55,9 +55,9 @@ The templates with a status have a working (if not necessarily tested) configura
 |**apache2**|configuration|**needs work**||
 |apex||
 |aspnetcore||
-|bash|client|**needs testing**||@bkryza|@MikeRalphson
-|clojure||
-|**codegen**|meta|**demo only**|||@MikeRalphson
+|bash|client|**Needs testing**||@bkryza|@MikeRalphson
+|clojure|?|**Needs modifiable delimeters**
+|**codegen**|meta|**Demo only**|||@MikeRalphson
 |**confluenceWikiDocs**|documentation|**needs testing**||
 |cpprest||
 |csharp||
