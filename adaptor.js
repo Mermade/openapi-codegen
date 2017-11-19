@@ -115,6 +115,7 @@ function getBase() {
     base.validatable = true; /* Generates self-validatable models. */
     base.ignoreFileOverride = '.swagger-codegen-ignore'; /* Specifies an override location for the .swagger-codegen-ignore file. Most useful on initial generation. */
     base.removeOperationIdPrefix = false; /* Remove prefix of operationId, e.g. config_getId => getId */
+    base.serverPort = 8000;
     return base;
 }
 
@@ -422,7 +423,7 @@ function transform(api, defaults) {
 
                 let container = {};
                 container.baseName = operation.nickname;
-                container.classname = operation.nickname;
+                container.classname = 'cls'+operation.nickname;
                 container.operation = operation;
                 obj.operations.push(container);
             }

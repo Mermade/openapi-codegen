@@ -1,0 +1,20 @@
+{
+    "defaults": {
+        "language": "go",
+        "packageName": "api",
+        "imports": [ ],
+        "apiPath": "go"
+    },
+    "directories": [
+        "go", "api"
+    ],
+    "transformations": [
+        { "input": "app.mustache", "output": "go/app.yaml" },
+        { "input": "controller.mustache", "output": "go/controller.go" },
+        { "input": "logger.mustache", "output": "go/logger.go" },
+        { "input": "main.mustache", "output": "main.go" },
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "routers.mustache", "output": "go/routers.go" },
+        { "input": "swagger.mustache", "output": "api/swagger.yaml" }
+    ]
+}

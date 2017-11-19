@@ -72,7 +72,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |flash||
 |**flaskConnexion**|server|**needs testing**||
 |go|client|**builds with tweaks, needs testing**||
-|go-server||
+|go-server|**builds and runs**||
 |**Groovy**|?|**untested**||
 |haskell-http-client||
 |haskell-servant||
