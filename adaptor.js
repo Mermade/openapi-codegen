@@ -20,9 +20,13 @@ String.prototype.toCamelCase = function camelize() {
 function convertArray(arr) {
     let obj = {};
     for (let i=0;i<arr.length;i++) {
-        if (i === 0) obj['-first'] = arr[0];
-        obj[i] = arr[i];
-        if (i === (arr.length-1)) obj['-last'] = arr[i];
+        if (i === 0) {
+            obj['-first'] = arr[0];
+        }
+        else if (i === (arr.length-1)) {
+            obj['-last'] = arr[i];
+        }
+        else obj[i] = arr[i];
     }
     return obj;
 }

@@ -86,7 +86,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |Javascript-Closure-Angular||
 |JavaSpring||
 |JavaVertXServer||
-|JMeter||
+|JMeter|meta|**Untested**||
 |kotlin-client||
 |lua|client|**Needs model spliting**|
 |lumen||

@@ -1,0 +1,10 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "transformations": [
+        { "input": "testdata-localhost.mustache", "output": "testdata-localhost" },
+        { "input": "api.mustache", "output": "api.xml" }
+    ]
+}
