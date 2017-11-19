@@ -57,7 +57,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |aspnetcore||
 |bash|client|**needs testing**||@bkryza|@MikeRalphson
 |clojure||
-|codegen|meta|**demo only**|||@MikeRalphson
+|**codegen**|meta|**demo only**|||@MikeRalphson
 |**confluenceWikiDocs**|documentation|**needs testing**||
 |cpprest||
 |csharp||
@@ -71,8 +71,8 @@ The templates with a status have a working (if not necessarily tested) configura
 |finch||
 |flash||
 |**flaskConnexion**|server|**needs testing**||
-|go|client|**builds with tweaks, needs testing**||
-|go-server|**builds and runs**||
+|**go**|client|**builds with tweaks, needs testing**||
+|**go-server**|**builds and runs**||
 |**Groovy**|?|**untested**||
 |haskell-http-client||
 |haskell-servant||
@@ -83,12 +83,12 @@ The templates with a status have a working (if not necessarily tested) configura
 |JavaJaxRS||
 |JavaPlayFramework||
 |Javascript||
-|Javascript-Closure-Angular||
+|**Javascript-Closure-Angular**|client|**Untested**
 |JavaSpring||
 |JavaVertXServer||
-|JMeter|meta|**Untested**||
+|**JMeter**|meta|**Untested**||
 |kotlin-client||
-|lua|client|**Needs model spliting**|
+|**lua**|client|**Needs model spliting**|
 |lumen||
 |MSF4J||
 |nancyfx||

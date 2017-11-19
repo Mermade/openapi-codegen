@@ -1,0 +1,14 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "directories": [ "es6" ],
+    "transformations": [
+        { "input": "model.mustache", "output": "model.js" },
+        { "input": "api.mustache", "output": "api.js" },
+        { "input": "es6/api.mustache", "output": "es6/api.js" },
+        { "input": "es6/module.mustache", "output": "es6/module.js" }
+    ]
+}
+
