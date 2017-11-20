@@ -57,7 +57,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |Template|Type|Status|README|Authors (TODO)|Config Maintainer|
 |---|---|---|---|---|---|
 |**\_common**|meta| *contains Apache-2.0 and Unlicense licenses*||
-|Ada||
+|**Ada**|client|**Untested**
 |akka-scala||
 |android||
 |**apache2**|configuration|**needs work**||
@@ -119,7 +119,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |rust-server||
 |scala||
 |scalatra||
-|scalaz||
+|scalaz|client|**Untested**||
 |sinatra||
 |**slim**|server|**Untested**||
 |**swagger**|meta|*outputs the input definition (in original form if OpenAPI 2.0)* :white_check_mark:||

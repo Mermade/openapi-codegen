@@ -647,6 +647,8 @@ function transform(api, defaults) {
         });
     }
 
+    obj.orderedModels = obj.models; // TODO
+
     if (defaults.debug) obj.debugModels = JSON.stringify(obj.models,null,2);
 
     return obj;

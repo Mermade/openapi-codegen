@@ -1,0 +1,16 @@
+{
+    "defaults": {
+    },
+    "partials": {
+        "licenseInfo": "licenseInfo.mustache"
+    },
+    "transformations": [
+        { "input": "client-body.mustache", "output": "client-body.ada" },
+        { "input": "client-spec.mustache", "output": "client-spec.ada" },
+        { "input": "gnat-project.mustache", "output": "gnat-project.ada" },
+        { "input": "model-body.mustache", "output": "model-body.ada" },
+        { "input": "model-spec.mustache", "output": "model-spec.ada" },
+        { "input": "server-body.mustache", "output": "server-body.ada" },
+        { "input": "server-spec.mustache", "output": "server-spec.ada" }
+    ]
+}
