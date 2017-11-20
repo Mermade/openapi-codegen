@@ -601,7 +601,10 @@ function transform(api, defaults) {
                     entry.name = state.property.split('/')[1];
                 }
                 if (reserved.indexOf(entry.name)>=0) {
-                    entry.name = 'api_'+entry.name;
+                    entry.name = ('_'+entry.name).toCamelCase();
+                }
+                if (entry.name) {
+                    entry.baseName = entry.name.toLowerCase();
                 }
                 entry.getter = ('get_'+entry.name).toCamelCase();
                 entry.setter = ('set_'+entry.name).toCamelCase();
@@ -626,7 +629,6 @@ function transform(api, defaults) {
                 entry.defaultValue = schema.default;
                 entry.isEnum = false; //! TODO
                 if (entry.name && state.depth<=1) {
-                    entry.baseName = entry.name.toLowerCase();
                     model.vars.push(entry);
                 }
             });

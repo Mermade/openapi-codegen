@@ -79,7 +79,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |finch||
 |flash||
 |**flaskConnexion**|server|**Needs testing**||
-|**go**|client|**Builds with tweaks, needs testing**||
+|**go**|client|**Builds, needs testing**||
 |**go-server**|server|**Builds and runs**||
 |**Groovy**|?|**untested**||
 |haskell-http-client||
@@ -143,6 +143,7 @@ The templates with a status have a working (if not necessarily tested) configura
 
 These projects use their own template model, not that of `swagger-codegen`
 
+* https://github.com/fmvilas/swagger-node-codegen
 * https://github.com/wcandillon/swagger-js-codegen
 * https://github.com/Cian-Chambliss/swagger-codegen-prepare
 
