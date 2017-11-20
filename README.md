@@ -12,7 +12,7 @@ Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
 
 ### CLI
 
-```shell
+```
 cg [options] {configName} {openapi-definition}
 
 Options:
@@ -22,6 +22,14 @@ Options:
   --version      Show version number                                   [boolean]
   -v, --verbose  Increase verbosity                                    [boolean]
 ```
+
+e.g.
+
+```
+node cg --verbose nodejs defs/generator.yaml
+```
+
+In this case, the generated code will be written to the `.out/nodejs` directory.
 
 ### API
 
