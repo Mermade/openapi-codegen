@@ -1,20 +1,22 @@
 {{>partial_header}}
 package {{packageName}}
 
+{{#operations}}
 import (
 	"net/url"
 	"net/http"
 	"strings"
 	"golang.org/x/net/context"
-{{#imports}}	"{{import}}"
+{{#imports}}{{#import}}    "{{{import}}}"{{/import}}
 {{/imports}}
 )
-{{#operations}}
 
 // Linger please
 var (
 	_ context.Context
 )
+var _ = fmt.Printf
+var _ = json.Indent
 
 type {{classname}}Service service
 

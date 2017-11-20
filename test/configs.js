@@ -125,6 +125,11 @@ async function main(){
                                 if (name === pm.input) found++;
                             }
                         }
+                        if (config.perOperation) {
+                            for (let po of config.perOperation) {
+                                if (name === po.input) found++;
+                            }
+                        }
                         found.should.be.exactly(1);
                     });
 

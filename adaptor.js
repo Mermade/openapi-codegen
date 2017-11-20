@@ -17,22 +17,6 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-/*function convertArray(arr) {
-    let obj = {};
-    for (let i=0;i<arr.length;i++) {
-        arr[i].hasMore = true;
-        if (i === 0) {
-            obj['-first'] = arr[0];
-        }
-        else if (i === (arr.length-1)) {
-            arr[i].hasMore = false;
-            obj['-last'] = arr[i];
-        }
-        else obj[i] = arr[i];
-    }
-    return obj;
-}*/
-
 function convertArray(arr,setHasMore) {
     if (arr.length) {
         Object.defineProperty(arr,'-first',{
@@ -99,9 +83,14 @@ const typeMaps = {
     }
 };
 
+const reservedWords = {
+    nop: [],
+    go: [ 'type' ]
+};
+
 let typeMap = typeMaps.nop;
 let markdownPP = markdownPPs.nop;
-
+let reserved = reservedWords.nop;
 
 function getBase() {
     let base = {};
@@ -167,6 +156,7 @@ function transform(api, defaults) {
 
     let lang = (defaults.language||'').toLowerCase();
     if (typeMaps[lang]) typeMap = typeMaps[lang];
+    if (reservedWords[lang]) reserved = reservedWords[lang];
 
     let prime = {};
     prime.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
@@ -372,6 +362,8 @@ function transform(api, defaults) {
                 operation.operationId = op.operationId;
                 operation.operationIdLowerCase = op.operationId.toLowerCase();
                 operation.operationIdSnakeCase = op.operationdId;
+                operation.description = op.description;
+                operation.summary = op.summary;
                 operation.allParams = [];
                 operation.pathParams = [];
                 operation.queryParams = [];
@@ -607,6 +599,9 @@ function transform(api, defaults) {
                 if (!entry.name && state.property && (state.property.startsWith('properties') || 
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
+                }
+                if (reserved.indexOf(entry.name)>=0) {
+                    entry.name = 'api_'+entry.name;
                 }
                 entry.getter = ('get_'+entry.name).toCamelCase();
                 entry.setter = ('set_'+entry.name).toCamelCase();

@@ -1,12 +1,7 @@
 {{>partial_header}}
 package {{packageName}}
-{{#imports}}
-import ({{/imports}}{{#imports}}
-	"{{import}}"{{/imports}}{{#imports}}
-)
-{{/imports}}
-{{#models}}
-{{#model}}{{#isEnum}}{{#description}}// {{{classname}}} : {{{description}}}{{/description}}
+
+{{#models}}{{#model}}{{#isEnum}}{{#description}}// {{{classname}}} : {{{description}}}{{/description}}
 type {{{name}}} {{^format}}{{dataType}}{{/format}}{{#format}}{{{format}}}{{/format}}
 
 // List of {{{name}}}

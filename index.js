@@ -65,9 +65,10 @@ function main(o, config, configName) {
             else {
                 fs.writeFileSync(outputDir+configName+'/LICENSE',fs.readFileSync('./templates/_common/UNLICENSE','utf8'),'utf8');
             }
-            // TODO perApi, perOperation
+            // TODO perApi
             // clone the model and provide an empty apis/operations/models container except for the item currently iterated
             let outer = model;
+ 
             if (config.perModel) {
                 for (let pm of config.perModel) {
                     let models = model.models;
@@ -76,10 +77,26 @@ function main(o, config, configName) {
                         outer.models.push(model);
                         let filename = mustache.render(pm.output,outer,config.partials);
                         let template = fs.readFileSync('./templates/'+configName+'/'+pm.input,'utf8');
+                        if (verbose) console.log('Rendering '+filename+' (dynamic)');
                         fs.writeFileSync(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
                     }
                 }
             }
+
+            if (config.perOperation) {
+                for (let po of config.perOperation) {
+                    let operations = model.operations;
+                    for (let operation of operations) {
+                        model.operations = [];
+                        model.operations.push(operation);
+                        let filename = mustache.render(po.output,outer,config.partials);
+                        let template = fs.readFileSync('./templates/'+configName+'/'+po.input,'utf8');
+                        if (verbose) console.log('Rendering '+filename+' (dynamic)');
+                        fs.writeFileSync(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
+                    }
+                }
+            }
+
         });
     });
 }
