@@ -17,18 +17,39 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-function convertArray(arr) {
+/*function convertArray(arr) {
     let obj = {};
     for (let i=0;i<arr.length;i++) {
+        arr[i].hasMore = true;
         if (i === 0) {
             obj['-first'] = arr[0];
         }
         else if (i === (arr.length-1)) {
+            arr[i].hasMore = false;
             obj['-last'] = arr[i];
         }
         else obj[i] = arr[i];
     }
     return obj;
+}*/
+
+function convertArray(arr,setHasMore) {
+    if (arr.length) {
+        Object.defineProperty(arr,'-first',{
+            enumerable: true,
+            value: arr[0]
+        });
+        Object.defineProperty(arr,'-last',{
+            enumerable: true,
+            value: arr[arr.length-1]
+        });
+        if (setHasMore) {
+            for (let i=0;i<arr.length;i++) {
+                arr[i].hasMore = (i<arr.length-1);
+            }
+        }
+    }
+    return arr;
 }
 
 // TODO add html and possibly termcap (https://www.npmjs.com/package/hermit) renderers
@@ -94,10 +115,13 @@ function getBase() {
     //base.developerEmail = x; /* developer email in generated pom.xml */
     //base.developerOrganization = x; /* developer organization in generated pom.xml */
     //base.developerOrganizationUrl = x; /* developer organization URL in generated pom.xml */
-    //base.gitUserId = x; /* Git user ID, e.g. swagger-api. */
-    //base.gitRepoId = x; /* Git repo ID, e.g. swagger-codegen. */
+    base.gitUserId = 'Mermade'; /* Git user ID, e.g. swagger-api. */
+    base.gitRepoId = 'openapi-codegen'; /* Git repo ID, e.g. swagger-codegen. */
     base.licenseName = 'Unlicense'; /* The name of the license */
+    base.projectLicenseName = 'Unlicense'; /* The name of the license */
     base.licenseUrl = 'https://unlicense.org'; /* The URL of the license */
+    base.projectLicenseUrl = 'https://unlicense.org'; /* The URL of the license */
+    base.projectUrl = 'https://github.com/Mermade/openapi-codegen';
     base.localVariablePrefix = ''; /* prefix for generated code members and local variables */
     base.serializableModel = true; /* boolean - toggle "implements Serializable" for generated models */
     base.bigDecimalAsString = false; /* Treat BigDecimal values as Strings to avoid precision loss. */
@@ -118,6 +142,7 @@ function getBase() {
     base.releaseNote = 'Minor update'; /* Release note, default to 'Minor update'. */
     base.supportsES6 = true; /* Generate code that conforms to ES6. */
     base.supportsAsync = true; /* Generate code that supports async operations. */
+    base.emitJSDoc = true; /* */
     base.excludeTests = false; /* Specifies that no tests are to be generated. */
     base.generateApiDocs = true; /* Not user-configurable. System provided for use in templates. */
     base.generateApiTests = true; /* Specifies that api tests are to be generated. */
@@ -130,6 +155,9 @@ function getBase() {
     base.ignoreFileOverride = '.swagger-codegen-ignore'; /* Specifies an override location for the .swagger-codegen-ignore file. Most useful on initial generation. */
     base.removeOperationIdPrefix = false; /* Remove prefix of operationId, e.g. config_getId => getId */
     base.serverPort = 8000;
+    base.newline = '\n';
+    base.apiDocPath = '';
+    base.modelDocPath = '';
     return base;
 }
 
@@ -140,31 +168,35 @@ function transform(api, defaults) {
     if (typeMaps[lang]) typeMap = typeMaps[lang];
 
     let prime = {};
-    prime.projectName = api.info.title;
+    prime.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
+    prime.projectName = prime.classname;
     prime.appVersion = api.info.version;
     prime.apiVersion = api.info.version;
     prime.packageVersion = api.info.version;
+    prime.projectVersion = api.info.version;
     prime.version = api.info.version;
     prime.swaggerVersion = api.openapi;
-    prime.swaggerCodegenVersion = 'openapi-codegen-v'+require('./package.json').version;
+    prime.generatorVersion = require('./package.json').version;
+    prime.swaggerCodegenVersion = 'openapi-codegen-v'+prime.generatorVersion;
     prime.appDescription = api.info.description||'No description';
-    prime.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
+    prime.projectDescription = prime.appDescription;
     prime.classVarName = 'default'; //? possibly an array of these based on tags (a la widdershins)
     prime.exportedName = prime.classname;
     prime.packageTitle = prime.classname; /* Specifies an AssemblyTitle for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
     prime.infoEmail = api.info.contact ? api.info.contact.email : null;
+    prime.appContact = prime.infoEmail;
     prime.infoUrl = api.info.contact ? api.info.contact.url : null;
     prime.licenseInfo = api.info.license ? api.info.license.name : null;
     prime.licenseUrl = api.info.license ? api.info.license.url : null;
     prime.appName = api.info.title;
     prime.host = ''
     prime.basePath = '/';
+    prime.basePathWithoutHost = '/';
     prime.contextPath = '/';
     prime.packageName = 'IO.OpenAPI';
     prime.apiPackage = prime.packageName; /* package for generated api classes */
     prime.generatorPackage = 'IO.OpenAPI';
     prime.invokerPackage = 'IO.OpenAPI'; /* root package for generated code */
-    prime.hasImport = true;
     prime.modelPackage = 'IO.OpenAPI'; /* package for generated models */
     prime.package = 'IO.OpenAPI.Api';
     prime.phpInvokerPackage = prime.invokerPackage; /* root package for generated php code */
@@ -173,14 +205,18 @@ function transform(api, defaults) {
     prime.pythonPackageName = prime.invokerPackage; /* package name for generated python code */
     prime.clientPackage = 'IO.OpenAPI.Client';
     prime.importPath = 'IO.OpenAPI.Api.Default';
+    prime.hasImport = true;
     prime.hasMore = true;
     prime.generatedDate = new Date().toString();
     prime.generatorClass = defaults.configName; // 'class ' prefix?
+    prime.fullyQualifiedGeneratorClass = prime.generatorPackage+'.'+prime.generatorClass;
     prime.imports = [ { "import": "IO.OpenAPI.Model.Default" } ];
     prime.name = prime.classname;
     prime.classFilename = prime.classname;
     prime.jsModuleName = prime.classname;
+    prime.moduleName = prime.classname;
     prime.jsProjectName = prime.classname;
+    prime.baseNamespace = prime.packageName;
     prime.sourceFolder = './out/'+defaults.configName; /* source folder for generated code */
     prime.templateDir = './templates/'+defaults.configName;
     prime.implFolder = prime.sourceFolder; /* folder for generated implementation code */
@@ -238,6 +274,9 @@ function transform(api, defaults) {
             let scheme = api.components.securitySchemes[s];
             let entry = {};
             entry.name = s;
+            entry.isApiKey = false;
+            entry.isBasic = false;
+            entry.isOAuth = false;
             if (scheme.type === 'http') {
                 entry.isBasic = true;
             }
@@ -247,6 +286,14 @@ function transform(api, defaults) {
                     let flow = Object.values(scheme.flows)[0];
                     entry.authorizationUrl = flow.authorizationUrl;
                     entry.tokenUrl = flow.tokenUrl;
+                    if (flow.scopes) {
+                        entry.scopes = [];
+                        for (let scope in flow.scopes) {
+                            let sc = {};
+                            sc.scope = scope;
+                            entry.scopes.push(sc);
+                        }
+                    }
                 }
             }
             else if (scheme.type == 'apiKey') {
@@ -261,6 +308,7 @@ function transform(api, defaults) {
             }
             obj.authMethods.push(entry);
         }
+        obj.authMethods = convertArray(obj.authMethods,true);
 
     }
 
@@ -292,7 +340,11 @@ function transform(api, defaults) {
         let up = url.parse(u);
         obj.host = up.host;
         obj.basePath = up.path;
+        obj.basePathWithoutHost = up.path;
     }
+
+    obj.consumes = [];
+    obj.produces = [];
 
     obj.operations = [];
     for (let p in api.paths) {
@@ -315,6 +367,8 @@ function transform(api, defaults) {
                 operation.httpMethod = o; //o.toUpperCase();
                 operation.path = p;
                 operation.operationId = op.operationId;
+                operation.operationIdLowerCase = op.operationId.toLowerCase();
+                operation.operationIdSnakeCase = op.operationdId;
                 operation.allParams = [];
                 operation.pathParams = [];
                 operation.queryParams = [];
@@ -331,20 +385,39 @@ function transform(api, defaults) {
                 }
                 operation.produces = [];
                 operation.consumes = [];
+                operation.hasParams = false;
+                operation.hasOptionalParams = false;
+                operation.hasRequiredParams = false;
+                operation.hasQueryParams = false;
+                operation.hasFormParams = false;
+                operation.hasPathParams = false;
+                operation.hasHeaderParams = false;
+                operation.hasBodyParam = false;
                 for (let pa in op.parameters) {
                     operation.hasParams = true;
                     let param = op.parameters[pa];
                     let parameter = {};
+                    parameter.isHeaderParam = false;
+                    parameter.isQueryParam = false;
+                    parameter.isPathParam = false;
+                    parameter.isBodyParam = false;
+                    parameter.isFormParam = false;
                     parameter.paramName = param.name;
                     parameter.baseName = param.name;
-                    parameter.required = param.required;
+                    parameter.required = param.required||false;
+                    parameter.optional = !parameter.required;
+                    if (parameter.required) operation.hasRequiredParams = true;
                     if (!parameter.required) operation.hasOptionalParams = true;
                     parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
+                    parameter.isBoolean = (param.schema.type === 'boolean');
                     parameter.dataFormat = param.schema.format;
-                    parameter.description = param.description;
+                    parameter.isDate = (parameter.dataFormat == 'date');
+                    parameter.isDateTime = (parameter.dataFormat == 'date-time');
+                    parameter.description = param.description||'';
                     parameter.unescapedDescription = param.description;
                     parameter.defaultValue = param.default;
                     parameter.hasMore = true; // last one gets reset below after sorting
+                    parameter.isFile = false;
                     operation.allParams.push(parameter);
                     if (param.in === 'path') {
                         parameter.isPathParam = true;
@@ -366,25 +439,41 @@ function transform(api, defaults) {
                         operation.formParams.push(parameter);
                         operation.hasFormParams = true;
                     }
+                    // TODO collectionFormat
                 }
                 if (op.requestBody) {
                     operation.hasBodyParam = true;
                     operation.bodyParam = {};
                     operation.bodyParam.isBodyParam = true;
+                    operation.bodyParam.isHeaderParam = false;
+                    operation.bodyParam.isQueryParam = false;
+                    operation.bodyParam.isPathParam = false;
+                    operation.bodyParam.isFormParam = false;
+                    operation.bodyParam.isDate = false;
+                    operation.bodyParam.isDateTime = false;
                     operation.bodyParam.baseName = 'body';
                     operation.bodyParam.paramName = 'body';
-                    operation.bodyParam.required = op.requestBody.required;
+                    operation.bodyParam.required = op.requestBody.required||false;
+                    operation.bodyParam.optional = !operation.bodyParam.required;
+                    if (operation.bodyParam.required) operation.hasRequiredParams = true;
                     if (!operation.bodyParam.required) operation.hasOptionalParams = true;
                     operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{}); // can be changed below
-                    operation.bodyParam.description = op.requestBody.description;
+                    operation.bodyParam.description = op.requestBody.description||'';
                     operation.bodyParam.schema = {};
                     operation.bodyParam.isEnum = false;
-                    operation.bodyParam.vendorExtensions = {};
+                    operation.bodyParam.vendorExtensions = {}; // TODO
                     if (op.requestBody.content) {
                         let contentType = Object.values(op.requestBody.content)[0];
                         let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
                         operation.consumes.push(mt);
                         operation.hasConsumes = true;
+                        let tmp = obj.consumes.find(function(e,i,a){
+                            return (e.mediaType === mt.mediaType);
+                        });
+                        if (!tmp) {
+                            obj.consumes.push(mt);
+                            obj.hasConsumes = true;
+                        }
                         operation.bodyParam.schema = contentType.schema;
                         if (contentType.schema.type) {
                             operation.bodyParam.type = contentType.schema.type;
@@ -395,11 +484,12 @@ function transform(api, defaults) {
                     operation.bodyParams = [];
                     operation.bodyParams.push(operation.bodyParam);
                     operation.bodyParam.hasMore = true;
+                    operation.bodyParam.isFile = false; // TODO
                     operation.allParams.push(operation.bodyParam);
                 }
                 operation.tags = op.tags;
                 operation.imports = op.tags;
-                operation.vendorExtensions = {};
+                operation.vendorExtensions = {}; // TODO
 
                 operation.responses = [];
                 for (let r in op.responses) {
@@ -408,6 +498,7 @@ function transform(api, defaults) {
                     entry.code = r;
                     entry.nickname = 'response'+r;
                     entry.message = response.description;
+                    entry.description = response.description||'';
                     entry.simpleType = true;
                     entry.schema = {};
                     entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
@@ -418,15 +509,24 @@ function transform(api, defaults) {
                         mt.mediaType = Object.keys(response.content)[0];
                         operation.produces.push(mt);
                         operation.hasProduces = true;
+                        let tmp = obj.produces.find(function(e,i,a){
+                            return (e.mediaType === mt.mediaType);
+                        });
+                        if (!tmp) {
+                            obj.produces.push(mt);
+                            obj.hasProduces = true;
+                        }
                         if (contentType.schema) {
                             entry.schema = contentType.schema;
                             entry.jsonSchema = safeJson({schema:entry.schema},null,2);
-                            entry.dataType = contentType.schema.type;
+                            entry.dataType = typeMap(contentType.schema.type,false,entry.schema);
                             if (contentType.schema["x-oldref"]) {
                                 entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
                             }
                         }
+                        operation.returnType = entry.dataType;
                     }
+                    operation.hasExamples = false;
                     // TODO examples
                     operation.responses.push(entry);
                 }
@@ -442,8 +542,21 @@ function transform(api, defaults) {
                     operation.allParams[operation.allParams.length-1].hasMore = false;
                 }
 
-                operation.consumes = convertArray(operation.consumes);
-                operation.produces = convertArray(operation.produces);
+                if (operation.hasConsumes) {
+                    operation.consumes = convertArray(operation.consumes,true);
+                }
+                else {
+                    delete operation.consumes;
+                }
+                if (operation.hasProduces) {
+                    operation.produces = convertArray(operation.produces,true);
+                }
+                else {
+                    delete operation.produces;
+                }
+                operation.queryParams = convertArray(operation.queryParams,false);
+                operation.headerParams = convertArray(operation.headerParams,false);
+                operation.allParams = convertArray(operation.allParams,false);
 
                 let container = {};
                 container.baseName = operation.nickname;
@@ -457,6 +570,9 @@ function transform(api, defaults) {
     if (obj.operations) {
         obj.operations[obj.operations.length-1].operation.hasMore = false;
     }
+
+    obj.produces = convertArray(obj.produces,true);
+    obj.consumes = convertArray(obj.consumes,true);
 
     obj.apiInfo = {};
     obj.apiInfo.apis = [];
@@ -476,6 +592,8 @@ function transform(api, defaults) {
             model.modelJson = safeJson(schema,null,2);
             model.title = schema.title;
             model.unescapedDescription = schema.description;
+            model.classFilename = 'cls'+model.name;
+            model.modelPackage = model.name;
             model.vars = [];
             walkSchema(schema,{},wsGetState,function(schema,parent,state){
                 let entry = {};
@@ -486,13 +604,17 @@ function transform(api, defaults) {
                 }
                 entry.getter = ('get_'+entry.name).toCamelCase();
                 entry.setter = ('set_'+entry.name).toCamelCase();
+                entry.description = schema.description||'';
+                entry.unescapedDescription = entry.description;
                 entry.type = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
+                entry.isNotRequired = !entry.required;
                 entry.type = typeMap(entry.type,entry.required,schema);
                 entry.datatype = entry.type; //?
                 entry.datatypeWithEnum = entry.datatype; // ?
                 entry.jsonSchema = safeJson(schema,null,2);
                 entry.hasMore = true;
+                entry.pattern = schema.pattern;
                 entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
                 entry.isNotContainer = entry.isPrimitiveType;
                 if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
@@ -509,8 +631,19 @@ function transform(api, defaults) {
             });
             model.vars[model.vars.length-1].hasMore = false;
             container.model = model;
+            container.importPath = model.name;
             obj.models.push(container);
         }
+    }
+
+    if (obj.models.length === 0) {
+        obj.models = { isEmpty: true };
+    }
+    else {
+        Object.defineProperty(obj.models, 'isEmpty', {
+            enumerable: true,
+            value: false
+        });
     }
 
     if (defaults.debug) obj.debugModels = JSON.stringify(obj.models,null,2);

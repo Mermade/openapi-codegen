@@ -1,10 +1,11 @@
 {
     "defaults": {
         "serverPort": "3000",
-        "implFolder": "nodejs"
+        "implFolder": "impl",
+        "googleCloudFunctions": false
     },
     "directories": [
-        "api", "controllers", "utils"
+        "api", "controllers", "utils", "impl"
     ],
     "transformations": [
         { "input": "controller.mustache", "output": "controllers/controller.js" },
@@ -15,5 +16,6 @@
         { "input": "service.mustache", "output": "service.js" },
         { "input": "swagger.mustache", "output": "api/swagger.yaml" },
         { "input": "writer.mustache", "output": "utils/writer.js" }
-    ]
+    ],
+    "touch": "{{#operations}}{{#operation}}impl/{{classname}}Service.js{{newline}}{{/operation}}{{/operations}}"
 }

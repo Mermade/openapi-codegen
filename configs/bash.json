@@ -1,5 +1,6 @@
 {
     "defaults": {
+        "scriptName": "bash_completion.sh"
     },
     "transformations": [
         { "input": "api_doc.mustache", "output": "api_doc.md" },

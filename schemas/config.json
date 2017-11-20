@@ -53,6 +53,10 @@
                     "output"
                 ]
             }
+        },
+        "touch": {
+            "type": "string",
+            "description": "A list of files to touch, separated by newlines, may be templated"
         }
     },
     "required": [

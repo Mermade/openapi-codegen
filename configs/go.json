@@ -2,7 +2,7 @@
     "defaults": {
         "language": "go",
         "packageName": "OpenAPI",
-        "imports": [ { "import": "fmt" } ]
+        "imports": [ { "import": "fmt" }, { "import": "encoding/json" } ]
     },
     "partials": {
         "partial_header": "partial_header.mustache"

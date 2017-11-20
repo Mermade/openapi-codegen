@@ -1,5 +1,7 @@
 {
     "defaults": {
+        "asyncio": true,
+        "tornado": true
     },
     "directories": [
         "asyncio", "tornado"

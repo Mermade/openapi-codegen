@@ -1,0 +1,13 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "transformations": [
+        { "input": "api.mustache", "output": "api.clj" },
+        { "input": "core.mustache", "output": "core.clj" },
+        { "input": "project.mustache", "output": "project.clj" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "gitignore.mustache", "output": ".gitignore" }
+    ]
+}

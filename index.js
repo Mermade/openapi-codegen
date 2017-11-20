@@ -47,6 +47,18 @@ function main(o, config, configName) {
                 let content = mustache.render(action.template, model, config.partials);
                 fs.writeFileSync(outputDir+configName+'/'+action.output,content,'utf8');
             }
+            if (config.touch) {
+                let touchList = mustache.render(config.touch, model, config.partials);
+                let files = touchList.split('\r').join('').split('\n');
+                for (let file of files) {
+                    file = file.trim();
+                    if (file) {
+                        if (!fs.existsSync(outputDir+configName+'/'+file)) {
+                            fs.writeFileSync(outputDir+configName+'/'+file,'','utf8');
+                        }
+                    }
+                }
+            }
             if (config.apache) {
                 fs.writeFileSync(outputDir+configName+'/LICENSE',fs.readFileSync('./templates/_common/LICENSE','utf8'),'utf8');
             }

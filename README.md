@@ -56,7 +56,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |apex||
 |aspnetcore||
 |bash|client|**Needs testing**||@bkryza|@MikeRalphson
-|clojure|?|**Needs modifiable delimeters**
+|**clojure**|client|**Untested**|
 |**codegen**|meta|**Demo only**|||@MikeRalphson
 |**confluenceWikiDocs**|documentation|**needs testing**||
 |cpprest||
@@ -70,19 +70,19 @@ The templates with a status have a working (if not necessarily tested) configura
 |erlang-server||
 |finch||
 |flash||
-|**flaskConnexion**|server|**needs testing**||
-|**go**|client|**builds with tweaks, needs testing**||
-|**go-server**|**builds and runs**||
+|**flaskConnexion**|server|**Needs testing**||
+|**go**|client|**Builds with tweaks, needs testing**||
+|**go-server**|server|**Builds and runs**||
 |**Groovy**|?|**untested**||
 |haskell-http-client||
 |haskell-servant||
-|**htmlDocs**|documentation|*appears to work*||
-|**htmlDocs2**|documentation|*appears to work, no console errors logged*||
+|**htmlDocs**|documentation|*Appears to work*||
+|**htmlDocs2**|documentation|*Appears to work, no console errors logged*||
 |Java||
 |JavaInflector||
 |JavaJaxRS||
 |JavaPlayFramework||
-|Javascript||
+|**Javascript**|client|**Needs model splitting**||
 |**Javascript-Closure-Angular**|client|**Untested**
 |JavaSpring||
 |JavaVertXServer||

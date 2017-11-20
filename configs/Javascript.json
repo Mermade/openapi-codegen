@@ -1,0 +1,53 @@
+{
+    "defaults": {
+        "packageName": "OpenAPI",
+        "invokerPackage": "OpenAPI",
+        "apiPackage": "OpenAPI",
+        "importPath": "Default",
+        "useInheritance": true,
+        "usePromises": true
+    },
+    "partials": {
+        "licenseInfo": "licenseInfo.mustache",
+        "partial_model_enum_class": "partial_model_enum_class.mustache",
+        "partial_model_generic": "partial_model_generic.mustache",
+        "partial_model_inner_enum": "partial_model_inner_enum.mustache",
+        "es6/licenseInfo": "es6/licenseInfo.mustache",
+        "es6/partial_model_enum_class": "es6/partial_model_enum_class.mustache",
+        "es6/partial_model_generic": "es6/partial_model_generic.mustache",
+        "es6/partial_model_inner_enum": "es6/partial_model_inner_enum.mustache"
+    },
+    "directories": [ "es6" ],
+    "transformations": [
+        { "input": "es6/api.mustache", "output": "es6/api.js" },
+        { "input": "es6/api_doc.mustache", "output": "es6/api_doc.md" },
+        { "input": "es6/api_test.mustache", "output": "es6/api_test.js" },
+        { "input": "es6/ApiClient.mustache", "output": "es6/ApiClient.js" },
+        { "input": "es6/enumClass.mustache", "output": "es6/enumClass.js" },
+        { "input": "es6/git_push.sh.mustache", "output": "es6/git_push.sh" },
+        { "input": "es6/gitignore.mustache", "output": "es6/.gitignore" },
+        { "input": "es6/index.mustache", "output": "es6/index.js" },
+        { "input": "es6/model.mustache", "output": "es6/model.js" },
+        { "input": "es6/model_doc.mustache", "output": "es6/model_doc.md" },
+        { "input": "es6/model_test.mustache", "output": "es6/model_test.js" },
+        { "input": "es6/package.mustache", "output": "es6/package.json" },
+        { "input": "es6/README.mustache", "output": "es6/README.md" },
+        { "input": "es6/mocha.opts", "output": "es6/mocha.opts" },
+        { "input": "es6/travis.yml", "output": "es6/.travis.yml" },
+        { "input": "api.mustache", "output": "api.js" },
+        { "input": "api_doc.mustache", "output": "api_doc.md" },
+        { "input": "api_test.mustache", "output": "api_test.js" },
+        { "input": "ApiClient.mustache", "output": "ApiClient.js" },
+        { "input": "enumClass.mustache", "output": "enumClass.js" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "gitignore.mustache", "output": ".gitignore" },
+        { "input": "index.mustache", "output": "index.js" },
+        { "input": "model.mustache", "output": "model.js" },
+        { "input": "model_doc.mustache", "output": "model_doc.md" },
+        { "input": "model_test.mustache", "output": "model_test.js" },
+        { "input": "package.mustache", "output": "package.json" },
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "mocha.opts", "output": "mocha.opts" },
+        { "input": "travis.yml", "output": ".travis.yml" }
+    ]
+}
