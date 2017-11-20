@@ -1,0 +1,16 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "directories": [ "api" ],
+    "transformations": [
+        { "input": "api.mustache", "output": "api/api.rb" },
+        { "input": "my_app.mustache", "output": "my_app.rb" },
+        { "input": "config.ru", "output": "config.ru" },
+        { "input": "Gemfile", "output": "Gemfile" },
+        { "input": "README.md", "output": "README.md" },
+        { "input": "Swaggering.rb", "output": "Swaggering.rb" },
+        { "input": "swagger.mustache", "output": "swagger.yaml" }
+    ]
+}

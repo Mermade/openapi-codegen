@@ -6,7 +6,7 @@
         "clientFunction": "clientFunction.mustache"
     },
     "transformations": [
-        { "input": "QueryParamTypeClass.mustache", "output": "QueryParamTypeClass.scala" },
+        { "input": "QueryParamTypeclass.mustache", "output": "QueryParamTypeclass.scala" },
         { "input": "HelperCodecs.mustache", "output": "HelperCodecs.scala" },
         { "input": "api.mustache", "output": "api.scala" },
         { "input": "build.sbt.mustache", "output": "build.sbt" },
