@@ -1,0 +1,16 @@
+{
+    "defaults": {
+    },
+    "partials": {
+        "operationReturnType": "operationReturnType.mustache",
+        "clientFunction": "clientFunction.mustache"
+    },
+    "transformations": [
+        { "input": "QueryParamTypeClass.mustache", "output": "QueryParamTypeClass.scala" },
+        { "input": "HelperCodecs.mustache", "output": "HelperCodecs.scala" },
+        { "input": "api.mustache", "output": "api.scala" },
+        { "input": "build.sbt.mustache", "output": "build.sbt" },
+        { "input": "dateTimeCodecs.mustache", "output": "dateTimeCodecs.scala" },
+        { "input": "model.mustache", "output": "model.scala" }
+    ]
+}

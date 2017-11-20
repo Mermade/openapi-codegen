@@ -594,6 +594,7 @@ function transform(api, defaults) {
             model.unescapedDescription = schema.description;
             model.classFilename = 'cls'+model.name;
             model.modelPackage = model.name;
+            model.hasEnums = false;
             model.vars = [];
             walkSchema(schema,{},wsGetState,function(schema,parent,state){
                 let entry = {};
@@ -623,7 +624,7 @@ function transform(api, defaults) {
                 
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
-                entry.isEnum = false;
+                entry.isEnum = false; //! TODO
                 if (entry.name && state.depth<=1) {
                     entry.baseName = entry.name.toLowerCase();
                     model.vars.push(entry);
