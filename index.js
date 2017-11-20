@@ -65,6 +65,21 @@ function main(o, config, configName) {
             else {
                 fs.writeFileSync(outputDir+configName+'/LICENSE',fs.readFileSync('./templates/_common/UNLICENSE','utf8'),'utf8');
             }
+            // TODO perApi, perOperation
+            // clone the model and provide an empty apis/operations/models container except for the item currently iterated
+            let outer = model;
+            if (config.perModel) {
+                for (let pm of config.perModel) {
+                    let models = model.models;
+                    for (let model of models) {
+                        outer.models = [];
+                        outer.models.push(model);
+                        let filename = mustache.render(pm.output,outer,config.partials);
+                        let template = fs.readFileSync('./templates/'+configName+'/'+pm.input,'utf8');
+                        fs.writeFileSync(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
+                    }
+                }
+            }
         });
     });
 }

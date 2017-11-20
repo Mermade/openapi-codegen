@@ -18,7 +18,9 @@
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
         { "input": "model_doc.mustache", "output": "model_doc.md" },
-        { "input": "model.mustache", "output": "model.lua" },
         { "input": "README.mustache", "output": "README.md" }
+    ],
+    "perModel": [
+        { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.lua" }
     ]
 }

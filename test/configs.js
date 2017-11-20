@@ -120,6 +120,11 @@ async function main(){
                         for (let tx of config.transformations) {
                             if (name === tx.input) found++;
                         }
+                        if (config.perModel) {
+                            for (let pm of config.perModel) {
+                                if (name === pm.input) found++;
+                            }
+                        }
                         found.should.be.exactly(1);
                     });
 

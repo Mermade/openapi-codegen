@@ -32,6 +32,22 @@
                 "type": "string"
             }
         },
+        "perModel": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "input": {
+                        "type": "string",
+                        "description": "The input template filename"
+                    },
+                    "output": {
+                        "type": "string",
+                        "description": "The output filename, can be templated"
+                    }
+                }
+            }
+        },
         "transformations": {
             "type": "array",
             "minItems": 1,

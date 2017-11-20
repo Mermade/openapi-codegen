@@ -90,13 +90,13 @@ The templates with a status have a working (if not necessarily tested) configura
 |JavaInflector||
 |JavaJaxRS||
 |JavaPlayFramework||
-|**Javascript**|client|**Needs model splitting**||
+|**Javascript**|client|**Untested**||
 |**Javascript-Closure-Angular**|client|**Untested**
 |JavaSpring||
 |JavaVertXServer||
 |**JMeter**|meta|**Untested**||
 |kotlin-client||
-|**lua**|client|**Needs model spliting**|
+|**lua**|client|**Untested**|
 |lumen||
 |MSF4J||
 |nancyfx||

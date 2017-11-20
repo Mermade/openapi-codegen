@@ -158,6 +158,7 @@ function getBase() {
     base.newline = '\n';
     base.apiDocPath = '';
     base.modelDocPath = '';
+    base.classPrefix = 'cls';
     return base;
 }
 
@@ -265,7 +266,9 @@ function transform(api, defaults) {
     }
 
     // openapi3 extensions
-    obj.servers = api.servers;
+    obj.openapi = {};
+    obj.openapi.version = api.openapi;
+    obj.openapi.servers = api.servers;
 
     if (api.components && api.components.securitySchemes) {
         obj.hasAuthMethods = true;
@@ -393,6 +396,7 @@ function transform(api, defaults) {
                 operation.hasPathParams = false;
                 operation.hasHeaderParams = false;
                 operation.hasBodyParam = false;
+                operation.openapi = {};
                 for (let pa in op.parameters) {
                     operation.hasParams = true;
                     let param = op.parameters[pa];
@@ -442,6 +446,7 @@ function transform(api, defaults) {
                     // TODO collectionFormat
                 }
                 if (op.requestBody) {
+                    operation.openapi.requestBody = op.requestBody;
                     operation.hasBodyParam = true;
                     operation.bodyParam = {};
                     operation.bodyParam.isBodyParam = true;
@@ -560,7 +565,7 @@ function transform(api, defaults) {
 
                 let container = {};
                 container.baseName = operation.nickname;
-                container.classname = 'cls'+operation.nickname;
+                container.classname = obj.classPrefix+operation.nickname;
                 container.operation = operation;
                 obj.operations.push(container);
             }
@@ -592,7 +597,7 @@ function transform(api, defaults) {
             model.modelJson = safeJson(schema,null,2);
             model.title = schema.title;
             model.unescapedDescription = schema.description;
-            model.classFilename = 'cls'+model.name;
+            model.classFilename = obj.classPrefix+model.name;
             model.modelPackage = model.name;
             model.hasEnums = false;
             model.vars = [];
