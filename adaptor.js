@@ -151,13 +151,7 @@ function getBase() {
     return base;
 }
 
-function transform(api, defaults) {
-    let base = getBase();
-
-    let lang = (defaults.language||'').toLowerCase();
-    if (typeMaps[lang]) typeMap = typeMaps[lang];
-    if (reservedWords[lang]) reserved = reservedWords[lang];
-
+function getPrime(api,defaults) {
     let prime = {};
     prime.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
     prime.projectName = prime.classname;
@@ -229,7 +223,17 @@ function transform(api, defaults) {
 //    prime.scmUrl = x; /* SCM URL in generated pom.xml */
 
     prime.httpUserAgent = 'OpenAPI-Codegen/'+prime.packageVersion+'/'+defaults.configName; /* HTTP user agent, e.g. codegen_csharp_api_client, default to 'Swagger-Codegen/{packageVersion}}/{language}' */
+    return prime;
+}
 
+function transform(api, defaults) {
+    let base = getBase(); // defaults which are hard-coded
+
+    let lang = (defaults.language||'').toLowerCase();
+    if (typeMaps[lang]) typeMap = typeMaps[lang];
+    if (reservedWords[lang]) reserved = reservedWords[lang];
+
+    let prime = getPrime(api,defaults); // defaults which depend in some way on the api definition
     let obj = Object.assign({},base,prime,defaults);
 
     obj["swagger-yaml"] = yaml.safeDump(defaults.swagger || api, {lineWidth:-1}); // set to original if converted v2.0
@@ -687,6 +691,8 @@ function transform(api, defaults) {
 }
 
 module.exports = {
+    getBase : getBase,
+    getPrime : getPrime,
     transform : transform
 };
 

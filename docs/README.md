@@ -27,3 +27,7 @@
     ]
 }
 ```
+
+### Model properties
+
+* [Defaults](modelProperties.md)
