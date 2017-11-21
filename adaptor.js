@@ -371,7 +371,7 @@ function transform(api, defaults) {
                 operation.formParams = [];
                 operation.summary = op.summary;
                 operation.notes = op.description;
-                operation.responseHeaders = [];
+                operation.responseHeaders = []; // TODO
                 operation.hasMore = true; // last one gets reset to false
                 operation.isResponseBinary = false; //TODO
                 operation.baseName = 'Default';
@@ -439,7 +439,26 @@ function transform(api, defaults) {
                         operation.formParams.push(parameter);
                         operation.hasFormParams = true;
                     }
-                    // TODO collectionFormat
+                    if (param.style === 'form') {
+                        if (param.explode) {
+                            parameter.collectionFormat = 'multi';
+                        }
+                        else {
+                            parameter.collectionFormat = 'csv';
+                        }
+                    }
+                    else if (param.style === 'simple') {
+                        parameter.collectionFormat = 'csv';
+                    }
+                    else if (param.style === 'spaceDelimited') {
+                        parameter.collectionFormat = 'ssv';
+                    }
+                    else if (param.style === 'pipeDelimited') {
+                        parameter.collectionFormat = 'pipes';
+                    }
+                    if ((param["x-collectionFormat"] === 'tsv') || (param["x-tabDelimited"])) {
+                        parameter.collectionFormat = 'tsv';
+                    }
                 }
                 if (op.requestBody) {
                     operation.openapi.requestBody = op.requestBody;
@@ -529,6 +548,8 @@ function transform(api, defaults) {
                     }
                     operation.hasExamples = false;
                     // TODO examples
+                    entry.openapi = {};
+                    entry.openapi.links = response.links;
                     operation.responses.push(entry);
                 }
 
@@ -558,6 +579,8 @@ function transform(api, defaults) {
                 operation.queryParams = convertArray(operation.queryParams,false);
                 operation.headerParams = convertArray(operation.headerParams,false);
                 operation.allParams = convertArray(operation.allParams,false);
+
+                operation.openapi.callbacks = op.callbacks;
 
                 let container = {};
                 container.baseName = operation.nickname;
@@ -653,7 +676,10 @@ function transform(api, defaults) {
         });
     }
 
-    obj.orderedModels = obj.models; // TODO
+    obj.orderedModels = {};
+    Object.keys(obj.models).sort().forEach(function(key) {
+        obj.orderedModels[key] = obj.models[key];
+    });
 
     if (defaults.debug) obj.debugModels = JSON.stringify(obj.models,null,2);
 
