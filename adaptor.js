@@ -226,7 +226,7 @@ function getPrime(api,defaults) {
     return prime;
 }
 
-function transform(api, defaults) {
+function transform(api, defaults, callback) {
     let base = getBase(); // defaults which are hard-coded
 
     let lang = (defaults.language||'').toLowerCase();
@@ -301,7 +301,8 @@ function transform(api, defaults) {
                 entry.isKeyInCookie = (scheme.in === 'cookie'); // extension
             }
             else {
-                // TODO OpenAPI 3 schemes
+                entry.openapi = {};
+                entry.openapi.scheme = scheme;
             }
             obj.authMethods.push(entry);
         }
@@ -687,6 +688,7 @@ function transform(api, defaults) {
 
     if (defaults.debug) obj.debugModels = JSON.stringify(obj.models,null,2);
 
+    if (callback) callback(null,obj);
     return obj;
 }
 
