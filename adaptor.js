@@ -6,6 +6,7 @@ const url = require('url');
 const yaml = require('js-yaml');
 const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
+const stools = require('swagger-tools');
 const deref = require('reftools/lib/dereference.js').dereference;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
@@ -160,7 +161,7 @@ function getPrime(api,defaults) {
     prime.packageVersion = api.info.version;
     prime.projectVersion = api.info.version;
     prime.version = api.info.version;
-    prime.swaggerVersion = api.openapi;
+    prime.swaggerVersion = '2.0';
     prime.generatorVersion = require('./package.json').version;
     prime.swaggerCodegenVersion = 'openapi-codegen-v'+prime.generatorVersion;
     prime.appDescription = api.info.description||'No description';
@@ -236,28 +237,28 @@ function transform(api, defaults, callback) {
     let prime = getPrime(api,defaults); // defaults which depend in some way on the api definition
     let obj = Object.assign({},base,prime,defaults);
 
-    obj["swagger-yaml"] = yaml.safeDump(defaults.swagger || api, {lineWidth:-1}); // set to original if converted v2.0
-    obj["swagger-json"] = JSON.stringify(defaults.swagger || api, null, 2); // set to original if converted 2.0
-    obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1});
-    obj["openapi-json"] = JSON.stringify(api, null, 2);
-    
     if (defaults.swagger) {
         obj.swagger = defaults.swagger;
     }
     else {
         obj.swagger = {};
         obj.swagger.swagger = api.openapi;
-        obj.swagger.info = api.info;
-        obj.tags = api.tags;
-        obj.externalDocs = api.externalDocs;
+        if (api.info) obj.swagger.info = api.info;
+        if (api.tags) obj.tags = api.tags;
+        if (api.externalDocs) obj.externalDocs = api.externalDocs;
         obj.swagger.paths = api.paths;
         if (api.components) {
-            obj.swagger.parameters = api.components.parameters;
-            obj.swagger.headers = api.components.headers;
-            obj.swagger.responses = api.components.responses;
-            obj.swagger.definitions = api.components.schemas;
+            if (api.components.parameters) obj.swagger.parameters = api.components.parameters;
+            if (api.components.headers) obj.swagger.headers = api.components.headers;
+            if (api.components.responses) obj.swagger.responses = api.components.responses;
+            if (api.components.schemas) obj.swagger.definitions = api.components.schemas;
         }
     }
+
+    obj["swagger-yaml"] = yaml.safeDump(obj.swagger, {lineWidth:-1}); // set to original if converted v2.0
+    obj["swagger-json"] = JSON.stringify(obj.swagger, null, 2); // set to original if converted 2.0
+    obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1});
+    obj["openapi-json"] = JSON.stringify(api, null, 2);
 
     // openapi3 extensions
     obj.openapi = {};
@@ -315,7 +316,32 @@ function transform(api, defaults, callback) {
     obj.messages = [];
     let message = {};
     let vOptions = {lint:defaults.lint};
-    try {
+    if (defaults.stools && defaults.swagger) {
+        stools.specs['v2_0'].validate(defaults.swagger,function(err,result){
+            if (err) console.error(util.inspect(err));
+            if (result.errors) {
+                for (let e of result.errors) {
+                    let message = {};
+                    message.level = 'Error';
+                    message.elementType = 'Path';
+                    message.message = e.message;
+                    message.elementId = e.path.join('/');
+                    obj.messages.push(message);
+                    if (defaults.verbose) console.log(message);
+                }
+                for (let w of result.warnings) {
+                    let message = {};
+                    message.level = 'Warning';
+                    message.elementType = 'Path';
+                    message.message = w.message;
+                    message.elementId = w.path.join('/');
+                    obj.messages.push(message);
+                    if (defaults.verbose) console.log(message);
+                }
+            }
+        });
+    }
+    else try {
         validator(api,vOptions);
         message.level = 'Valid';
         message.elementType = 'Context';
@@ -664,7 +690,9 @@ function transform(api, defaults, callback) {
                     model.vars.push(entry);
                 }
             });
-            model.vars[model.vars.length-1].hasMore = false;
+            if (model.vars.length) {
+                model.vars[model.vars.length-1].hasMore = false;
+            }
             container.model = model;
             container.importPath = model.name;
             obj.models.push(container);

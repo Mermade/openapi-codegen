@@ -9,7 +9,7 @@ const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
-const s1p = require('swagger-tools');
+const stools = require('swagger-tools');
 
 const processor = require('./index.js');
 
@@ -21,6 +21,9 @@ var argv = require('yargs')
     .boolean('lint')
     .alias('l','lint')
     .describe('lint','Lint input definition')
+    .boolean('stools')
+    .alias('s','stools')
+    .describe('stools','Use swagger-tools to validate OpenAPI 2.0 definitions')
     .boolean('verbose')
     .describe('verbose','Increase verbosity')
     .alias('v','verbose')
@@ -104,7 +107,7 @@ function convert12(api){
       // resolve multiple promises in parallel
       var res = yield retrieve;
       var sVersion = 'v1_2';
-      s1p.specs[sVersion].convert(api,apiDeclarations,true,function(err,converted){
+      stools.specs[sVersion].convert(api,apiDeclarations,true,function(err,converted){
           if (err) {
               console.error(util.inspect(err));
           }
@@ -144,6 +147,7 @@ if (argv.verbose) {
 }
 if (argv.lint) config.defaults.lint = true;
 if (argv.debug) config.defaults.debug = true;
+if (argv.stools) config.defaults.stools = true;
 
 let up = url.parse(defName);
 if (up.protocol && up.protocol.startsWith('http')) {
