@@ -1,4 +1,4 @@
-|Property|Parent|Default|Description|
+|Property|Parent|Default/Example|Description|
 |---|---|---|---|
 |apis||||
 |models||||
@@ -53,7 +53,7 @@
 |interfacePrefix|||Prefix interfaces with a community standard or widely accepted prefix.|
 |returnICollection||false|Return ICollection<T> instead of the concrete type.|
 |optionalProjectFile||false|Generate {PackageName}.csproj.|
-|packageGuid||0c1f6007-b85a-488e-935a-09daa7312e4b|The GUID that will be associated with the C# project|
+|packageGuid||3cff8b0e-c6e1-4589-9efb-60cf16d72585|The GUID that will be associated with the C# project|
 |modelPropertyNaming||original|{camelCase, PascalCase, snake_case, original, UPPERCASE}|
 |targetFramework||4|The target .NET framework version.|
 |{camelCase, PascalCase, snake_case, original}||||
@@ -78,3 +78,77 @@
 |validatable||true|Generates self-validatable models.|
 |ignoreFileOverride||.swagger-codegen-ignore|Specifies an override location for the .swagger-codegen-ignore file. Most useful on initial generation.|
 |removeOperationIdPrefix||false|Remove prefix of operationId, e.g. config_getId => getId|
+|nickname|operation|addPet||
+|httpMethod|operation|post||
+|path|operation|/pet||
+|operationId|operation|addPet||
+|operationIdLowerCase|operation|addpet||
+|operationIdSnakeCase|operation|undefined||
+|description|operation|||
+|summary|operation|Add a new pet to the store||
+|allParams|operation|[array]||
+|pathParams|operation|[array]||
+|queryParams|operation|[array]||
+|headerParams|operation|[array]||
+|formParams|operation|[array]||
+|notes|operation|||
+|responseHeaders|operation|[array]||
+|hasMore|operation|true||
+|isResponseBinary|operation|false||
+|baseName|operation|pet||
+|consumes|operation|[array]||
+|hasParams|operation|false||
+|hasOptionalParams|operation|false||
+|hasRequiredParams|operation|true||
+|hasQueryParams|operation|false||
+|hasFormParams|operation|false||
+|hasPathParams|operation|false||
+|hasHeaderParams|operation|false||
+|hasBodyParam|operation|true||
+|openapi|operation|{object}||
+|bodyParam|operation|{object}||
+|hasConsumes|operation|true||
+|bodyParams|operation|[array]||
+|tags|operation|[array]||
+|imports|operation|[array]||
+|vendorExtensions|operation|{object}||
+|responses|operation|[array]||
+|hasExamples|operation|false||
+|isBodyParam|parameter|true||
+|isHeaderParam|parameter|false||
+|isQueryParam|parameter|false||
+|isPathParam|parameter|false||
+|isFormParam|parameter|false||
+|isDate|parameter|false||
+|isDateTime|parameter|false||
+|baseName|parameter|body||
+|paramName|parameter|body||
+|required|parameter|true||
+|optional|parameter|false||
+|dataType|parameter|object||
+|description|parameter|Pet object that needs to be added to the store||
+|schema|parameter|{object}||
+|isEnum|parameter|false||
+|vendorExtensions|parameter|{object}||
+|type|parameter|object||
+|jsonSchema|parameter|"string"||
+|hasMore|parameter|false||
+|isFile|parameter|false||
+|code|response|405||
+|nickname|response|response405||
+|message|response|Invalid input||
+|description|response|Invalid input||
+|simpleType|response|true||
+|schema|response|{object}||
+|jsonSchema|response|"string"||
+|openapi|response|{object}||
+|name|model|Order||
+|classname|model|Order||
+|classVarName|model|Order||
+|modelJson|model|"string"||
+|title|model|undefined||
+|unescapedDescription|model|undefined||
+|classFilename|model|clsOrder||
+|modelPackage|model|Order||
+|hasEnums|model|false||
+|vars|model|[array]||
