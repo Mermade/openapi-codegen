@@ -389,9 +389,13 @@ function transform(api, defaults) {
                 operation.hasHeaderParams = false;
                 operation.hasBodyParam = false;
                 operation.openapi = {};
-                for (let pa in op.parameters) {
+
+                let effParameters = (op.parameters||[]).concat(pathItem.parameters||[]);
+                effParameters = effParameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+
+                for (let pa in effParameters) {
                     operation.hasParams = true;
-                    let param = op.parameters[pa];
+                    let param = effParameters[pa];
                     let parameter = {};
                     parameter.isHeaderParam = false;
                     parameter.isQueryParam = false;
