@@ -24,7 +24,7 @@
         "operation": "operation.mustache"
     },
     "transformations": [
-        { "template": "Hello from {{projectName}}", "output": "README.md" },
+        { "template": "Hello from \{\{projectName\}\}", "output": "README.md" },
         { "input": "index.mustache", "output": "docs/index.html" }
     ]
 }
