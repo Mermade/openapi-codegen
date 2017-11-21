@@ -141,6 +141,10 @@ The templates with a status have a working (if not necessarily tested) configura
 |ze-ph|
 </details>
 
+## Documentation
+
+* [See here](docs/README.md) - contributions welcome
+
 ## See also
 
 These projects use their own template model, not that of `swagger-codegen`
