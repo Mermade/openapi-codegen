@@ -360,7 +360,7 @@ function transform(api, defaults) {
                 operation.httpMethod = o; //o.toUpperCase();
                 operation.path = p;
                 operation.operationId = op.operationId;
-                operation.operationIdLowerCase = op.operationId.toLowerCase();
+                operation.operationIdLowerCase = (op.operationId||'').toLowerCase();
                 operation.operationIdSnakeCase = op.operationdId;
                 operation.description = op.description;
                 operation.summary = op.summary;

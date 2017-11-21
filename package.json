@@ -30,6 +30,7 @@
     "js-yaml": "^3.10.0",
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
+    "node-fetch": "^1.7.3",
     "reftools": "0.0.18",
     "rimraf": "^2.6.2",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",

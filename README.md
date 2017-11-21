@@ -31,6 +31,8 @@ node cg --verbose nodejs defs/generator.yaml
 
 In this case, the generated code will be written to the `.out/nodejs` directory.
 
+You can also load the OpenAPI definition from a URL.
+
 ### API
 
 ```javascript
