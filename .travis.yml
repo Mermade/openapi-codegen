@@ -3,3 +3,5 @@ node_js:
   - "8"
 after_script:
   - find configs -type f | sed s/.json//g | sed s/configs.//g | xargs -n 1 node cg -v
+  - bin/checkJs.sh
+  - bin/checkTs.sh
