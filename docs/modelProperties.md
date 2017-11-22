@@ -61,6 +61,8 @@
 |modelNamePrefix|||Prefix that will be prepended to all model names. Default is the empty string.|
 |modelNameSuffix|||Suffix that will be appended to all model names. Default is the empty string.|
 |optionalEmitDefaultValues||false|Set DataMember's EmitDefaultValue.|
+|emitModelMethods||true||
+|emitJSDoc||true|Whether to emit JSDoc comments|
 |gitUserId||Mermade|Git user ID, e.g. swagger-api.|
 |gitRepoId||openapi-codegen|Git repo ID, e.g. swagger-codegen.|
 |releaseNote||Minor update|Release note, default to 'Minor update'.|
