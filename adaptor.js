@@ -21,18 +21,10 @@ String.prototype.toCamelCase = function camelize() {
 
 function convertArray(arr,setHasMore) {
     if (arr.length) {
-        Object.defineProperty(arr,'-first',{
-            enumerable: true,
-            value: arr[0]
-        });
-        arr[0]['-first'] = true;
-        Object.defineProperty(arr,'-last',{
-            enumerable: true,
-            value: arr[arr.length-1]
-        });
-        arr[arr.length-1]['-last'] = true;
-        if (setHasMore) {
-            for (let i=0;i<arr.length;i++) {
+        for (let i=0;i<arr.length;i++) {
+            arr[i]['-first'] = (i === 0);
+            arr[i]['-last'] = (i === arr.length-1);
+            if (setHasMore) {
                 arr[i].hasMore = (i<arr.length-1);
             }
         }
