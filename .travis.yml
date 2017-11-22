@@ -3,6 +3,7 @@ node_js:
   - "8"
 before_script:
   - sudo apt-get install lua5.2
+  - sudo apt-get install golang
 script:
   - npm test
   - find configs -type f | sed s/.json//g | sed s/configs.//g | xargs -n 1 node cg -v
@@ -10,3 +11,4 @@ script:
   - bin/checkJs.sh
   - bin/checkTs.sh
   - bin/checkLua.sh
+  - bin/checkGo.sh
