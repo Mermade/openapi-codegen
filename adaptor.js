@@ -41,6 +41,7 @@ String.prototype.toCamelCase = function camelize() {
 
 function convertArray(arr,setHasMore) {
     if (arr.length) {
+        arr.isEmpty = false;
         for (let i=0;i<arr.length;i++) {
             arr[i]['-first'] = (i === 0);
             arr[i]['-last'] = (i === arr.length-1);
@@ -49,6 +50,7 @@ function convertArray(arr,setHasMore) {
             }
         }
     }
+    else arr.isEmpty = true;
     return arr;
 }
 
@@ -418,6 +420,9 @@ function transform(api, defaults, callback) {
                 operation.formParams = [];
                 operation.summary = op.summary;
                 operation.notes = op.description;
+                if (!operation.notes) {
+                    operation.notes = {isEmpty:true};
+                }
                 operation.responseHeaders = []; // TODO
                 operation.hasMore = true; // last one gets reset to false
                 operation.isResponseBinary = false; //TODO
@@ -466,27 +471,6 @@ function transform(api, defaults, callback) {
                     parameter.defaultValue = param.default;
                     parameter.hasMore = true; // last one gets reset below after sorting
                     parameter.isFile = false;
-                    operation.allParams.push(parameter);
-                    if (param.in === 'path') {
-                        parameter.isPathParam = true;
-                        operation.pathParams.push(parameter);
-                        operation.hasPathParams = true;
-                    }
-                    if (param.in === 'query') {
-                        parameter.isQueryParam = true;
-                        operation.queryParams.push(parameter);
-                        operation.hasQueryParams = true;
-                    }
-                    if (param.in === 'header') {
-                        parameter.isHeaderParam = true;
-                        operation.headerParams.push(parameter);
-                        operation.hasHeaderParams = true;
-                    }
-                    if (param.in === 'form') {
-                        parameter.isFormParam = true;
-                        operation.formParams.push(parameter);
-                        operation.hasFormParams = true;
-                    }
                     if (param.style === 'form') {
                         if (param.explode) {
                             parameter.collectionFormat = 'multi';
@@ -507,7 +491,30 @@ function transform(api, defaults, callback) {
                     if ((param["x-collectionFormat"] === 'tsv') || (param["x-tabDelimited"])) {
                         parameter.collectionFormat = 'tsv';
                     }
+
+                    operation.allParams.push(parameter);
+                    if (param.in === 'path') {
+                        parameter.isPathParam = true;
+                        operation.pathParams.push(clone(parameter));
+                        operation.hasPathParams = true;
+                    }
+                    if (param.in === 'query') {
+                        parameter.isQueryParam = true;
+                        operation.queryParams.push(clone(parameter));
+                        operation.hasQueryParams = true;
+                    }
+                    if (param.in === 'header') {
+                        parameter.isHeaderParam = true;
+                        operation.headerParams.push(clone(parameter));
+                        operation.hasHeaderParams = true;
+                    }
+                    if (param.in === 'form') {
+                        parameter.isFormParam = true;
+                        operation.formParams.push(clone(parameter));
+                        operation.hasFormParams = true;
+                    }
                 }
+                operation.bodyParams = [];
                 if (op.requestBody) {
                     operation.openapi.requestBody = op.requestBody;
                     operation.hasBodyParam = true;
@@ -550,11 +557,9 @@ function transform(api, defaults, callback) {
                         }
                     }
                     operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
-                    operation.bodyParams = [];
                     operation.bodyParams.push(operation.bodyParam);
-                    operation.bodyParam.hasMore = true;
                     operation.bodyParam.isFile = false; // TODO
-                    operation.allParams.push(operation.bodyParam);
+                    operation.allParams.push(clone(operation.bodyParam));
                 }
                 operation.tags = op.tags;
                 operation.imports = op.tags;
@@ -609,9 +614,12 @@ function transform(api, defaults, callback) {
                         return 0;
                     });
                 }
-                if (operation.allParams.length) {
-                    operation.allParams[operation.allParams.length-1].hasMore = false;
-                }
+                operation.queryParams = convertArray(operation.queryParams,true);
+                operation.headerParams = convertArray(operation.headerParams,true);
+                operation.pathParams = convertArray(operation.pathParams,true);
+                operation.formParams = convertArray(operation.formParams,true);
+                operation.bodyParams = convertArray(operation.bodyParams,true);
+                operation.allParams = convertArray(operation.allParams,true);
 
                 if (operation.hasConsumes) {
                     operation.consumes = convertArray(operation.consumes,true);
@@ -625,9 +633,6 @@ function transform(api, defaults, callback) {
                 else {
                     delete operation.produces;
                 }
-                operation.queryParams = convertArray(operation.queryParams,false);
-                operation.headerParams = convertArray(operation.headerParams,false);
-                operation.allParams = convertArray(operation.allParams,false);
 
                 operation.openapi.callbacks = op.callbacks;
 
@@ -720,6 +725,7 @@ function transform(api, defaults, callback) {
                 }
 
                 if (entry.name && state.depth<=1) {
+                    entry.nameInCamelCase = entry.name.toCamelCase();
                     entry.datatypeWithEnum = entry.name+'Enum';
                     entry.enumName = entry.datatypeWithEnum;
                     model.hasEnums = true;

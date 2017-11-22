@@ -77,8 +77,8 @@ The templates with a status have a working (if not necessarily tested) configura
 |**debug**|meta|*used for dumping the model state*||@Mermade|@MikeRalphson
 |Eiffel||
 |elixir||
-|erlang-client||
-|erlang-server||
+|erlang-client|client|**Untested**||
+|erlang-server|server|
 |finch||
 |flash||
 |**flaskConnexion**|server|**Needs testing**||
@@ -99,7 +99,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |JavaVertXServer||
 |**JMeter**|meta|**Untested**||
 |kotlin-client||
-|**lua**|client|**Untested**|
+|**lua**|client|**Compiles OK**|
 |lumen||
 |MSF4J||
 |nancyfx||
@@ -123,7 +123,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |scala||
 |scalatra||
 |scalaz|client|**Untested**||
-|sinatra||
+|sinatra|server|**Syntax checks OK**||
 |**slim**|server|**Untested**||
 |**swagger**|meta|*outputs the input definition (in original form if OpenAPI 2.0)* :white_check_mark:||
 |**swagger-static**|documentation|**tested** *template modified to include partials*||
