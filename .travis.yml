@@ -9,6 +9,6 @@ script:
   - find configs -type f | sed s/.json//g | sed s/configs.//g | xargs -n 1 node cg -v
   - npm i typescript -g
   - bin/checkJs.sh
-  - bin/checkTs.sh
+#  - bin/checkTs.sh
   - bin/checkLua.sh
   - bin/checkGo.sh

@@ -13,6 +13,26 @@ const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 const validator = require('swagger2openapi/validate').validateSync;
 
+const schemaProperties = [
+    'format',
+    'minimum',
+    'maximum',
+    'exclusiveMinimum',
+    'exclusiveMaximum',
+    'minLength',
+    'maxLength',
+    'multipleOf',
+    'minItems',
+    'maxItems',
+    'uniqueItems',
+    'minProperties',
+    'maxProperties',
+    'additionalProperties',
+    'pattern',
+    'enum',
+    'default'
+];
+
 String.prototype.toCamelCase = function camelize() {
     return this.toLowerCase().replace(/[-_ \/\.](.)/g, function (match, group1) {
         return group1.toUpperCase();
@@ -436,6 +456,7 @@ function transform(api, defaults, callback) {
                     if (parameter.required) operation.hasRequiredParams = true;
                     if (!parameter.required) operation.hasOptionalParams = true;
                     parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
+                    // schemaProperties?
                     parameter.isBoolean = (param.schema.type === 'boolean');
                     parameter.dataFormat = param.schema.format;
                     parameter.isDate = (parameter.dataFormat == 'date');
@@ -522,6 +543,7 @@ function transform(api, defaults, callback) {
                             obj.hasConsumes = true;
                         }
                         operation.bodyParam.schema = contentType.schema;
+                        // schemaProperties?
                         if (contentType.schema.type) {
                             operation.bodyParam.type = contentType.schema.type;
                             operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
@@ -671,16 +693,20 @@ function transform(api, defaults, callback) {
                 entry.datatype = entry.type; //?
                 entry.jsonSchema = safeJson(schema,null,2);
                 entry.hasMore = true;
-                entry.pattern = schema.pattern;
+                for (let p in schemaProperties) {
+                    if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
+                }
+                entry.isEnum = !!schema.enum;
                 entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
                 entry.isNotContainer = entry.isPrimitiveType;
+                if (entry.isEnum) entry.isNotContainer = false;
+                entry.isContainer = !entry.isNotContainer;
                 if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
                     entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
                 }
                 
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
-                entry.isEnum = !!schema.enum;
 
                 if (entry.isEnum) {
                     model.allowableValues = {};
