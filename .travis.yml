@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "8"
 before_script:
-  - apt-get install lua5.2
+  - sudo apt-get install lua5.2
 script:
   - npm test
   - find configs -type f | sed s/.json//g | sed s/configs.//g | xargs -n 1 node cg -v
