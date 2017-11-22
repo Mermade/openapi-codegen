@@ -1,0 +1,20 @@
+{
+    "defaults": {
+        "testing": {
+            "dredd": {
+                "testCommand": "true -n",
+                "endPoint": "http://127.0.0.1:3001"
+            }
+        }
+    },
+    "partials": {
+    },
+    "transformations": [
+        { "input": "README.md.mustache", "output": "README.md" },
+        { "template": "{{{swagger-yaml}}}", "output": "swagger.yaml" },
+        { "input": "dredd.yml.mustache", "output": "dredd.yml" },
+        { "input": "index.js.mustache", "output": "index.js" },
+        { "input": "package.json.mustache", "output": "package.json" },
+        { "input": "test.sh.mustache", "output": "test.sh" }
+    ]
+}

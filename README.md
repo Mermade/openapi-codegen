@@ -140,6 +140,14 @@ The templates with a status have a working (if not necessarily tested) configura
 |undertow||
 |**validator**|meta|*uses swagger2openapi's OpenAPI 3.0 validator internally* :white_check_mark:||
 |ze-ph|
+
+### New Templates
+
+These templates are examples of how features of OpenAPI Codegen may be used, and best-practices in naming model properties.
+
+|Template|Type|Status|README|Authors|Config Maintainer|
+|---|---|---|---|---|---|
+|testing.dredd|testing|**In progress**|[README](templates/testing.dredd/README.md.mustache)|@Mermade|@MikeRalphson|
 </details>
 
 ## Documentation
