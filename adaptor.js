@@ -8,6 +8,7 @@ const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
 const stools = require('swagger-tools');
 const deref = require('reftools/lib/dereference.js').dereference;
+const clone = require('reftools/lib/clone.js').clone;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 const validator = require('swagger2openapi/validate').validateSync;
@@ -24,10 +25,12 @@ function convertArray(arr,setHasMore) {
             enumerable: true,
             value: arr[0]
         });
+        arr[0]['-first'] = true;
         Object.defineProperty(arr,'-last',{
             enumerable: true,
             value: arr[arr.length-1]
         });
+        arr[arr.length-1]['-last'] = true;
         if (setHasMore) {
             for (let i=0;i<arr.length;i++) {
                 arr[i].hasMore = (i<arr.length-1);
@@ -133,6 +136,7 @@ function getBase() {
     base.supportsES6 = true; /* Generate code that conforms to ES6. */
     base.supportsAsync = true; /* Generate code that supports async operations. */
     base.emitJSDoc = true; /* */
+    base.emitModelMethods = true; /* */
     base.excludeTests = false; /* Specifies that no tests are to be generated. */
     base.generateApiDocs = true; /* Not user-configurable. System provided for use in templates. */
     base.generateApiTests = true; /* Specifies that api tests are to be generated. */
@@ -673,7 +677,6 @@ function transform(api, defaults, callback) {
                 entry.isNotRequired = !entry.required;
                 entry.type = typeMap(entry.type,entry.required,schema);
                 entry.datatype = entry.type; //?
-                entry.datatypeWithEnum = entry.datatype; // ?
                 entry.jsonSchema = safeJson(schema,null,2);
                 entry.hasMore = true;
                 entry.pattern = schema.pattern;
@@ -685,8 +688,20 @@ function transform(api, defaults, callback) {
                 
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
-                entry.isEnum = false; //! TODO
+                entry.isEnum = !!schema.enum;
+
+                if (entry.isEnum) {
+                    model.allowableValues = {};
+                    model.allowableValues.enumVars = [];
+                    for (let v of schema.enum) {
+                        let e = { name: v, value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
+                        model.allowableValues.enumVars.push(e);
+                    }
+                    model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars,true);
+                }
+
                 if (entry.name && state.depth<=1) {
+                    entry.datatypeWithEnum = entry.name+'Enum';
                     model.vars.push(entry);
                 }
             });

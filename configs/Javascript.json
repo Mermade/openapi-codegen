@@ -43,7 +43,7 @@
         { "input": "api_doc.mustache", "output": "docs/Default.md" },
         { "input": "api_test.mustache", "output": "test/api/Default.js" },
         { "input": "ApiClient.mustache", "output": "src/ApiClient.js" },
-        { "input": "enumClass.mustache", "output": "src/enumClass.js" },
+        { "input": "enumClass.mustache", "output": "src/enumClass.TODO" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "index.mustache", "output": "src/index.js" },
