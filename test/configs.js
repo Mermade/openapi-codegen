@@ -130,7 +130,7 @@ async function main(){
                                 if (name === po.input) found++;
                             }
                         }
-                        found.should.be.exactly(1);
+                        found.should.be.greaterThan(0);
                     });
 
                 }
