@@ -518,7 +518,7 @@ function transform(api, defaults, callback) {
                             return (e.mediaType === mt.mediaType);
                         });
                         if (!tmp) {
-                            obj.consumes.push(mt);
+                            obj.consumes.push(clone(mt)); // so convertArray works correctly
                             obj.hasConsumes = true;
                         }
                         operation.bodyParam.schema = contentType.schema;
@@ -560,7 +560,7 @@ function transform(api, defaults, callback) {
                             return (e.mediaType === mt.mediaType);
                         });
                         if (!tmp) {
-                            obj.produces.push(mt);
+                            obj.produces.push(clone(mt)); // so convertArray works correctly
                             obj.hasProduces = true;
                         }
                         if (contentType.schema) {
@@ -694,6 +694,8 @@ function transform(api, defaults, callback) {
 
                 if (entry.name && state.depth<=1) {
                     entry.datatypeWithEnum = entry.name+'Enum';
+                    entry.enumName = entry.datatypeWithEnum;
+                    model.hasEnums = true;
                     model.vars.push(entry);
                 }
             });
