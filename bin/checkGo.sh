@@ -9,10 +9,10 @@ go get github.com/gorilla/mux
 echo go
 cd out/go
 go build .
-cd ..
+cd ../..
 
 echo go-server
 cd out/go-server
 go build .
-cd ..
+cd ../..
 
