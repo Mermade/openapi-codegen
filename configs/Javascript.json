@@ -1,14 +1,15 @@
 {
     "defaults": {
         "packageName": "OpenAPI",
-        "invokerPackage": "OpenAPI",
-        "apiPackage": "apis",
-        "modelPackage": "models",
+        "invokerPackage": "",
+        "apiPackage": "api",
+        "modelPackage": "model",
         "importPath": "Default",
         "useInheritance": true,
         "usePromises": true,
         "imports": [],
-        "classPrefix": ""
+        "classPrefix": "",
+        "sourceFolder": "./src"
     },
     "partials": {
         "licenseInfo": "licenseInfo.mustache",
@@ -20,39 +21,44 @@
         "es6/partial_model_generic": "es6/partial_model_generic.mustache",
         "es6/partial_model_inner_enum": "es6/partial_model_inner_enum.mustache"
     },
-    "directories": [ "es6", "models", "apis", "es6/models", "es6/apis" ],
+    "directories": [ 
+        "src", "src/model", "src/api", "docs", "test", "test/api", "test/model", 
+        "es6", "es6/src", "es6/src/model", "es6/src/api", "es6/docs", "es6/test", "es6/test/api", "es6/test/model" 
+    ],
     "transformations": [
-        { "input": "es6/api.mustache", "output": "es6/apis/Default.js" },
-        { "input": "es6/api_doc.mustache", "output": "es6/api_doc.md" },
-        { "input": "es6/api_test.mustache", "output": "es6/api_test.js" },
-        { "input": "es6/ApiClient.mustache", "output": "es6/ApiClient.js" },
-        { "input": "es6/enumClass.mustache", "output": "es6/enumClass.js" },
+        { "input": "es6/api.mustache", "output": "es6/src/api/Default.mjs" },
+        { "input": "es6/api_doc.mustache", "output": "es6/docs/Default.md" },
+        { "input": "es6/api_test.mustache", "output": "es6/test/api/Default.mjs" },
+        { "input": "es6/ApiClient.mustache", "output": "es6/src/ApiClient.mjs" },
+        { "input": "es6/enumClass.mustache", "output": "es6/src/enumClass.mjs" },
         { "input": "es6/git_push.sh.mustache", "output": "es6/git_push.sh" },
         { "input": "es6/gitignore.mustache", "output": "es6/.gitignore" },
-        { "input": "es6/index.mustache", "output": "es6/index.js" },
-        { "input": "es6/model_doc.mustache", "output": "es6/model_doc.md" },
-        { "input": "es6/model_test.mustache", "output": "es6/model_test.js" },
+        { "input": "es6/index.mustache", "output": "es6/src/index.mjs" },
         { "input": "es6/package.mustache", "output": "es6/package.json" },
         { "input": "es6/README.mustache", "output": "es6/README.md" },
         { "input": "es6/mocha.opts", "output": "es6/mocha.opts" },
+        { "input": "es6/mocha.opts", "output": "es6/test/mocha.opts" },
         { "input": "es6/travis.yml", "output": "es6/.travis.yml" },
-        { "input": "api.mustache", "output": "/apis/Default.js" },
-        { "input": "api_doc.mustache", "output": "api_doc.md" },
-        { "input": "api_test.mustache", "output": "api_test.js" },
-        { "input": "ApiClient.mustache", "output": "ApiClient.js" },
-        { "input": "enumClass.mustache", "output": "enumClass.js" },
+        { "input": "api.mustache", "output": "src/api/Default.js" },
+        { "input": "api_doc.mustache", "output": "docs/Default.md" },
+        { "input": "api_test.mustache", "output": "test/api/Default.js" },
+        { "input": "ApiClient.mustache", "output": "src/ApiClient.js" },
+        { "input": "enumClass.mustache", "output": "src/enumClass.js" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
-        { "input": "index.mustache", "output": "index.js" },
-        { "input": "model_doc.mustache", "output": "model_doc.md" },
-        { "input": "model_test.mustache", "output": "model_test.js" },
+        { "input": "index.mustache", "output": "src/index.js" },
         { "input": "package.mustache", "output": "package.json" },
         { "input": "README.mustache", "output": "README.md" },
         { "input": "mocha.opts", "output": "mocha.opts" },
+        { "input": "mocha.opts", "output": "test/mocha.opts" },
         { "input": "travis.yml", "output": ".travis.yml" }
     ],
     "perModel": [
-        { "input": "model.mustache", "output": "models/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.js" },
-        { "input": "es6/model.mustache", "output": "es6/models/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.js" }
+        { "input": "model.mustache", "output": "src/model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.js" },
+        { "input": "model_doc.mustache", "output": "docs/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.md" },
+        { "input": "model_test.mustache", "output": "test/model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.js" },
+        { "input": "es6/model.mustache", "output": "es6/src/model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.mjs" },
+        { "input": "es6/model_doc.mustache", "output": "es6/docs/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.md" },
+        { "input": "es6/model_test.mustache", "output": "es6/test/model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.mjs" }
     ]
 }

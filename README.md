@@ -69,7 +69,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |bash|client|**Needs testing**||@bkryza|@MikeRalphson
 |**clojure**|client|**Untested**|
 |**codegen**|meta|**Demo only**|||@MikeRalphson
-|**confluenceWikiDocs**|documentation|**needs testing**||
+|**confluenceWikiDocs**|documentation|**Tested** with Docker [server](https://hub.docker.com/r/atlassian/confluence-server/)||
 |cpprest||
 |csharp||
 |csharp-dotnet2||

@@ -6,6 +6,7 @@ const util = require('util');
 const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 const mustache = require('mustache');
+const clone = require('reftools/lib/clone.js').clone;
 
 const adaptor = require('./adaptor.js');
 
@@ -69,9 +70,9 @@ function main(o, config, configName) {
                 let outer = model;
      
                 if (config.perModel) {
+                    let cModels = clone(model.models); 
                     for (let pm of config.perModel) {
-                        let models = model.models;
-                        for (let model of models) {
+                        for (let model of cModels) {
                             outer.models = [];
                             outer.models.push(model);
                             let filename = mustache.render(pm.output,outer,config.partials);
@@ -83,9 +84,9 @@ function main(o, config, configName) {
                 }
     
                 if (config.perOperation) {
+                    let cOperations = clone(model.operations);
                     for (let po of config.perOperation) {
-                        let operations = model.operations;
-                        for (let operation of operations) {
+                        for (let operation of cOperations) {
                             model.operations = [];
                             model.operations.push(operation);
                             let filename = mustache.render(po.output,outer,config.partials);
