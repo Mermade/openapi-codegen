@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/Mermade/openapi-codegen#readme",
   "dependencies": {
+    "adm-zip": "^0.4.7",
     "co": "^4.6.0",
     "connect": "^3.6.5",
     "js-yaml": "^3.10.0",

@@ -22,6 +22,7 @@ Options:
   -s, --stools   Use swagger-tools to validate OpenAPI 2.0 definitions [boolean]
   --version      Show version number                                   [boolean]
   -v, --verbose  Increase verbosity                                    [boolean]
+  -z, --zip      Create a .zip file instead of individual files        [boolean]
 ```
 
 e.g.

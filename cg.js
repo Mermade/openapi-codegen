@@ -10,6 +10,7 @@ const fetch = require('node-fetch');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
 const stools = require('swagger-tools');
+const admzip = require('adm-zip');
 
 const processor = require('./index.js');
 
@@ -27,12 +28,37 @@ var argv = require('yargs')
     .boolean('verbose')
     .describe('verbose','Increase verbosity')
     .alias('v','verbose')
+    .boolean('zip')
+    .alias('z','zip')
+    .describe('zip','Create a .zip file instead of individual files')
     .version()
     .argv;
 
 let configName = argv._[0] || 'nodejs';
 let config = require('./configs/'+configName+'.json');
 let defName = argv._[1] || './defs/petstore3.json';
+
+let zipFiles = {};
+
+function nop(arg, callback) { if (callback) callback(null,true); return true; };
+
+function zipFile(filename,contents,encoding) {
+    zipFiles[filename] = contents;
+}
+
+function finish(err,result) {
+    if (argv.zip) {
+        // create archive
+        var zip = new admzip();
+
+        // add files directly
+        for (let f in zipFiles) {
+            zip.addFile(f, new Buffer(zipFiles[f]), 'Created with OpenAPI-CodeGen');
+        }
+        // write everything to disk
+        zip.writeZip('./out/'+configName+'.zip');
+    }
+}
 
 function convert20(obj){
     if (argv.verbose) console.log('Converting OpenAPI 2.0 definition');
@@ -42,7 +68,7 @@ function convert20(obj){
         }
         else {
             config.defaults.swagger = obj;
-            processor.main(openapi,config,configName);
+            processor.main(openapi,config,configName,finish);
         }
     });
 }
@@ -126,7 +152,7 @@ function main(s) {
     if (argv.verbose) console.log('Loaded definition '+defName);
 
     if (o && o.openapi) {
-        processor.main(o,config,configName);
+        processor.main(o,config,configName,finish);
     }
     else {
         if (o && o.swaggerVersion && o.swaggerVersion === '1.2') {
@@ -148,6 +174,12 @@ if (argv.verbose) {
 if (argv.lint) config.defaults.lint = true;
 if (argv.debug) config.defaults.debug = true;
 if (argv.stools) config.defaults.stools = true;
+if (argv.zip) {
+    processor.fileFunctions.createFile = zipFile;
+    processor.fileFunctions.rimraf = nop;
+    processor.fileFunctions.mkdirp = nop;
+    processor.fileFunctions.mkdirp.sync = nop;
+}
 
 let up = url.parse(defName);
 if (up.protocol && up.protocol.startsWith('http')) {
