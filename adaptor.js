@@ -43,20 +43,380 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-function convertArray(arr,setHasMore) {
+function convertArray(arr) {
+    if (!arr) arr = [];
     if (arr.length) {
         arr.isEmpty = false;
         for (let i=0;i<arr.length;i++) {
             arr[i]['-first'] = (i === 0);
             arr[i]['-last'] = (i === arr.length-1);
-            if (setHasMore) {
-                arr[i].hasMore = (i<arr.length-1);
-            }
+            arr[i].hasMore = (i<arr.length-1);
         }
     }
     else arr.isEmpty = true;
     arr.toString = function() { if (arrayMode === 'length') return this.length.toString() };
     return arr;
+}
+
+function getAuthData(secSchemes,api) {
+    let result = {};
+    result.hasAuthMethods = (secSchemes && secSchemes.length>0);
+    result.authMethods = [];
+    if (result.hasAuthMethods) {
+    for (let ss of secSchemes) {
+        for (let s in ss) {
+        let scheme = api.components.securitySchemes[s];
+        let entry = {};
+        entry.name = s;
+        entry.isApiKey = false;
+        entry.isBasic = false;
+        entry.isOAuth = false;
+        if (scheme.type === 'http') {
+            entry.isBasic = true;
+        }
+        else if (scheme.type === 'oauth2') {
+            entry.isOAuth = true;
+            if (scheme.flows) {
+                let flow = Object.values(scheme.flows)[0];
+                entry.authorizationUrl = flow.authorizationUrl;
+                entry.tokenUrl = flow.tokenUrl;
+                // TODO override scopes
+                if (flow.scopes) {
+                    entry.scopes = [];
+                    for (let scope in flow.scopes) {
+                        let sc = {};
+                        sc.scope = scope;
+                        entry.scopes.push(sc);
+                    }
+                    entry.scopes = convertArray(entry.scopes);
+                }
+            }
+        }
+        else if (scheme.type == 'apiKey') {
+            entry.isApiKey = true;
+            entry.keyParamName = scheme.name;
+            entry.isKeyInQuery = (scheme.in === 'query');
+            entry.isKeyInHeader = (scheme.in === 'header');
+            entry.isKeyInCookie = (scheme.in === 'cookie'); // extension
+        }
+        else {
+            entry.openapi = {};
+            entry.openapi.scheme = scheme;
+        }
+        result.authMethods.push(entry);
+    }
+    }
+    result.authMethods = convertArray(result.authMethods);
+    }
+    return result;
+}
+
+function convertOperation(op,verb,path,pathItem,obj,api) {
+    let operation = {};
+    operation.nickname = op.operationId;
+    //operation.classname = obj.classPrefix+operation.nickname;
+    operation.httpMethod = verb; //verb.toUpperCase();
+    operation.path = path;
+    operation.replacedPathName = path; //?
+    operation.operationId = op.operationId;
+    operation.operationIdLowerCase = (op.operationId||'').toLowerCase();
+    operation.operationIdSnakeCase = op.operationdId;
+    operation.description = op.description;
+    operation.summary = op.summary;
+    operation.allParams = [];
+    operation.pathParams = [];
+    operation.queryParams = [];
+    operation.headerParams = [];
+    operation.formParams = [];
+    operation.summary = op.summary;
+    operation.notes = op.description;
+    if (!operation.notes) {
+        operation.notes = {isEmpty:true};
+        operation.notes.toString = function() { return '' };
+    }
+    operation.responseHeaders = []; // TODO
+    operation.hasMore = true; // last one gets reset to false
+    operation.isResponseBinary = false; //TODO
+    operation.isResponseFile = false; //TODO
+    operation.baseName = 'Default';
+    if (op.tags && op.tags.length) {
+        operation.baseName = op.tags[0];
+    }
+    operation.produces = [];
+    operation.consumes = [];
+    operation.hasParams = false;
+    operation.hasOptionalParams = false;
+    operation.hasRequiredParams = false;
+    operation.hasQueryParams = false;
+    operation.hasFormParams = false;
+    operation.hasPathParams = false;
+    operation.hasHeaderParams = false;
+    operation.hasBodyParam = false;
+    operation.openapi = {};
+
+    let authData = getAuthData(op.security||api.security,api);
+    operation = Object.assign(operation,authData);
+
+    let effParameters = (op.parameters||[]).concat(pathItem.parameters||[]);
+    effParameters = effParameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+
+    for (let pa in effParameters) {
+        operation.hasParams = true;
+        let param = effParameters[pa];
+        let parameter = {};
+        parameter.isHeaderParam = false;
+        parameter.isQueryParam = false;
+        parameter.isPathParam = false;
+        parameter.isBodyParam = false;
+        parameter.isFormParam = false;
+        parameter.paramName = param.name;
+        parameter.baseName = param.name;
+        parameter.required = param.required||false;
+        parameter.optional = !parameter.required;
+        if (parameter.required) operation.hasRequiredParams = true;
+        if (!parameter.required) operation.hasOptionalParams = true;
+        parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
+        parameter["%dataType%"] = parameter.dataType; // bug in typescript-fetch template?
+        for (let p in schemaProperties) {
+            if (typeof param.schema[p] !== 'undefined') parameter[p] = param.schema[p];
+        }
+        parameter.isBoolean = (param.schema.type === 'boolean');
+        parameter.isPrimitiveType = (!param.schema["x-oldref"]);
+        parameter.dataFormat = param.schema.format;
+        parameter.isDate = (parameter.dataFormat == 'date');
+        parameter.isDateTime = (parameter.dataFormat == 'date-time');
+        parameter.description = param.description||'';
+        parameter.unescapedDescription = param.description;
+        parameter.defaultValue = param.default;
+        parameter.hasMore = true; // last one gets reset below after sorting
+        parameter.isFile = false;
+        if (param.style === 'form') {
+            if (param.explode) {
+                parameter.collectionFormat = 'multi';
+            }
+            else {
+                parameter.collectionFormat = 'csv';
+            }
+        }
+        else if (param.style === 'simple') {
+            parameter.collectionFormat = 'csv';
+        }
+        else if (param.style === 'spaceDelimited') {
+            parameter.collectionFormat = 'ssv';
+        }
+        else if (param.style === 'pipeDelimited') {
+            parameter.collectionFormat = 'pipes';
+        }
+        if ((param["x-collectionFormat"] === 'tsv') || (param["x-tabDelimited"])) {
+            parameter.collectionFormat = 'tsv';
+        }
+
+        operation.allParams.push(parameter);
+        if (param.in === 'path') {
+            parameter.isPathParam = true;
+            operation.pathParams.push(clone(parameter));
+            operation.hasPathParams = true;
+        }
+        if (param.in === 'query') {
+            parameter.isQueryParam = true;
+            operation.queryParams.push(clone(parameter));
+            operation.hasQueryParams = true;
+        }
+        if (param.in === 'header') {
+            parameter.isHeaderParam = true;
+            operation.headerParams.push(clone(parameter));
+            operation.hasHeaderParams = true;
+        }
+        if (param.in === 'form') {
+            parameter.isFormParam = true;
+            operation.formParams.push(clone(parameter));
+            operation.hasFormParams = true;
+        }
+    }
+    operation.bodyParams = [];
+    if (op.requestBody) {
+        operation.openapi.requestBody = op.requestBody;
+        operation.hasBodyParam = true;
+        operation.bodyParam = {};
+        operation.bodyParam.isBodyParam = true;
+        operation.bodyParam.isHeaderParam = false;
+        operation.bodyParam.isQueryParam = false;
+        operation.bodyParam.isPathParam = false;
+        operation.bodyParam.isFormParam = false;
+        operation.bodyParam.isDate = false;
+        operation.bodyParam.isDateTime = false;
+        operation.bodyParam.baseName = 'body';
+        operation.bodyParam.paramName = 'body';
+        operation.bodyParam.required = op.requestBody.required||false;
+        operation.bodyParam.optional = !operation.bodyParam.required;
+        if (operation.bodyParam.required) operation.hasRequiredParams = true;
+        if (!operation.bodyParam.required) operation.hasOptionalParams = true;
+        operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{}); // can be changed below
+        operation.bodyParam.description = op.requestBody.description||'';
+        operation.bodyParam.schema = {};
+        operation.bodyParam.isEnum = false;
+        operation.bodyParam.vendorExtensions = {}; // TODO
+        if (op.requestBody.content) {
+            let contentType = Object.values(op.requestBody.content)[0];
+            let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
+            operation.consumes.push(mt);
+            operation.hasConsumes = true;
+            let tmp = obj.consumes.find(function(e,i,a){
+                return (e.mediaType === mt.mediaType);
+            });
+            if (!tmp) {
+                obj.consumes.push(clone(mt)); // so convertArray works correctly
+                obj.hasConsumes = true;
+            }
+            operation.bodyParam.schema = contentType.schema;
+            for (let p in schemaProperties) {
+                if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
+            }
+            if (contentType.schema.type) {
+                operation.bodyParam.type = contentType.schema.type;
+                operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
+            }
+        }
+        operation.bodyParam["%dataType%"] = operation.bodyParam.dataType; // bug in typescript-fetch template?
+        operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
+        operation.bodyParams.push(operation.bodyParam);
+        operation.bodyParam.isFile = false; // TODO
+        operation.allParams.push(clone(operation.bodyParam));
+    }
+    operation.tags = op.tags;
+    operation.imports = op.tags;
+    operation.vendorExtensions = {}; // TODO
+
+    operation.responses = [];
+    for (let r in op.responses) {
+        let response = op.responses[r];
+        let entry = {};
+        entry.code = r;
+        entry.isDefault = (r === 'default');
+        entry.nickname = 'response'+r;
+        entry.message = response.description;
+        entry.description = response.description||'';
+        entry.simpleType = true;
+        entry.schema = {};
+        entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
+        if (response.content) {
+            entry.baseType = 'object';
+            entry.dataType = typeMap(entry.baseType,false,{});;
+            let contentType = Object.values(response.content)[0];
+            let mt = {};
+            mt.mediaType = Object.keys(response.content)[0];
+            operation.produces.push(mt);
+            operation.hasProduces = true;
+            let tmp = obj.produces.find(function(e,i,a){
+                return (e.mediaType === mt.mediaType);
+            });
+            if (!tmp) {
+                obj.produces.push(clone(mt)); // so convertArray works correctly
+                obj.hasProduces = true;
+            }
+            if (contentType.schema) {
+                entry.schema = contentType.schema;
+                entry.jsonSchema = safeJson({schema:entry.schema},null,2);
+                entry.baseType = contentType.schema.type;
+                entry.isPrimitiveType = true;
+                entry.dataType = typeMap(contentType.schema.type,false,entry.schema);
+                if (contentType.schema["x-oldref"]) {
+                    entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
+                    entry.isPrimitiveType = false;
+                }
+            }
+            operation.returnType = entry.dataType;
+            operation.returnBaseType = entry.baseType;
+            operation.returnTypeIsPrimitive = entry.isPrimitiveType;
+            operation.returnContainer = ((entry.baseType === 'object') || (entry.baseType === 'array'));
+
+        }
+        operation.hasExamples = false;
+        // TODO examples
+        entry.openapi = {};
+        entry.openapi.links = response.links;
+        operation.responses.push(entry);
+    }
+
+    if (obj.sortParamsByRequiredFlag) {
+        operation.allParams = operation.allParams.sort(function(a,b){
+            if (a.required && !b.required) return -1;
+            if (b.required && !a.required) return +1;
+            return 0;
+        });
+    }
+    operation.queryParams = convertArray(operation.queryParams);
+    operation.headerParams = convertArray(operation.headerParams);
+    operation.pathParams = convertArray(operation.pathParams);
+    operation.formParams = convertArray(operation.formParams);
+    operation.bodyParams = convertArray(operation.bodyParams);
+    operation.allParams = convertArray(operation.allParams);
+
+    if (operation.hasConsumes) {
+        operation.consumes = convertArray(operation.consumes);
+    }
+    else {
+        delete operation.consumes;
+    }
+    if (operation.hasProduces) {
+        operation.produces = convertArray(operation.produces);
+    }
+    else {
+        delete operation.produces;
+    }
+
+    operation.openapi.callbacks = op.callbacks;
+
+    //let container = {};
+    //container.baseName = operation.nickname;
+    //container.operation = operation;
+    //obj.operations.push(container);
+    return operation;
+}
+
+function convertToApis(source,obj) {
+    let apis = [];
+    for (let p in source.paths) {
+        for (let m in source.paths[p]) {
+            if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
+                let op = source.paths[p][m];
+                let tagName = 'Default';
+                if (op.tags && op.tags.length > 0) {
+                    tagName = op.tags[0];
+                }
+                let entry = apis.find(function(e,i,a){
+                    return (e.name === tagName);
+                });
+                if (!entry) {
+                    entry = {};
+                    entry.name = tagName;
+                    entry.classname = tagName+'Api';
+                    entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
+                    entry.operations = {};
+                    entry.operations.operation = [];
+                    apis.push(entry);
+                }
+                let operation = convertOperation(op,m,p,source.paths[p],obj,source);
+                entry.operations.operation.push(operation);
+            }
+        }
+    }
+    for (let t in source.tags) {
+        let tag = source.tags[t];
+        let entry = apis.find(function(e,i,a){
+            return (e.name === t);
+        });
+        if (entry) {
+            entry.classname = tag.name+'Api';
+            entry.description = tag.description;
+            entry.externalDocs = tag.externalDocs;
+        }
+    }
+    for (let api of apis) {
+        api.operations.operation = convertArray(api.operations.operation);
+    }
+    apis = convertArray(apis);
+    return apis;
 }
 
 // TODO add html and possibly termcap (https://www.npmjs.com/package/hermit) renderers
@@ -301,51 +661,16 @@ function transform(api, defaults, callback) {
         return true;
     };
 
+    let allSecurity = [];
     if (api.components && api.components.securitySchemes) {
-        obj.hasAuthMethods = true;
-        obj.authMethods = [];
         for (let s in api.components.securitySchemes) {
-            let scheme = api.components.securitySchemes[s];
             let entry = {};
-            entry.name = s;
-            entry.isApiKey = false;
-            entry.isBasic = false;
-            entry.isOAuth = false;
-            if (scheme.type === 'http') {
-                entry.isBasic = true;
-            }
-            else if (scheme.type === 'oauth2') {
-                entry.isOAuth = true;
-                if (scheme.flows) {
-                    let flow = Object.values(scheme.flows)[0];
-                    entry.authorizationUrl = flow.authorizationUrl;
-                    entry.tokenUrl = flow.tokenUrl;
-                    if (flow.scopes) {
-                        entry.scopes = [];
-                        for (let scope in flow.scopes) {
-                            let sc = {};
-                            sc.scope = scope;
-                            entry.scopes.push(sc);
-                        }
-                    }
-                }
-            }
-            else if (scheme.type == 'apiKey') {
-                entry.isApiKey = true;
-                entry.keyParamName = scheme.name;
-                entry.isKeyInQuery = (scheme.in === 'query');
-                entry.isKeyInHeader = (scheme.in === 'header');
-                entry.isKeyInCookie = (scheme.in === 'cookie'); // extension
-            }
-            else {
-                entry.openapi = {};
-                entry.openapi.scheme = scheme;
-            }
-            obj.authMethods.push(entry);
+            entry[s] = api.components.securitySchemes[s];
+            allSecurity.push(entry);
         }
-        obj.authMethods = convertArray(obj.authMethods,true);
-
     }
+    let authData = getAuthData(allSecurity,api);
+    obj = Object.assign(obj,authData);
 
     api = deref(api,api,{$ref:'x-oldref'});
 
@@ -406,280 +731,11 @@ function transform(api, defaults, callback) {
     obj.consumes = [];
     obj.produces = [];
 
-    obj.operations = [];
-    for (let p in api.paths) {
-        let pathItem = api.paths[p];
-        for (let o in pathItem) {
-            if (o === 'description') {
-            }
-            else if (o === 'summary') {
-            }
-            else if (o === 'parameters') {
-            }
-            else if (o === '$ref') {
-            }
-            else if (o.startsWith('x-')) {
-            }
-            else {
-                let op = pathItem[o];
-                let operation = {};
-                operation.nickname = op.operationId;
-                operation.httpMethod = o; //o.toUpperCase();
-                operation.path = p;
-                operation.replacedPathName = p; //?
-                operation.operationId = op.operationId;
-                operation.operationIdLowerCase = (op.operationId||'').toLowerCase();
-                operation.operationIdSnakeCase = op.operationdId;
-                operation.description = op.description;
-                operation.summary = op.summary;
-                operation.allParams = [];
-                operation.pathParams = [];
-                operation.queryParams = [];
-                operation.headerParams = [];
-                operation.formParams = [];
-                operation.summary = op.summary;
-                operation.notes = op.description;
-                if (!operation.notes) {
-                    operation.notes = {isEmpty:true};
-                }
-                operation.responseHeaders = []; // TODO
-                operation.hasMore = true; // last one gets reset to false
-                operation.isResponseBinary = false; //TODO
-                operation.baseName = 'Default';
-                if (op.tags && op.tags.length) {
-                    operation.baseName = op.tags[0];
-                }
-                operation.produces = [];
-                operation.consumes = [];
-                operation.hasParams = false;
-                operation.hasOptionalParams = false;
-                operation.hasRequiredParams = false;
-                operation.hasQueryParams = false;
-                operation.hasFormParams = false;
-                operation.hasPathParams = false;
-                operation.hasHeaderParams = false;
-                operation.hasBodyParam = false;
-                operation.openapi = {};
-
-                let effParameters = (op.parameters||[]).concat(pathItem.parameters||[]);
-                effParameters = effParameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
-
-                for (let pa in effParameters) {
-                    operation.hasParams = true;
-                    let param = effParameters[pa];
-                    let parameter = {};
-                    parameter.isHeaderParam = false;
-                    parameter.isQueryParam = false;
-                    parameter.isPathParam = false;
-                    parameter.isBodyParam = false;
-                    parameter.isFormParam = false;
-                    parameter.paramName = param.name;
-                    parameter.baseName = param.name;
-                    parameter.required = param.required||false;
-                    parameter.optional = !parameter.required;
-                    if (parameter.required) operation.hasRequiredParams = true;
-                    if (!parameter.required) operation.hasOptionalParams = true;
-                    parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
-                    // schemaProperties?
-                    parameter.isBoolean = (param.schema.type === 'boolean');
-                    parameter.dataFormat = param.schema.format;
-                    parameter.isDate = (parameter.dataFormat == 'date');
-                    parameter.isDateTime = (parameter.dataFormat == 'date-time');
-                    parameter.description = param.description||'';
-                    parameter.unescapedDescription = param.description;
-                    parameter.defaultValue = param.default;
-                    parameter.hasMore = true; // last one gets reset below after sorting
-                    parameter.isFile = false;
-                    if (param.style === 'form') {
-                        if (param.explode) {
-                            parameter.collectionFormat = 'multi';
-                        }
-                        else {
-                            parameter.collectionFormat = 'csv';
-                        }
-                    }
-                    else if (param.style === 'simple') {
-                        parameter.collectionFormat = 'csv';
-                    }
-                    else if (param.style === 'spaceDelimited') {
-                        parameter.collectionFormat = 'ssv';
-                    }
-                    else if (param.style === 'pipeDelimited') {
-                        parameter.collectionFormat = 'pipes';
-                    }
-                    if ((param["x-collectionFormat"] === 'tsv') || (param["x-tabDelimited"])) {
-                        parameter.collectionFormat = 'tsv';
-                    }
-
-                    operation.allParams.push(parameter);
-                    if (param.in === 'path') {
-                        parameter.isPathParam = true;
-                        operation.pathParams.push(clone(parameter));
-                        operation.hasPathParams = true;
-                    }
-                    if (param.in === 'query') {
-                        parameter.isQueryParam = true;
-                        operation.queryParams.push(clone(parameter));
-                        operation.hasQueryParams = true;
-                    }
-                    if (param.in === 'header') {
-                        parameter.isHeaderParam = true;
-                        operation.headerParams.push(clone(parameter));
-                        operation.hasHeaderParams = true;
-                    }
-                    if (param.in === 'form') {
-                        parameter.isFormParam = true;
-                        operation.formParams.push(clone(parameter));
-                        operation.hasFormParams = true;
-                    }
-                }
-                operation.bodyParams = [];
-                if (op.requestBody) {
-                    operation.openapi.requestBody = op.requestBody;
-                    operation.hasBodyParam = true;
-                    operation.bodyParam = {};
-                    operation.bodyParam.isBodyParam = true;
-                    operation.bodyParam.isHeaderParam = false;
-                    operation.bodyParam.isQueryParam = false;
-                    operation.bodyParam.isPathParam = false;
-                    operation.bodyParam.isFormParam = false;
-                    operation.bodyParam.isDate = false;
-                    operation.bodyParam.isDateTime = false;
-                    operation.bodyParam.baseName = 'body';
-                    operation.bodyParam.paramName = 'body';
-                    operation.bodyParam.required = op.requestBody.required||false;
-                    operation.bodyParam.optional = !operation.bodyParam.required;
-                    if (operation.bodyParam.required) operation.hasRequiredParams = true;
-                    if (!operation.bodyParam.required) operation.hasOptionalParams = true;
-                    operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{}); // can be changed below
-                    operation.bodyParam.description = op.requestBody.description||'';
-                    operation.bodyParam.schema = {};
-                    operation.bodyParam.isEnum = false;
-                    operation.bodyParam.vendorExtensions = {}; // TODO
-                    if (op.requestBody.content) {
-                        let contentType = Object.values(op.requestBody.content)[0];
-                        let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
-                        operation.consumes.push(mt);
-                        operation.hasConsumes = true;
-                        let tmp = obj.consumes.find(function(e,i,a){
-                            return (e.mediaType === mt.mediaType);
-                        });
-                        if (!tmp) {
-                            obj.consumes.push(clone(mt)); // so convertArray works correctly
-                            obj.hasConsumes = true;
-                        }
-                        operation.bodyParam.schema = contentType.schema;
-                        // schemaProperties?
-                        if (contentType.schema.type) {
-                            operation.bodyParam.type = contentType.schema.type;
-                            operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
-                        }
-                    }
-                    operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
-                    operation.bodyParams.push(operation.bodyParam);
-                    operation.bodyParam.isFile = false; // TODO
-                    operation.allParams.push(clone(operation.bodyParam));
-                }
-                operation.tags = op.tags;
-                operation.imports = op.tags;
-                operation.vendorExtensions = {}; // TODO
-
-                operation.responses = [];
-                for (let r in op.responses) {
-                    let response = op.responses[r];
-                    let entry = {};
-                    entry.code = r;
-                    entry.isDefault = (r === 'default');
-                    entry.nickname = 'response'+r;
-                    entry.message = response.description;
-                    entry.description = response.description||'';
-                    entry.simpleType = true;
-                    entry.schema = {};
-                    entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
-                    if (response.content) {
-                        entry.baseType = 'object';
-                        entry.dataType = typeMap(entry.baseType,false,{});;
-                        let contentType = Object.values(response.content)[0];
-                        let mt = {};
-                        mt.mediaType = Object.keys(response.content)[0];
-                        operation.produces.push(mt);
-                        operation.hasProduces = true;
-                        let tmp = obj.produces.find(function(e,i,a){
-                            return (e.mediaType === mt.mediaType);
-                        });
-                        if (!tmp) {
-                            obj.produces.push(clone(mt)); // so convertArray works correctly
-                            obj.hasProduces = true;
-                        }
-                        if (contentType.schema) {
-                            entry.schema = contentType.schema;
-                            entry.jsonSchema = safeJson({schema:entry.schema},null,2);
-                            entry.baseType = contentType.schema.type;
-                            entry.dataType = typeMap(contentType.schema.type,false,entry.schema);
-                            if (contentType.schema["x-oldref"]) {
-                                entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
-                            }
-                        }
-                        operation.returnType = entry.dataType;
-                        operation.returnBaseType = entry.baseType;
-                        operation.returnContainer = ((entry.baseType === 'object') || (entry.baseType === 'array'));
-
-                    }
-                    operation.hasExamples = false;
-                    // TODO examples
-                    entry.openapi = {};
-                    entry.openapi.links = response.links;
-                    operation.responses.push(entry);
-                }
-
-                if (obj.sortParamsByRequiredFlag) {
-                    operation.allParams = operation.allParams.sort(function(a,b){
-                        if (a.required && !b.required) return -1;
-                        if (b.required && !a.required) return +1;
-                        return 0;
-                    });
-                }
-                operation.queryParams = convertArray(operation.queryParams,true);
-                operation.headerParams = convertArray(operation.headerParams,true);
-                operation.pathParams = convertArray(operation.pathParams,true);
-                operation.formParams = convertArray(operation.formParams,true);
-                operation.bodyParams = convertArray(operation.bodyParams,true);
-                operation.allParams = convertArray(operation.allParams,true);
-
-                if (operation.hasConsumes) {
-                    operation.consumes = convertArray(operation.consumes,true);
-                }
-                else {
-                    delete operation.consumes;
-                }
-                if (operation.hasProduces) {
-                    operation.produces = convertArray(operation.produces,true);
-                }
-                else {
-                    delete operation.produces;
-                }
-
-                operation.openapi.callbacks = op.callbacks;
-
-                let container = {};
-                container.baseName = operation.nickname;
-                container.classname = obj.classPrefix+operation.nickname;
-                container.operation = operation;
-                obj.operations.push(container);
-            }
-        }
-    }
-
-    if (obj.operations) {
-        obj.operations = convertArray(obj.operations,true);
-    }
-
-    obj.produces = convertArray(obj.produces,true);
-    obj.consumes = convertArray(obj.consumes,true);
-
     obj.apiInfo = {};
-    obj.apiInfo.apis = [];
-    obj.apiInfo.apis.push( { operations: obj.operations } );
+    obj.apiInfo.apis = convertToApis(api,obj);
+
+    obj.produces = convertArray(obj.produces);
+    obj.consumes = convertArray(obj.consumes);
 
     if (defaults.debug) obj.debugOperations = JSON.stringify(obj,null,2);
 
@@ -719,6 +775,7 @@ function transform(api, defaults, callback) {
                 entry.type = schema.type;
                 entry.required = (parent.required && parent.required.indexOf(entry.name)>=0)||false;
                 entry.isNotRequired = !entry.required;
+                entry.readOnly = !!schema.readOnly;
                 entry.type = typeMap(entry.type,entry.required,schema);
                 entry.datatype = entry.type; //?
                 entry.jsonSchema = safeJson(schema,null,2);
@@ -740,23 +797,23 @@ function transform(api, defaults, callback) {
                 if (entry.isEnum) {
                     model.allowableValues = {};
                     model.allowableValues.enumVars = [];
-                    model.allowableValues.values = schema.enum;
+                    model["allowableValues.values"] = schema.enum;
                     for (let v of schema.enum) {
                         let e = { name: v, value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
                         model.allowableValues.enumVars.push(e);
                     }
-                    model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars,true);
+                    model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
                 }
 
                 if (entry.name && state.depth<=1) {
                     entry.nameInCamelCase = entry.name.toCamelCase();
-                    entry.datatypeWithEnum = entry.name+'Enum';
-                    entry.enumName = entry.datatypeWithEnum;
+                    entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
+                    entry.enumName = entry.name+'Enum';
                     model.hasEnums = true;
                     model.vars.push(entry);
                 }
             });
-            model.vars = convertArray(model.vars,true);
+            model.vars = convertArray(model.vars);
             container.model = model;
             container.importPath = model.name;
             obj.models.push(container);
