@@ -72,7 +72,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |**confluenceWikiDocs**|documentation|**Tested** with Docker [server](https://hub.docker.com/r/atlassian/confluence-server/)||
 |cpprest||
 |csharp||
-|csharp-dotnet2||
+|**csharp-dotnet2**|client|**Untested**||
 |dart||
 |**debug**|meta|*used for dumping the model state*||@Mermade|@MikeRalphson
 |Eiffel||

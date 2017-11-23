@@ -77,19 +77,29 @@ function getAuthData(secSchemes,api) {
         else if (scheme.type === 'oauth2') {
             entry.isOAuth = true;
             if (scheme.flows) {
+                entry.flow = Object.keys(scheme.flows)[0];
                 let flow = Object.values(scheme.flows)[0];
                 entry.authorizationUrl = flow.authorizationUrl;
                 entry.tokenUrl = flow.tokenUrl;
-                // TODO override scopes
+                entry.scopes = [];
                 if (flow.scopes) {
-                    entry.scopes = [];
                     for (let scope in flow.scopes) {
                         let sc = {};
                         sc.scope = scope;
                         entry.scopes.push(sc);
                     }
-                    entry.scopes = convertArray(entry.scopes);
                 }
+                // override scopes with local subset
+                if (Array.isArray(ss[s])) {
+                    let newScopes = [];
+                    for (let scope of entry.scopes) {
+                        if (ss[s].indexOf(scope.scope)>=0) {
+                            newScopes.push(scope);
+                        }
+                    }
+                    entry.scopes = newScopes;
+                }
+                entry.scopes = convertArray(entry.scopes);
             }
         }
         else if (scheme.type == 'apiKey') {

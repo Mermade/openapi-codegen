@@ -1,0 +1,24 @@
+{
+    "defaults": {
+        "supportUWP": true
+    },
+    "partials": {
+    },
+    "directories": [ "docs", "vendor", "src", "src/Api", "src/Client", "src/Model" ],
+    "transformations": [
+        { "input": "ApiClient.mustache", "output": "src/Client/ApiClient" },
+        { "input": "ApiException.mustache", "output": "src/Client/ApiException.cs" },
+        { "input": "compile-mono.sh.mustache", "output": "compile-mono.sh" },
+        { "input": "Configuration.mustache", "output": "src/Client/Configuration.cs" },
+        { "input": "packages.config.mustache", "output": "vendor/packages.config" },
+        { "input": "README.mustache", "output": "README.md" }
+    ],
+    "perApi": [
+        { "input": "api.mustache", "output": "src/Api/{{name}}Api.cs" },
+        { "input": "api_doc.mustache", "output": "docs/{{name}}Api.md" }
+    ],
+    "perModel": [
+        { "input": "model.mustache", "output": "src/Model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.cs" },
+        { "input": "model_doc.mustache", "output": "docs/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.md" }
+    ]
+}
