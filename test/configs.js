@@ -130,6 +130,11 @@ async function main(){
                                 if (name === po.input) found++;
                             }
                         }
+                        if (config.perApi) {
+                            for (let pa of config.perApi) {
+                                if (name === pa.input) found++;
+                            }
+                        }
                         found.should.be.greaterThan(0);
                     });
 
