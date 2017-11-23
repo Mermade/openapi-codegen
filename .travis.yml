@@ -5,6 +5,7 @@ before_script:
   - sudo apt-get install lua5.2
   - sudo apt-get install golang
   - sudo apt-get install ruby
+  - sudo apt-get install ghc
 script:
   - npm test
   - bin/buildAll.sh
@@ -15,3 +16,4 @@ script:
   - bin/checkGo.sh
   - bin/checkRuby.sh
   - bin/checkBash.sh
+  - bin/checkHaskell.sh
