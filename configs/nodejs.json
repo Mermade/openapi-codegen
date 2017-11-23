@@ -8,14 +8,15 @@
         "api", "controllers", "utils", "impl"
     ],
     "transformations": [
-        { "input": "controller.mustache", "output": "controllers/controller.js" },
         { "input": "index.mustache", "output": "index.js" },
         { "input": "index-gcf.mustache", "output": "index-gcf.js" },
         { "input": "package.mustache", "output": "package.json" },
         { "input": "README.mustache", "output": "README.md" },
-        { "input": "service.mustache", "output": "service.js" },
         { "input": "swagger.mustache", "output": "api/swagger.yaml" },
         { "input": "writer.mustache", "output": "utils/writer.js" }
     ],
-    "touch": "{{#operations}}{{#operation}}impl/{{classname}}Service.js{{newline}}{{/operation}}{{/operations}}"
+    "perApi": [
+        { "input": "controller.mustache", "output": "controllers/{{name}}.js" },
+        { "input": "service.mustache", "output": "impl/{{name}}ApiService.js" }
+    ]
 }
