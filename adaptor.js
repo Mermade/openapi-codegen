@@ -544,6 +544,7 @@ function getPrime(api,defaults) {
     prime.packageVersion = api.info.version;
     prime.projectVersion = api.info.version;
     prime.version = api.info.version;
+    prime.title = api.info.title;
     prime.swaggerVersion = '2.0';
     prime.generatorVersion = require('./package.json').version;
     prime.swaggerCodegenVersion = 'openapi-codegen-v'+prime.generatorVersion;

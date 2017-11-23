@@ -66,7 +66,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |**apache2**|configuration|**needs work**||
 |apex||
 |aspnetcore||
-|**bash**|client|**Needs testing**||@bkryza|@MikeRalphson
+|**bash**|client|**Syntax ok, needs testing**||@bkryza|@MikeRalphson
 |**clojure**|client|**Untested**|
 |**codegen**|meta|**Demo only**|||@MikeRalphson
 |**confluenceWikiDocs**|documentation|**Tested** with Docker [server](https://hub.docker.com/r/atlassian/confluence-server/)||
@@ -85,8 +85,8 @@ The templates with a status have a working (if not necessarily tested) configura
 |**go**|client|**Builds, needs testing**||
 |**go-server**|server|**Builds and runs**||
 |**Groovy**|?|**untested**||
-|haskell-http-client||
-|haskell-servant||
+|haskell-http-client|client||||
+|**haskell-servant**|server|**Untested**||
 |**htmlDocs**|documentation|*Appears to work*||
 |**htmlDocs2**|documentation|*Appears to work, no console errors logged*||
 |Java||

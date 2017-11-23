@@ -1,0 +1,15 @@
+{
+    "defaults": {
+    },
+    "partials": {
+    },
+    "directories": [ "lib", "lib/Api" ],
+    "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "Setup.mustache", "output": "Setup.hs" },
+        { "input": "Types.mustache", "output": "lib/Api/Types.hs" },
+        { "input": "API.mustache", "output": "lib/Api/API.hs" },
+        { "input": "stack.mustache", "output": "stack.yaml" },
+        { "input": "haskell-servant-codegen.mustache", "output": "swagger-api.cabal" }
+    ]
+}
