@@ -1,0 +1,19 @@
+{
+    "defaults": {
+        "modelNamespace": "openapi"
+    },
+    "partials": {
+        "licenseInfo": "licenseInfo.mustache"
+    },
+    "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "api-header.mustache", "output": "api-default.h" },
+        { "input": "api-source.mustache", "output": "api-default.cpp" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "gitignore.mustache", "output": ".gitignore" }
+    ],
+    "perModel": [
+        { "input": "model-header.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.h" },
+        { "input": "model-source.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.cpp" }
+    ]
+}

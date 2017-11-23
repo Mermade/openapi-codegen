@@ -33,6 +33,10 @@ const schemaProperties = [
     'default'
 ];
 
+// used by helper functions / convertToArray's toString method
+let arrayMode = 'length';
+let thisFunc = encodeURIComponent;
+
 String.prototype.toCamelCase = function camelize() {
     return this.toLowerCase().replace(/[-_ \/\.](.)/g, function (match, group1) {
         return group1.toUpperCase();
@@ -51,6 +55,7 @@ function convertArray(arr,setHasMore) {
         }
     }
     else arr.isEmpty = true;
+    arr.toString = function() { if (arrayMode === 'length') return this.length.toString() };
     return arr;
 }
 
@@ -283,6 +288,19 @@ function transform(api, defaults, callback) {
     obj.openapi.version = api.openapi;
     obj.openapi.servers = api.servers;
 
+    // helper functions (seen in erlang-client)
+    obj.qsEncode = function() {
+        thisFunc = encodeURIComponent;
+        return true;
+    };
+    obj.this = function() {
+        return thisFunc(this.paramName);
+    };
+    obj.length = function() {
+        arrayMode = 'length';
+        return true;
+    };
+
     if (api.components && api.components.securitySchemes) {
         obj.hasAuthMethods = true;
         obj.authMethods = [];
@@ -408,6 +426,7 @@ function transform(api, defaults, callback) {
                 operation.nickname = op.operationId;
                 operation.httpMethod = o; //o.toUpperCase();
                 operation.path = p;
+                operation.replacedPathName = p; //?
                 operation.operationId = op.operationId;
                 operation.operationIdLowerCase = (op.operationId||'').toLowerCase();
                 operation.operationIdSnakeCase = op.operationdId;
@@ -570,6 +589,7 @@ function transform(api, defaults, callback) {
                     let response = op.responses[r];
                     let entry = {};
                     entry.code = r;
+                    entry.isDefault = (r === 'default');
                     entry.nickname = 'response'+r;
                     entry.message = response.description;
                     entry.description = response.description||'';
@@ -577,7 +597,8 @@ function transform(api, defaults, callback) {
                     entry.schema = {};
                     entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
                     if (response.content) {
-                        entry.dataType = 'object';
+                        entry.baseType = 'object';
+                        entry.dataType = typeMap(entry.baseType,false,{});;
                         let contentType = Object.values(response.content)[0];
                         let mt = {};
                         mt.mediaType = Object.keys(response.content)[0];
@@ -593,12 +614,16 @@ function transform(api, defaults, callback) {
                         if (contentType.schema) {
                             entry.schema = contentType.schema;
                             entry.jsonSchema = safeJson({schema:entry.schema},null,2);
+                            entry.baseType = contentType.schema.type;
                             entry.dataType = typeMap(contentType.schema.type,false,entry.schema);
                             if (contentType.schema["x-oldref"]) {
                                 entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
                             }
                         }
                         operation.returnType = entry.dataType;
+                        operation.returnBaseType = entry.baseType;
+                        operation.returnContainer = ((entry.baseType === 'object') || (entry.baseType === 'array'));
+
                     }
                     operation.hasExamples = false;
                     // TODO examples
@@ -646,7 +671,7 @@ function transform(api, defaults, callback) {
     }
 
     if (obj.operations) {
-        obj.operations[obj.operations.length-1].operation.hasMore = false;
+        obj.operations = convertArray(obj.operations,true);
     }
 
     obj.produces = convertArray(obj.produces,true);
@@ -692,12 +717,11 @@ function transform(api, defaults, callback) {
                 entry.description = schema.description||'';
                 entry.unescapedDescription = entry.description;
                 entry.type = schema.type;
-                entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
+                entry.required = (parent.required && parent.required.indexOf(entry.name)>=0)||false;
                 entry.isNotRequired = !entry.required;
                 entry.type = typeMap(entry.type,entry.required,schema);
                 entry.datatype = entry.type; //?
                 entry.jsonSchema = safeJson(schema,null,2);
-                entry.hasMore = true;
                 for (let p in schemaProperties) {
                     if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
                 }
@@ -732,9 +756,7 @@ function transform(api, defaults, callback) {
                     model.vars.push(entry);
                 }
             });
-            if (model.vars.length) {
-                model.vars[model.vars.length-1].hasMore = false;
-            }
+            model.vars = convertArray(model.vars,true);
             container.model = model;
             container.importPath = model.name;
             obj.models.push(container);

@@ -66,7 +66,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |**apache2**|configuration|**needs work**||
 |apex||
 |aspnetcore||
-|bash|client|**Needs testing**||@bkryza|@MikeRalphson
+|**bash**|client|**Needs testing**||@bkryza|@MikeRalphson
 |**clojure**|client|**Untested**|
 |**codegen**|meta|**Demo only**|||@MikeRalphson
 |**confluenceWikiDocs**|documentation|**Tested** with Docker [server](https://hub.docker.com/r/atlassian/confluence-server/)||
@@ -77,7 +77,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |**debug**|meta|*used for dumping the model state*||@Mermade|@MikeRalphson
 |Eiffel||
 |elixir||
-|erlang-client|client|**Untested**||
+|**erlang-client**|client|**Untested**||
 |erlang-server|server|
 |finch||
 |flash||
@@ -116,14 +116,14 @@ The templates with a status have a working (if not necessarily tested) configura
 |qt5cpp||
 |r||
 |rails5||
-|restbed||
+|**restbed**|server|**Untested**||
 |ruby||
 |rust||
 |rust-server||
 |scala||
 |scalatra||
 |scalaz|client|**Untested**||
-|sinatra|server|**Syntax checks OK**||
+|**sinatra**|server|**Syntax checks OK**||
 |**slim**|server|**Untested**||
 |**swagger**|meta|*outputs the input definition (in original form if OpenAPI 2.0)* :white_check_mark:||
 |**swagger-static**|documentation|**tested** *template modified to include partials*||
