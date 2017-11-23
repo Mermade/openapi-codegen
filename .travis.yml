@@ -10,7 +10,8 @@ script:
   - bin/buildAll.sh
   - npm i typescript -g
   - bin/checkJs.sh
-#  - bin/checkTs.sh
+  - bin/checkTs.sh
   - bin/checkLua.sh
   - bin/checkGo.sh
   - bin/checkRuby.sh
+  - bin/checkBash.sh
