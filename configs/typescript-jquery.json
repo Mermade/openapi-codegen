@@ -1,0 +1,35 @@
+{
+    "defaults": {
+        "language": "typescript",
+        "supportsES6": true,
+        "gitUserId": "mermade",
+        "gitRepoId": "change-me",
+        "releaseNote": "Initial commit",
+        "npmName": "change-me",
+        "npmVersion": "1.0.0",
+        "npmRepository": "https://github.com/mermade/change-me",
+        "jqueryAlreadyImported": false
+    },
+    "directories": [ "api", "model", "typings" ],
+    "partials": {
+        "licenseInfo": "licenseInfo.mustache",
+        "modelEnum": "modelEnum.mustache",
+        "modelGeneric": "modelGeneric.mustache"
+    },
+    "transformations": [
+        { "input": "api.mustache", "output": "api/api.ts" },
+        { "input": "apis.mustache", "output": "apis.ts" },
+        { "input": "configuration.mustache", "output": "configuration.ts" },
+        { "input": "index.mustache", "output": "index.ts" },
+        { "input": "masterApiEntry.mustache", "output": "masterApiEntry.ts" },
+        { "input": "models.mustache", "output": "model/models.ts" },
+        { "input": "package.mustache", "output": "package.json" },
+        { "input": "tsconfig.mustache", "output": "tsconfig.json" },
+        { "input": "variables.mustache", "output": "variables.ts" },
+        { "input": "typings.mustache", "output": "typings/index.d.ts" },
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" }
+    ],
+    "perModel": [
+        { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.ts" }
+    ]
+}

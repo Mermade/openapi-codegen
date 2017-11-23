@@ -18,8 +18,8 @@
         { "input": "model_doc.mustache", "output": "model_doc.md" },
         { "input": "README.mustache", "output": "README.md" }
     ],
-    "perOperation": [
-        { "input": "api.mustache", "output": "{{#operations}}{{#operation}}{{classname}}{{/operation}}{{/operations}}.go" }
+    "perApi": [
+        { "input": "api.mustache", "output": "{{name}}_api.go" }
     ],
     "perModel": [
         { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.go" }

@@ -8,11 +8,10 @@
         "partial_header": "partial_header.mustache"
     },
     "directories": [
-        "err"
+        "err", "docs"
     ],
     "transformations": [
         { "input": "api_client.mustache", "output": "err/api_client.go" },
-        { "input": "api_doc.mustache", "output": "api_doc.md" },
         { "input": "api.mustache", "output": "api.lua" },
         { "input": "configuration.mustache", "output": "err/configuration.go" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
@@ -22,5 +21,8 @@
     ],
     "perModel": [
         { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.lua" }
+    ],
+    "perApi": [
+        { "input": "api_doc.mustache", "output": "docs/{{name}}.md" }
     ]
 }
