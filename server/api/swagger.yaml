@@ -32,7 +32,6 @@ tags:
 paths:
   /gen/clients:
     get:
-      x-swagger-router-controller: Clients
       description: ''
       operationId: clientOptions
       parameters: []
