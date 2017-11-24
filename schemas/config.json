@@ -10,6 +10,10 @@
                 "documentation"
             ]
         },
+        "name": {
+            "type": "string",
+            "description": "Name of the config. Currently unused."
+        },
         "apache": {
             "type": "boolean",
             "description": "Whether to include the Apache-2.0 license instead of the Unlicense"
@@ -45,7 +49,8 @@
                         "type": "string",
                         "description": "The output filename, can be templated"
                     }
-                }
+                },
+                "additionalProperties": false
             }
         },
         "perOperation": {
@@ -61,7 +66,25 @@
                         "type": "string",
                         "description": "The output filename, can be templated"
                     }
-                }
+                },
+                "additionalProperties": false
+            }
+        },
+        "perApi": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "input": {
+                        "type": "string",
+                        "description": "The input template filename"
+                    },
+                    "output": {
+                        "type": "string",
+                        "description": "The output filename, can be templated"
+                    }
+                },
+                "additionalProperties": false
             }
         },
         "transformations": {
@@ -83,7 +106,8 @@
                 },
                 "required": [
                     "output"
-                ]
+                ],
+                "additionalProperties": false
             }
         },
         "touch": {
@@ -94,5 +118,6 @@
     "required": [
         "defaults",
         "transformations"
-    ]
+    ],
+    "additionalProperties": false
 }
