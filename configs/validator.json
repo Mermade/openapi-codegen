@@ -4,6 +4,7 @@
     "partials": {
     },
     "transformations": [
-        { "input": "index.mustache", "output": "index.html" }
+        { "input": "index.mustache", "output": "index.html" },
+        { "input": "README.md", "output": "README.md" }
     ]
 }

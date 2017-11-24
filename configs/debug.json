@@ -5,6 +5,7 @@
     "partials": {
     },
     "transformations": [
-        { "input": "debug.mustache", "output": "debug.json" }
+        { "input": "debug.mustache", "output": "debug.json" },
+        { "input": "README.md", "output": "README.md" }
     ]
 }
