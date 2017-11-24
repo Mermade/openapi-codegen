@@ -1,6 +1,7 @@
 {
     "defaults": {
-        "usePromises": true
+        "usePromises": true,
+        "httpMethodCase": "original"
     },
     "directories": [
     ],

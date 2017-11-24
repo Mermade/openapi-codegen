@@ -121,16 +121,27 @@ function getAuthData(secSchemes,api) {
     return result;
 }
 
+function specificationExtensions(obj) {
+    let result = {};
+    for (let k in obj) {
+       if (k.startsWith('x-')) result[k] = obj[k];
+    }
+    return result;
+}
+
 function convertOperation(op,verb,path,pathItem,obj,api) {
     let operation = {};
-    operation.nickname = op.operationId;
-    //operation.classname = obj.classPrefix+operation.nickname;
-    operation.httpMethod = verb; //verb.toUpperCase();
+    operation.httpMethod = verb.toUpperCase();
+    if ('original' === obj.httpMethodCase) operation.httpMethod = verb; // extension
     operation.path = path;
     operation.replacedPathName = path; //?
-    operation.operationId = op.operationId;
-    operation.operationIdLowerCase = (op.operationId||'').toLowerCase();
-    operation.operationIdSnakeCase = op.operationdId;
+
+    operation.operationId = op.operationId||('operation'+obj.openapi.operationCounter++);
+    operation.operationIdLowerCase = operation.operationId.toLowerCase();
+    operation.operationIdSnakeCase = operation.operationId; // TODO
+    operation.nickname = operation.operationId;
+    //operation.classname = obj.classPrefix+operation.nickname;
+
     operation.description = op.description;
     operation.summary = op.summary;
     operation.allParams = [];
@@ -144,8 +155,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         operation.notes = {isEmpty:true};
         operation.notes.toString = function() { return '' };
     }
-    operation.responseHeaders = []; // TODO
-    operation.hasMore = true; // last one gets reset to false
+    //operation.hasMore = true; // last one gets reset to false
     operation.isResponseBinary = false; //TODO
     operation.isResponseFile = false; //TODO
     operation.baseName = 'Default';
@@ -198,8 +208,12 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         parameter.description = param.description||'';
         parameter.unescapedDescription = param.description;
         parameter.defaultValue = param.default;
-        parameter.hasMore = true; // last one gets reset below after sorting
         parameter.isFile = false;
+        parameter.isEnum = false; // TODO?
+        parameter.vendorExtensions = specificationExtensions(param);
+        if (param.nullable) {
+            parameter.vendorExtensions["x-nullable"] = true;
+        }
         if (param.style === 'form') {
             if (param.explode) {
                 parameter.collectionFormat = 'multi';
@@ -264,8 +278,8 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{}); // can be changed below
         operation.bodyParam.description = op.requestBody.description||'';
         operation.bodyParam.schema = {};
-        operation.bodyParam.isEnum = false;
-        operation.bodyParam.vendorExtensions = {}; // TODO
+        operation.bodyParam.isEnum = false; // TODO?
+        operation.bodyParam.vendorExtensions = specificationExtensions(op.requestBody);
         if (op.requestBody.content) {
             let contentType = Object.values(op.requestBody.content)[0];
             let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
@@ -295,7 +309,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     }
     operation.tags = op.tags;
     operation.imports = op.tags;
-    operation.vendorExtensions = {}; // TODO
+    operation.vendorExtensions = specificationExtensions(op);
 
     operation.responses = [];
     for (let r in op.responses) {
@@ -309,6 +323,8 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.simpleType = true;
         entry.schema = {};
         entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
+        operation.hasExamples = false;
+        operation.examples = {};
         if (response.content) {
             entry.baseType = 'object';
             entry.dataType = typeMap(entry.baseType,false,{});;
@@ -335,14 +351,26 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                     entry.isPrimitiveType = false;
                 }
             }
+            if (contentType.example) {
+                entry.hasExamples = true;
+                entry.examples[mt.mediaType] = contentType.example;
+            }
+            if (contentType.examples) {
+                for (let example in contentType.examples) {
+                    if (example.value) {
+                        entry.hasExamples = true;
+                        entry.examples[mt.mediaType] = example.value;
+                    }
+                }
+            }
             operation.returnType = entry.dataType;
             operation.returnBaseType = entry.baseType;
             operation.returnTypeIsPrimitive = entry.isPrimitiveType;
             operation.returnContainer = ((entry.baseType === 'object') || (entry.baseType === 'array'));
 
         }
-        operation.hasExamples = false;
-        // TODO examples
+        entry.responseHeaders = []; // TODO responseHeaders
+        entry.responseHeaders = convertArray(entry.responseHeaders);
         entry.openapi = {};
         entry.openapi.links = response.links;
         operation.responses.push(entry);
@@ -656,6 +684,7 @@ function transform(api, defaults, callback) {
 
     // openapi3 extensions
     obj.openapi = {};
+    obj.openapi.operationCounter = 1;
     obj.openapi.version = api.openapi;
     obj.openapi.servers = api.servers;
 
@@ -669,6 +698,10 @@ function transform(api, defaults, callback) {
     };
     obj.length = function() {
         arrayMode = 'length';
+        return true;
+    };
+    obj.capitalize = function() {
+        //? seen in akka-scala
         return true;
     };
 

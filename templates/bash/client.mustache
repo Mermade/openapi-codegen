@@ -763,7 +763,7 @@ call_{{operationId}}() {
     local query_parameter_names=({{#queryParams}}{{baseName}}{{#hasMore}} {{/hasMore}}{{/queryParams}}{{#authMethods}} {{#isApiKey}}{{#isKeyInQuery}}{{keyParamName}}{{/isKeyInQuery}}{{/isApiKey}} {{/authMethods}})
     local path
 
-    if ! path=$(build_request_path "{{basePathWithoutHost}}{{{path}}}" path_parameter_names query_parameter_names); then
+    if ! path=$(build_request_path "{{{basePathWithoutHost}}}{{{path}}}" path_parameter_names query_parameter_names); then
         ERROR_MSG=$path
         exit 1
     fi

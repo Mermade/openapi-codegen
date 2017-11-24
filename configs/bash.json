@@ -1,6 +1,7 @@
 {
     "defaults": {
-        "scriptName": "bash_completion.sh"
+        "scriptName": "bash_completion.sh",
+        "x-codegen-curl-options": "--location"
     },
     "transformations": [
         { "input": "api_doc.mustache", "output": "api_doc.md" },
