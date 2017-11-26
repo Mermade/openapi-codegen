@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const util = require('util');
 
 const mkdirp = require('mkdirp');
@@ -18,6 +19,10 @@ let ff = {
     mkdirp: mkdirp
 };
 
+function tpl(...segments) {
+    return path.join(__dirname, 'templates', ...segments)
+};
+
 function main(o, config, configName, callback) {
     let outputDir = config.outputDir || './out/';
     let verbose = config.defaults.verbose;
@@ -26,7 +31,7 @@ function main(o, config, configName, callback) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
-            config.partials[p] = ff.readFileSync('./templates/'+configName+'/'+partial,'utf8');
+            config.partials[p] = ff.readFileSync(tpl(configName, partial),'utf8');
         }
     
         let actions = [];
@@ -34,7 +39,7 @@ function main(o, config, configName, callback) {
             let tx = config.transformations[t];
             if (tx.input) {
                 if (verbose) console.log('Processing template '+tx.input);
-                tx.template = ff.readFileSync('./templates/'+configName+'/'+tx.input,'utf8');
+                tx.template = ff.readFileSync(tpl(configName, tx.input),'utf8');
             }
             actions.push(tx);
         }
@@ -65,10 +70,10 @@ function main(o, config, configName, callback) {
                     }
                 }
                 if (config.apache) {
-                    ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync('./templates/_common/LICENSE','utf8'),'utf8');
+                    ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync(tpl('_common', 'LICENSE'),'utf8'),'utf8');
                 }
                 else {
-                    ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync('./templates/_common/UNLICENSE','utf8'),'utf8');
+                    ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
                 }
                 let outer = model;
      
@@ -79,7 +84,7 @@ function main(o, config, configName, callback) {
                         for (let api of model.apiInfo.apis) {
                             let cApi = Object.assign({},config.defaults,toplevel,api);
                             let filename = mustache.render(pa.output,cApi,config.partials);
-                            let template = ff.readFileSync('./templates/'+configName+'/'+pa.input,'utf8');
+                            let template = ff.readFileSync(tpl(configName, pa.input),'utf8');
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
                             ff.createFile(outputDir+configName+'/'+filename,mustache.render(template,cApi,config.partials),'utf8');
                         }
@@ -93,7 +98,7 @@ function main(o, config, configName, callback) {
                             outer.models = [];
                             outer.models.push(model);
                             let filename = mustache.render(pm.output,outer,config.partials);
-                            let template = ff.readFileSync('./templates/'+configName+'/'+pm.input,'utf8');
+                            let template = ff.readFileSync(tpl(configName, pm.input),'utf8');
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
                             ff.createFile(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
                         }
@@ -108,7 +113,7 @@ function main(o, config, configName, callback) {
                                 model.operations = [];
                                 model.operations.push(operation);
                                 let filename = mustache.render(po.output,outer,config.partials);
-                                let template = ff.readFileSync('./templates/'+configName+'/'+po.input,'utf8');
+                                let template = ff.readFileSync(tpl(configName, po.input),'utf8');
                                 if (verbose) console.log('Rendering '+filename+' (dynamic)');
                                 ff.createFile(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
                             }
