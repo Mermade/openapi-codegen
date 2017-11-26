@@ -323,8 +323,6 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.simpleType = true;
         entry.schema = {};
         entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
-        operation.hasExamples = false;
-        operation.examples = {};
         if (response.content) {
             entry.baseType = 'object';
             entry.dataType = typeMap(entry.baseType,false,{});;
@@ -353,12 +351,14 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             }
             if (contentType.example) {
                 entry.hasExamples = true;
+                if (!entry.examples) entry.examples = {};
                 entry.examples[mt.mediaType] = contentType.example;
             }
             if (contentType.examples) {
                 for (let example in contentType.examples) {
                     if (example.value) {
                         entry.hasExamples = true;
+                        if (!entry.examples) entry.examples = true;
                         entry.examples[mt.mediaType] = example.value;
                     }
                 }

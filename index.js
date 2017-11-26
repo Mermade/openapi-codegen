@@ -5,7 +5,7 @@ const util = require('util');
 
 const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
-const mustache = require('mustache');
+const Hogan = require('hogan.js');
 const clone = require('reftools/lib/clone.js').clone;
 
 const adaptor = require('./adaptor.js');
@@ -26,7 +26,7 @@ function main(o, config, configName, callback) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
-            config.partials[p] = ff.readFileSync('./templates/'+configName+'/'+partial,'utf8');
+            config.partials[p] = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+partial,'utf8'));
         }
     
         let actions = [];
@@ -49,11 +49,13 @@ function main(o, config, configName, callback) {
                 }
                 for (let action of actions) {
                     if (verbose) console.log('Rendering '+action.output);
-                    let content = mustache.render(action.template, model, config.partials);
+                    let template = Hogan.compile(action.template);
+                    let content = template.render(Object.assign({},model, {partials:config.partials}));
                     ff.createFile(outputDir+configName+'/'+action.output,content,'utf8');
                 }
                 if (config.touch) {
-                    let touchList = mustache.render(config.touch, model, config.partials);
+                    let touchTmp = Hogan.compile(config.touch);
+                    let touchList = touchTmp.render(config.touch, Object.assign({},model, {partials:config.partials}));
                     let files = touchList.split('\r').join('').split('\n');
                     for (let file of files) {
                         file = file.trim();
@@ -76,12 +78,13 @@ function main(o, config, configName, callback) {
                     let toplevel = clone(model);
                     delete toplevel.apiInfo;
                     for (let pa of config.perApi) {
+                        let fnTemplate = Hogan.compile(pa.output);
+                        let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+pa.input,'utf8'));
                         for (let api of model.apiInfo.apis) {
                             let cApi = Object.assign({},config.defaults,toplevel,api);
-                            let filename = mustache.render(pa.output,cApi,config.partials);
-                            let template = ff.readFileSync('./templates/'+configName+'/'+pa.input,'utf8');
+                            let filename = fnTemplate.render(Object.assign({},cApi,{partials:config.partials}));
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                            ff.createFile(outputDir+configName+'/'+filename,mustache.render(template,cApi,config.partials),'utf8');
+                            ff.createFile(outputDir+configName+'/'+filename,template.render(Object.assign({},cApi,{partials:config.partials})),'utf8');
                         }
                     }
                 }
@@ -89,13 +92,14 @@ function main(o, config, configName, callback) {
                 if (config.perModel) {
                     let cModels = clone(model.models); 
                     for (let pm of config.perModel) {
+                        let fnTemplate = Hogan.compile(pm.output);
+                        let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+pm.input,'utf8'));
                         for (let model of cModels) {
                             outer.models = [];
                             outer.models.push(model);
-                            let filename = mustache.render(pm.output,outer,config.partials);
-                            let template = ff.readFileSync('./templates/'+configName+'/'+pm.input,'utf8');
+                            let filename = fnTemplate.render(Object.assign({},outer,{partials:config.partials}));
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                            ff.createFile(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
+                            ff.createFile(outputDir+configName+'/'+filename,template.render(Object.assign({},outer,{partials:config.partials})),'utf8');
                         }
                     }
                 }
@@ -107,10 +111,11 @@ function main(o, config, configName, callback) {
                             for (let operation of cOperations) {
                                 model.operations = [];
                                 model.operations.push(operation);
-                                let filename = mustache.render(po.output,outer,config.partials);
-                                let template = ff.readFileSync('./templates/'+configName+'/'+po.input,'utf8');
+                                let fnTemplate = Hogan.compile(po.output);
+                                let filename = fnTemplate.render(Object.assign({},outer,{partials:config.partials}));
+                                let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+po.input,'utf8'));
                                 if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                                ff.createFile(outputDir+configName+'/'+filename,mustache.render(template,outer,config.partials),'utf8');
+                                ff.createFile(outputDir+configName+'/'+filename,template.render(Object.assign({},outer,{partials:config.partials})),'utf8');
                             }
                         }
                     }
