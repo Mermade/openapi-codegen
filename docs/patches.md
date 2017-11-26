@@ -22,4 +22,18 @@
 ## Patch mustache.js for debugging
 
 ```diff
+--- mustache.old        2017-11-26 13:56:27.432368300 +0000
++++ mustache.js 2017-11-23 13:39:14.855455600 +0000
+@@ -425,10 +425,11 @@
+     }
+
+     if (isFunction(value))
+       value = value.call(this.view);
+
++    if (typeof value === 'undefined') console.warn('  miss',name);
+     return value;
+   };
+
+   /**
+    * A Writer knows how to take a stream of tokens and render them to a
 ```
