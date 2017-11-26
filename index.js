@@ -26,7 +26,8 @@ function main(o, config, configName, callback) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
-            config.partials[p] = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+partial,'utf8'));
+            //config.partials[p] = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+partial,'utf8'));
+            config.partials[p] = ff.readFileSync('./templates/'+configName+'/'+partial,'utf8');
         }
     
         let actions = [];
