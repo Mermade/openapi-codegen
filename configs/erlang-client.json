@@ -5,10 +5,12 @@
     },
     "directories": [ "src" ],
     "transformations": [
-        { "input": "api.mustache", "output": "src/swagger_default_api.erl" },
         { "input": "app.src.mustache", "output": "src/swagger_app.src" },
         { "input": "README.mustache", "output": "README.md" },
         { "input": "rebar.config.mustache", "output": "rebar.config" }
+    ],
+    "perApi": [
+        { "input": "api.mustache", "output": "src/{{name}}Api.erl" }
     ],
     "perModel": [
         { "input": "model.mustache", "output": "src/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.erl" }

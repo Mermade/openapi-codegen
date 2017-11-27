@@ -6,7 +6,7 @@ const util = require('util');
 const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 const Hogan = require('hogan.js');
-const clone = require('reftools/lib/clone.js').clone;
+const clone = require('reftools/lib/clone.js').deepClone; // must preserve functions
 
 const adaptor = require('./adaptor.js');
 
