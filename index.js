@@ -26,7 +26,6 @@ function main(o, config, configName, callback) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
-            //config.partials[p] = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+partial,'utf8'));
             config.partials[p] = ff.readFileSync('./templates/'+configName+'/'+partial,'utf8');
         }
     
@@ -51,12 +50,12 @@ function main(o, config, configName, callback) {
                 for (let action of actions) {
                     if (verbose) console.log('Rendering '+action.output);
                     let template = Hogan.compile(action.template);
-                    let content = template.render(Object.assign({},model, {partials:config.partials}));
+                    let content = template.render(model,config.partials);
                     ff.createFile(outputDir+configName+'/'+action.output,content,'utf8');
                 }
                 if (config.touch) {
                     let touchTmp = Hogan.compile(config.touch);
-                    let touchList = touchTmp.render(config.touch, Object.assign({},model, {partials:config.partials}));
+                    let touchList = touchTmp.render(model,config.partials);
                     let files = touchList.split('\r').join('').split('\n');
                     for (let file of files) {
                         file = file.trim();
@@ -83,9 +82,9 @@ function main(o, config, configName, callback) {
                         let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+pa.input,'utf8'));
                         for (let api of model.apiInfo.apis) {
                             let cApi = Object.assign({},config.defaults,toplevel,api);
-                            let filename = fnTemplate.render(Object.assign({},cApi,{partials:config.partials}));
+                            let filename = fnTemplate.render(cApi,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                            ff.createFile(outputDir+configName+'/'+filename,template.render(Object.assign({},cApi,{partials:config.partials})),'utf8');
+                            ff.createFile(outputDir+configName+'/'+filename,template.render(cApi,config.partials),'utf8');
                         }
                     }
                 }
@@ -98,9 +97,9 @@ function main(o, config, configName, callback) {
                         for (let model of cModels) {
                             outer.models = [];
                             outer.models.push(model);
-                            let filename = fnTemplate.render(Object.assign({},outer,{partials:config.partials}));
+                            let filename = fnTemplate.render(outer,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                            ff.createFile(outputDir+configName+'/'+filename,template.render(Object.assign({},outer,{partials:config.partials})),'utf8');
+                            ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
                         }
                     }
                 }
@@ -113,10 +112,10 @@ function main(o, config, configName, callback) {
                                 model.operations = [];
                                 model.operations.push(operation);
                                 let fnTemplate = Hogan.compile(po.output);
-                                let filename = fnTemplate.render(Object.assign({},outer,{partials:config.partials}));
+                                let filename = fnTemplate.render(outer,config.partials);
                                 let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+po.input,'utf8'));
                                 if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                                ff.createFile(outputDir+configName+'/'+filename,template.render(Object.assign({},outer,{partials:config.partials})),'utf8');
+                                ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
                             }
                         }
                     }
