@@ -1,5 +1,6 @@
 {
     "defaults": {
+        "modelNaming": "snake_case"
     },
     "partials": {
     },

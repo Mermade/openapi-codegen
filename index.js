@@ -53,7 +53,7 @@ function main(o, config, configName, callback) {
                     let content = template.render(model,config.partials);
                     ff.createFile(outputDir+configName+'/'+action.output,content,'utf8');
                 }
-                if (config.touch) {
+                if (config.touch) { // may not now be necessary
                     let touchTmp = Hogan.compile(config.touch);
                     let touchList = touchTmp.render(model,config.partials);
                     let files = touchList.split('\r').join('').split('\n');
@@ -108,12 +108,12 @@ function main(o, config, configName, callback) {
                     for (let po of config.perOperation) {
                         for (let api of outer.apiInfo.apis) {
                             let cOperations = clone(api.operations);
+                            let fnTemplate = Hogan.compile(po.output);
+                            let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+po.input,'utf8'));
                             for (let operation of cOperations) {
                                 model.operations = [];
                                 model.operations.push(operation);
-                                let fnTemplate = Hogan.compile(po.output);
                                 let filename = fnTemplate.render(outer,config.partials);
-                                let template = Hogan.compile(ff.readFileSync('./templates/'+configName+'/'+po.input,'utf8'));
                                 if (verbose) console.log('Rendering '+filename+' (dynamic)');
                                 ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
                             }

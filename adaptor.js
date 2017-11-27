@@ -6,6 +6,7 @@ const url = require('url');
 const yaml = require('js-yaml');
 const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
+const Case = require('case');
 const stools = require('swagger-tools');
 const deref = require('reftools/lib/dereference.js').dereference;
 const clone = require('reftools/lib/clone.js').clone;
@@ -36,12 +37,6 @@ const schemaProperties = [
 // used by helper functions / convertToArray's toString method
 let arrayMode = 'length';
 let thisFunc = encodeURIComponent;
-
-String.prototype.toCamelCase = function camelize() {
-    return this.toLowerCase().replace(/[-_ \/\.](.)/g, function (match, group1) {
-        return group1.toUpperCase();
-    });
-}
 
 function convertArray(arr) {
     if (!arr) arr = [];
@@ -138,7 +133,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
 
     operation.operationId = op.operationId||('operation'+obj.openapi.operationCounter++);
     operation.operationIdLowerCase = operation.operationId.toLowerCase();
-    operation.operationIdSnakeCase = operation.operationId; // TODO
+    operation.operationIdSnakeCase = Case.snake(operation.operationId);
     operation.nickname = operation.operationId;
     //operation.classname = obj.classPrefix+operation.nickname;
 
@@ -570,6 +565,9 @@ function getBase() {
     base.apiDocPath = '';
     base.modelDocPath = '';
     base.classPrefix = 'cls';
+
+    //extensions
+    base.modelNaming = 'original'; /* {camelCase, PascalCase, snake_case, original, UPPERCASE} */
     return base;
 }
 
@@ -790,7 +788,10 @@ function transform(api, defaults, callback) {
             let container = {}
             let model = {};
             model.name = s;
-            model.classname = s;
+            if (obj.modelNaming === 'snake_case') {
+                model.name = Case.snake(model.name);
+            }
+            model.classname = model.name;
             model.classVarName = s;
             model.modelJson = safeJson(schema,null,2);
             model.title = schema.title;
@@ -806,14 +807,17 @@ function transform(api, defaults, callback) {
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
                 }
+                if (obj.modelPropertyNaming === 'snake_case') {
+                    entry.name = Case.snake(entry.name);
+                }
                 if (reserved.indexOf(entry.name)>=0) {
-                    entry.name = ('_'+entry.name).toCamelCase();
+                    entry.name = Case.pascal(entry.name);
                 }
                 if (entry.name) {
                     entry.baseName = entry.name.toLowerCase();
                 }
-                entry.getter = ('get_'+entry.name).toCamelCase();
-                entry.setter = ('set_'+entry.name).toCamelCase();
+                entry.getter = Case.camel('get_'+entry.name);
+                entry.setter = Case.camel('set_'+entry.name);
                 entry.description = schema.description||'';
                 entry.unescapedDescription = entry.description;
                 entry.type = schema.type;
@@ -850,7 +854,7 @@ function transform(api, defaults, callback) {
                 }
 
                 if (entry.name && state.depth<=1) {
-                    entry.nameInCamelCase = entry.name.toCamelCase();
+                    entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
                     entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
                     entry.enumName = entry.name+'Enum';
                     model.hasEnums = true;
