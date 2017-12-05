@@ -45,7 +45,7 @@ renderer.main(definition,config,configName);
 
 ## Templates
 
-Templates are taken directly from `swagger-codegen`. This project is also licensed under [Apache-2.0](LICENSE) for this reason. Generated code is explicitly covered by the [Unlicense](templates/_common/UNLICENSE).
+Templates are taken directly from `swagger-codegen`. This project is also licensed under [Apache-2.0](LICENSE) for this reason. Generated code is explicitly covered by the [Unlicense](templates/_common/UNLICENSE). Code to downconvert OpenAPI 3.0 definitions is taken from [Angular-Swagger-UI](https://github.com/Orange-OpenSource/angular-swagger-ui) and is MIT licensed.
 
 ### Contributors
 

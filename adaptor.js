@@ -13,6 +13,7 @@ const clone = require('reftools/lib/clone.js').clone;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 const validator = require('swagger2openapi/validate').validateSync;
+const downconverter = require('./lib/orange/downconvert.js');
 
 const schemaProperties = [
     'format',
@@ -191,7 +192,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         if (parameter.required) operation.hasRequiredParams = true;
         if (!parameter.required) operation.hasOptionalParams = true;
         parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
-        parameter["%dataType%"] = parameter.dataType; // bug in typescript-fetch template?
+        parameter["%dataType%"] = parameter.dataType; // bug in typescript-fetch template? trying to use {{{ with different delimiters
         for (let p in schemaProperties) {
             if (typeof param.schema[p] !== 'undefined') parameter[p] = param.schema[p];
         }
@@ -661,18 +662,7 @@ function transform(api, defaults, callback) {
         obj.swagger = defaults.swagger;
     }
     else {
-        obj.swagger = {};
-        obj.swagger.swagger = api.openapi;
-        if (api.info) obj.swagger.info = api.info;
-        if (api.tags) obj.tags = api.tags;
-        if (api.externalDocs) obj.externalDocs = api.externalDocs;
-        obj.swagger.paths = api.paths;
-        if (api.components) {
-            if (api.components.parameters) obj.swagger.parameters = api.components.parameters;
-            if (api.components.headers) obj.swagger.headers = api.components.headers;
-            if (api.components.responses) obj.swagger.responses = api.components.responses;
-            if (api.components.schemas) obj.swagger.definitions = api.components.schemas;
-        }
+        obj.swagger = downconverter(api);
     }
 
     obj["swagger-yaml"] = yaml.safeDump(obj.swagger, {lineWidth:-1}); // set to original if converted v2.0
@@ -689,9 +679,13 @@ function transform(api, defaults, callback) {
     // helper functions (seen in erlang-client)
     obj.qsEncode = function() {
         thisFunc = encodeURIComponent;
-        return true;
+        return function(template,context){
+            console.warn(util.inspect(template));
+            console.warn(util.inspect(this));
+        };
     };
     obj.this = function() {
+        console.warn('this called');
         return thisFunc(this.paramName);
     };
     obj.length = function() {
