@@ -12,7 +12,6 @@
     ],
     "transformations": [
         { "input": "api_client.mustache", "output": "err/api_client.go" },
-        { "input": "api.mustache", "output": "api.lua" },
         { "input": "configuration.mustache", "output": "err/configuration.go" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
@@ -23,6 +22,7 @@
         { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.lua" }
     ],
     "perApi": [
-        { "input": "api_doc.mustache", "output": "docs/{{name}}.md" }
+        { "input": "api_doc.mustache", "output": "docs/{{name}}.md" },
+        { "input": "api.mustache", "output": "{{name}}Api.lua" }
     ]
 }
