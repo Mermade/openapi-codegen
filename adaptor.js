@@ -8,6 +8,7 @@ const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
 const Case = require('case');
 const stools = require('swagger-tools');
+const sampler = require('openapi-sampler');
 const deref = require('reftools/lib/dereference.js').dereference;
 const clone = require('reftools/lib/clone.js').clone;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
@@ -347,18 +348,30 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             }
             if (contentType.example) {
                 entry.hasExamples = true;
-                if (!entry.examples) entry.examples = {};
-                entry.examples[mt.mediaType] = contentType.example;
+                if (!entry.examples) entry.examples = [];
+                entry.examples.push({contentType: mt.mediaType, example: JSON.stringify(contentType.example,null,2)});
             }
             if (contentType.examples) {
                 for (let example in contentType.examples) {
                     if (example.value) {
                         entry.hasExamples = true;
-                        if (!entry.examples) entry.examples = true;
-                        entry.examples[mt.mediaType] = example.value;
+                        if (!entry.examples) entry.examples = [];
+                        entry.examples.push({contentType: mt.mediaType, example: JSON.stringify(example.value,null,2)});
                     }
                 }
             }
+
+            if (!entry.hasExamples && entry.schema) {
+                let example = sampler.sample(entry.schema,{},api);
+                if (example) {
+                    entry.hasExamples = true;
+                    if (!entry.examples) entry.examples = [];
+                    entry.examples.push({contentType: mt.mediaType, example:JSON.stringify(example,null,2)});
+                }
+            }
+
+            operation.examples = (operation.examples||[]).concat(entry.examples||[]);
+
             operation.returnType = entry.dataType;
             operation.returnBaseType = entry.baseType;
             operation.returnTypeIsPrimitive = entry.isPrimitiveType;
@@ -367,6 +380,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         }
         entry.responseHeaders = []; // TODO responseHeaders
         entry.responseHeaders = convertArray(entry.responseHeaders);
+        entry.examples = convertArray(entry.examples);
         entry.openapi = {};
         entry.openapi.links = response.links;
         operation.responses.push(entry);
@@ -385,6 +399,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.formParams = convertArray(operation.formParams);
     operation.bodyParams = convertArray(operation.bodyParams);
     operation.allParams = convertArray(operation.allParams);
+    operation.examples = convertArray(operation.examples);
 
     if (operation.hasConsumes) {
         operation.consumes = convertArray(operation.consumes);
