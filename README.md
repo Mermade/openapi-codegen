@@ -10,6 +10,15 @@ Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
 
 ## Usage
 
+### Installing
+
+`npm i -g openapi-codegen`
+
+or
+
+* clone the repository, and
+* `npm i`
+
 ### CLI
 
 ```
