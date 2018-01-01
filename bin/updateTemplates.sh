@@ -14,7 +14,8 @@ git diff
 git add modules
 git commit -m "Temporary commit"
 git rebase $SCBRANCH
-rc=$?; if [[ $rc != 0 ]]; then
+rc=$?
+if [ $rc != 0 ]; then
   echo You need to complete the rebase...
   exit $rc
 fi
