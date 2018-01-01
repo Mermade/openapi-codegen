@@ -8,7 +8,11 @@
     "directories": [
         "go", "api"
     ],
+    "partials": {
+	"partial_header": "partial_header.mustache"
+    },
     "transformations": [
+        { "input": "controller-api.mustache", "output": "go/controller-api.go" },
         { "input": "app.mustache", "output": "go/app.yaml" },
         { "input": "logger.mustache", "output": "go/logger.go" },
         { "input": "main.mustache", "output": "main.go" },
@@ -18,5 +22,8 @@
     ],
     "perApi": [
         { "input": "controller.mustache", "output": "go/{{name}}.go" }
+    ],
+    "perModel": [
+	{ "input": "model.mustache", "output": "go/{{name}}.go" }
     ]
 }

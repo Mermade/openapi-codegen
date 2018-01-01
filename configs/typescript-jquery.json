@@ -17,6 +17,7 @@
         "modelGeneric": "modelGeneric.mustache"
     },
     "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
         { "input": "api.mustache", "output": "api/api.ts" },
         { "input": "apis.mustache", "output": "apis.ts" },
         { "input": "configuration.mustache", "output": "configuration.ts" },
