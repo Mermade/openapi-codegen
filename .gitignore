@@ -5,4 +5,5 @@ templates/logback.xml
 out/
 dev/
 dist/
+issues/
 *.swp
