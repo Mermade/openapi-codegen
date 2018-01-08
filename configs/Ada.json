@@ -5,12 +5,22 @@
         "licenseInfo": "licenseInfo.mustache"
     },
     "transformations": [
+        { "input": "README.mustache", "output": "README.md" },
+        { "input": "swagger.mustache", "output": "swagger.yaml" },
+        { "input": "config.gpr", "output": "config.gpr" },
+        { "input": "client.mustache", "output": "client.ada" },
         { "input": "client-body.mustache", "output": "client-body.ada" },
         { "input": "client-spec.mustache", "output": "client-spec.ada" },
         { "input": "gnat-project.mustache", "output": "gnat-project.ada" },
         { "input": "model-body.mustache", "output": "model-body.ada" },
         { "input": "model-spec.mustache", "output": "model-spec.ada" },
+        { "input": "server.mustache", "output": "server.ada" },
         { "input": "server-body.mustache", "output": "server-body.ada" },
-        { "input": "server-spec.mustache", "output": "server-spec.ada" }
+        { "input": "server-spec.mustache", "output": "server-spec.ada" },
+        { "input": "server-skeleton-spec.mustache", "output": "server-skeleton-spec.ada" },
+        { "input": "server-skeleton-body.mustache", "output": "server-skeleton-body.ada" },
+        { "input": "server-properties.mustache", "output": "server-properties.ada" },
+        { "input": "package-spec-level1.mustache", "output": "package-spec-level1.ada" },
+        { "input": "package-spec-level2.mustache", "output": "package-spec-level2.ada" }
     ]
 }

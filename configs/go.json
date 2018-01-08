@@ -16,7 +16,8 @@
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
         { "input": "model_doc.mustache", "output": "model_doc.md" },
-        { "input": "README.mustache", "output": "README.md" }
+        { "input": "README.mustache", "output": "README.md" },
+	{ "input": "swagger.mustache", "output": "swagger.yaml" }
     ],
     "perApi": [
         { "input": "api.mustache", "output": "{{name}}_api.go" }
