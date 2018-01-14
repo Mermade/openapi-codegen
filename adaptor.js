@@ -194,7 +194,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         if (!parameter.required) operation.hasOptionalParams = true;
         parameter.dataType = typeMap(param.schema.type,parameter.required,param.schema);
         parameter["%dataType%"] = parameter.dataType; // bug in typescript-fetch template? trying to use {{{ with different delimiters
-        for (let p in schemaProperties) {
+        for (let p of schemaProperties) {
             if (typeof param.schema[p] !== 'undefined') parameter[p] = param.schema[p];
         }
         parameter.isBoolean = (param.schema.type === 'boolean');
