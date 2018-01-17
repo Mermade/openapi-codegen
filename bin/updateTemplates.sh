@@ -16,7 +16,7 @@ git commit -m "Temporary commit"
 git rebase $SCBRANCH
 rc=$?
 if [ $rc != 0 ]; then
-  echo You need to complete the rebase...
+  echo You need to complete the rebase... then update to $NEWBASE
   exit $rc
 fi
 cd ../swagger-codegen
