@@ -44,7 +44,7 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
-    "ajv": "^6.0.0",
+    "ajv": "^6.0.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
