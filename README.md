@@ -1,5 +1,7 @@
 # OpenAPI-CodeGen
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/openapi-codegen.svg)](https://greenkeeper.io/)
+
 [![Build status](https://travis-ci.org/Mermade/openapi-codegen.svg?branch=master)](https://travis-ci.org/Mermade/openapi-codegen)
 
 Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-codegen) templates to Node.js. This project was initially a 24-hour hackathon. The model adaptor code is entirely original and has been reverse-engineered from the existing documentation and template usage.
