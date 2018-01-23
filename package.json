@@ -41,7 +41,7 @@
     "swagger-tools": "^0.10.3",
     "swagger2openapi": "^2.11.9",
     "uuid": "^3.1.0",
-    "yargs": "^10.0.3"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "ajv": "^6.0.1",
