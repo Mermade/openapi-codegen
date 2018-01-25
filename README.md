@@ -7,7 +7,7 @@ Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-co
 
 **Work in progress**
 
-Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 2.0 by internal conversion
+Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 1.2 and 2.0 by internal conversion
 
 ## Usage
 
