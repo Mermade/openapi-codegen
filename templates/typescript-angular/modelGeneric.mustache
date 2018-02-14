@@ -1,3 +1,9 @@
+{{#hasComplex}}
+{{#vars}}{{#complexType}}
+import { {{complexType}} } from './{{complexType}}';
+{{/complexType}}{{/vars}}
+
+{{/hasComplex}}
 export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
 {{#additionalPropertiesType}}
     [key: string]: {{{additionalPropertiesType}}}{{#hasVars}} | any{{/hasVars}};
@@ -9,21 +15,15 @@ export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
      * {{{description}}}
      */
     {{/description}}
-    {{name}}{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{datatype}}}{{/isEnum}};
+    {{name}}{{^required}}?{{/required}}: {{#isEnum}}{{classname}}.{{nameInCamelCase}}{{/isEnum}}{{^isEnum}}{{complexType}}{{^complexType}}{{{datatype}}}{{/complexType}}{{/isEnum}};
 {{/vars}}
 }{{#hasEnums}}
 
 export namespace {{classname}} {
 {{#vars}}
-    {{#isEnum}}
-    export type {{enumName}} = {{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}} | {{/-last}}{{/enumVars}}{{/allowableValues}};
-    export const {{enumName}} = {
-    {{#allowableValues}}
-    {{#enumVars}}
-        {{name}}: {{{value}}} as {{enumName}}{{^-last}},{{/-last}}
-    {{/enumVars}}
-    {{/allowableValues}}
-    }
-    {{/isEnum}}
+{{#isEnum}}
+  {{>modelEnum}}
+{{/isEnum}}
 {{/vars}}
+
 }{{/hasEnums}}

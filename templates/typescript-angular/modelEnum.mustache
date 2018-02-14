@@ -1,3 +1,4 @@
+{{#oldEnums}}
 export type {{classname}} = {{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}} | {{/-last}}{{/enumVars}}{{/allowableValues}};
 
 export const {{classname}} = {
@@ -7,3 +8,11 @@ export const {{classname}} = {
 {{/enumVars}}
 {{/allowableValues}}
 }
+{{/oldEnums}}
+{{^oldEnums}}
+export enum {{nameInCamelCase}}{{^nameInCamelCase}}{{classname}}{{/nameInCamelCase}} {
+{{#allowableValues}}{{#enumVars}}
+  {{name}} = '{{name}}'{{#hasMore}},{{/hasMore}}
+{{/enumVars}}{{/allowableValues}}
+}
+{{/oldEnums}}

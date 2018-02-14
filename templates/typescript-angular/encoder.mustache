@@ -1,9 +1,9 @@
 {{>licenseInfo}}
 {{#useHttpClient}}
-    import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 {{/useHttpClient}}
 {{^useHttpClient}}
-    import { QueryEncoder } from '@angular/http';
+import { QueryEncoder } from '@angular/http';
 {{/useHttpClient}}
 
 {{#useHttpClient}}

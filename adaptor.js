@@ -799,7 +799,7 @@ function transform(api, defaults, callback) {
     if (api.components) {
         for (let s in api.components.schemas) {
             let schema = api.components.schemas[s];
-            let container = {}
+            let container = {};
             let model = {};
             model.name = s;
             if (obj.modelNaming === 'snake_case') {
@@ -813,6 +813,7 @@ function transform(api, defaults, callback) {
             model.classFilename = obj.classPrefix+model.name;
             model.modelPackage = model.name;
             model.hasEnums = false;
+            model.hasComplex = false;
             model.vars = [];
             walkSchema(schema,{},wsGetState,function(schema,parent,state){
                 let entry = {};
@@ -849,8 +850,8 @@ function transform(api, defaults, callback) {
                 entry.isNotContainer = entry.isPrimitiveType;
                 if (entry.isEnum) entry.isNotContainer = false;
                 entry.isContainer = !entry.isNotContainer;
-                if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
-                    entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
+                if ((schema.type === 'object') && schema["x-oldref"]) {
+                    entry.complexType = schema["x-oldref"].replace('#/components/schemas/','');
                 }
 
                 entry.dataFormat = schema.format;
@@ -871,7 +872,8 @@ function transform(api, defaults, callback) {
                     entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
                     entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
                     entry.enumName = entry.name+'Enum';
-                    model.hasEnums = true;
+                    model.hasEnums = model.hasEnums || entry.isEnum;
+                    model.hasComplex = model.hasComplex || !!entry.complexType;
                     model.vars.push(entry);
                 }
             });
