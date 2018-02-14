@@ -12,6 +12,7 @@ export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
     {{name}}{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{datatype}}}{{/isEnum}};
 {{/vars}}
 }{{#hasEnums}}
+
 export namespace {{classname}} {
 {{#vars}}
     {{#isEnum}}

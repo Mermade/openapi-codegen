@@ -1,0 +1,38 @@
+{
+  "defaults": {
+    "language": "typescript",
+    "supportsES6": true,
+    "gitUserId": "foxel",
+    "gitRepoId": "change-me",
+    "releaseNote": "Initial commit",
+    "npmName": "change-me",
+    "npmVersion": "1.0.0",
+    "npmRepository": "https://github.com/mermade/change-me",
+
+    "useHttpClient": true,
+    "injectionToken": "InjectionToken"
+  },
+  "directories": [ "api", "model" ],
+  "partials": {
+    "licenseInfo": "licenseInfo.mustache",
+    "modelEnum": "modelEnum.mustache",
+    "modelGeneric": "modelGeneric.mustache"
+  },
+  "transformations": [
+    { "input": "api.module.mustache", "output": "api.module.ts" },
+    { "input": "apis.mustache", "output": "apis.ts" },
+    { "input": "configuration.mustache", "output": "configuration.ts" },
+    { "input": "encoder.mustache", "output": "encoder.ts" },
+    { "input": "index.mustache", "output": "index.ts" },
+    { "input": "models.mustache", "output": "models.ts" },
+    { "input": "gitignore", "output": ".gitignore" },
+    { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+    { "input": "variables.mustache", "output": "variables.ts" }
+  ],
+  "perApi": [
+    { "input": "api.service.mustache", "output": "api/{{name}}.ts" }
+  ],
+  "perModel": [
+    { "input": "model.mustache", "output": "model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.ts" }
+  ]
+}

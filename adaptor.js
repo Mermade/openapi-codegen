@@ -297,6 +297,10 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 operation.bodyParam.type = contentType.schema.type;
                 operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
             }
+            if (contentType.schema["x-oldref"]) {
+                operation.bodyParam.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
+                operation.bodyParam.isPrimitiveType = false;
+            }
         }
         operation.bodyParam["%dataType%"] = operation.bodyParam.dataType; // bug in typescript-fetch template?
         operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
@@ -385,6 +389,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.openapi.links = response.links;
         operation.responses.push(entry);
     }
+    operation.responses = convertArray(operation.responses);
 
     if (obj.sortParamsByRequiredFlag) {
         operation.allParams = operation.allParams.sort(function(a,b){
@@ -439,7 +444,7 @@ function convertToApis(source,obj) {
                 if (!entry) {
                     entry = {};
                     entry.name = tagName;
-                    entry.classname = tagName+'Api';
+                    entry.classname = Case.pascal(tagName)+'Api';
                     entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
                     entry.operations = {};
                     entry.operations.operation = [];
@@ -456,7 +461,7 @@ function convertToApis(source,obj) {
             return (e.name === t);
         });
         if (entry) {
-            entry.classname = tag.name+'Api';
+            entry.classname = Case.pascal(tag.name)+'Api';
             entry.description = tag.description;
             entry.externalDocs = tag.externalDocs;
         }
@@ -812,7 +817,7 @@ function transform(api, defaults, callback) {
             walkSchema(schema,{},wsGetState,function(schema,parent,state){
                 let entry = {};
                 entry.name = schema.name || schema.title;
-                if (!entry.name && state.property && (state.property.startsWith('properties') || 
+                if (!entry.name && state.property && (state.property.startsWith('properties') ||
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
                 }
@@ -847,7 +852,7 @@ function transform(api, defaults, callback) {
                 if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
                     entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
                 }
-                
+
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
 

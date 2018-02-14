@@ -1,3 +1,4 @@
+{{>licenseInfo}}
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 {{#useHttpClient}}
@@ -10,7 +11,7 @@ import { Configuration } from './configuration';
 
 {{#apiInfo}}
 {{#apis}}
-import { {{classname}} } from './{{importPath}}';
+import { {{classname}} } from 'api/{{name}}.ts';
 {{/apis}}
 {{/apiInfo}}
 
@@ -18,16 +19,14 @@ import { {{classname}} } from './{{importPath}}';
   imports:      [ CommonModule, {{#useHttpClient}}HttpClientModule{{/useHttpClient}}{{^useHttpClient}}HttpModule{{/useHttpClient}} ],
   declarations: [],
   exports:      [],
-  providers: [
-    {{#apiInfo}}{{#apis}}{{classname}}{{#hasMore}},
-    {{/hasMore}}{{/apis}}{{/apiInfo}} ]
+  providers:    [ {{#apiInfo}}{{#apis}}{{classname}}{{#hasMore}}, {{/hasMore}}{{/apis}}{{/apiInfo}} ]
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {
         return {
             ngModule: ApiModule,
             providers: [ { provide: Configuration, useFactory: configurationFactory } ]
-        }
+        };
     }
 
     constructor( @Optional() @SkipSelf() parentModule: ApiModule) {
