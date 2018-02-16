@@ -1,8 +1,8 @@
 {{>licenseInfo}}
 {{#apiInfo}}
 {{#apis}}
-export * from 'api/{{name}}.ts';
-import { {{ classname }} } from 'api/{{classname}}.ts';
+export * from './api/{{classname}}';
+import { {{ classname }} } from './api/{{classname}}';
 {{/apis}}
 export const APIS = [{{#apis}}{{ classname }}{{^-last}}, {{/-last}}{{/apis}}];
 {{/apiInfo}}

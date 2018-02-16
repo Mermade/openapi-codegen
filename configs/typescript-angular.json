@@ -27,6 +27,7 @@
     { "input": "models.mustache", "output": "models.ts" },
     { "input": "gitignore", "output": ".gitignore" },
     { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+    { "input": "rxjs-operators.mustache", "output": "rxjs-operators.ts" },
     { "input": "variables.mustache", "output": "variables.ts" }
   ],
   "perApi": [
