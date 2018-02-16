@@ -794,7 +794,7 @@ function transform(api, defaults, callback) {
     if (api.components) {
         for (let s in api.components.schemas) {
             let schema = api.components.schemas[s];
-            let container = {}
+            let container = {};
             let model = {};
             model.name = s;
             if (obj.modelNaming === 'snake_case') {
