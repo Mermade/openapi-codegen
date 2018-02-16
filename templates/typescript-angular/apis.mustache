@@ -2,7 +2,7 @@
 {{#apiInfo}}
 {{#apis}}
 export * from 'api/{{name}}.ts';
-import { {{ classname }} } from 'api/{{name}}.ts';
+import { {{ classname }} } from 'api/{{classname}}.ts';
 {{/apis}}
 export const APIS = [{{#apis}}{{ classname }}{{^-last}}, {{/-last}}{{/apis}}];
 {{/apiInfo}}

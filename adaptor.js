@@ -69,9 +69,18 @@ function getAuthData(secSchemes,api) {
         entry.isBasic = false;
         entry.isOAuth = false;
         if (scheme.type === 'http') {
-            entry.isBasic = true;
+            if (scheme.scheme === 'basic') {
+                entry.isBasic = true;
+            }
+            else if (scheme.scheme === 'bearer') {
+                entry.isBearer = true;
+            }
+            else {
+                throw new Error('HTTP Authentication scheme not supported');
+            }
         }
         else if (scheme.type === 'oauth2') {
+            entry.isBearer = true;
             entry.isOAuth = true;
             if (scheme.flows) {
                 entry.flow = Object.keys(scheme.flows)[0];
@@ -99,7 +108,7 @@ function getAuthData(secSchemes,api) {
                 entry.scopes = convertArray(entry.scopes);
             }
         }
-        else if (scheme.type == 'apiKey') {
+        else if (scheme.type === 'apiKey') {
             entry.isApiKey = true;
             entry.keyParamName = scheme.name;
             entry.isKeyInQuery = (scheme.in === 'query');
@@ -318,6 +327,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         let entry = {};
         entry.code = r;
         entry.isDefault = (r === 'default');
+        entry.isError = String(r).match(/[45][\dX]{2}/);
         entry.nickname = 'response'+r;
         entry.message = response.description;
         entry.description = response.description||'';
@@ -330,8 +340,6 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             let contentType = Object.values(response.content)[0];
             let mt = {};
             mt.mediaType = Object.keys(response.content)[0];
-            operation.produces.push(mt);
-            operation.hasProduces = true;
             let tmp = obj.produces.find(function(e,i,a){
                 return (e.mediaType === mt.mediaType);
             });
@@ -389,6 +397,8 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.openapi.links = response.links;
         operation.responses.push(entry);
     }
+    operation.successResponses = convertArray(clone(operation.responses.filter(function(r){ return !r.isError; })));
+    operation.errorResponses = convertArray(clone(operation.responses.filter(function(r){ return r.isError; })));
     operation.responses = convertArray(operation.responses);
 
     if (obj.sortParamsByRequiredFlag) {
