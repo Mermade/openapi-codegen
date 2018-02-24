@@ -45,6 +45,8 @@ In this case, the generated code will be written to the `.out/nodejs` directory.
 
 You can also load the OpenAPI definition from a URL.
 
+If you are using Node 6.x or lower, please specify the `--harmony` flag.
+
 ### API
 
 ```javascript
