@@ -15,7 +15,7 @@ export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
      * {{{description}}}
      */
     {{/description}}
-    {{name}}{{^required}}?{{/required}}: {{#isEnum}}{{classname}}.{{nameInCamelCase}}{{/isEnum}}{{^isEnum}}{{complexType}}{{^complexType}}{{{datatype}}}{{/complexType}}{{/isEnum}};
+    {{name}}{{^required}}?{{/required}}: {{#isEnum}}{{classname}}.{{nameInCamelCase}}{{/isEnum}}{{^isEnum}}{{{complexType}}}{{^complexType}}{{{datatype}}}{{/complexType}}{{/isEnum}};
 {{/vars}}
 }{{#hasEnums}}
 

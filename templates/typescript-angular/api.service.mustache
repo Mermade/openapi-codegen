@@ -100,7 +100,7 @@ export class {{classname}} {
      {{/summary}}
      {{#allParams}}* @param {{paramName}}{{#description}} {{description}}{{/description}}
      {{/allParams}}*/
-    public {{nickname}}{{^useHttpClient}}WithHttpInfo{{/useHttpClient}}({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{#dataType}}{{^isPrimitiveType}}models.{{/isPrimitiveType}}{{dataType}}{{/dataType}}{{#hasMore}}, {{/hasMore}}{{/allParams}}{{^useHttpClient}}{{#hasParams}}, {{/hasParams}}extraHttpRequestParams?: RequestOptionsArgs{{/useHttpClient}}): Observable<{{#useHttpClient}}{{#successResponses}}{{#dataType}}{{^isPrimitiveType}}models.{{/isPrimitiveType}}{{dataType}}{{/dataType}}{{^dataType}}{}{{/dataType}}{{#hasMore}}|{{/hasMore}}{{/successResponses}}{{^successResponses}}{}{{/successResponses}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/useHttpClient}}{{^useHttpClient}}Response{{/useHttpClient}}> {
+    public {{nickname}}{{^useHttpClient}}WithHttpInfo{{/useHttpClient}}({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{#dataType}}{{^isPrimitiveType}}models.{{/isPrimitiveType}}{{{dataType}}}{{/dataType}}{{#hasMore}}, {{/hasMore}}{{/allParams}}{{^useHttpClient}}{{#hasParams}}, {{/hasParams}}extraHttpRequestParams?: RequestOptionsArgs{{/useHttpClient}}): Observable<{{#useHttpClient}}{{#successResponses}}{{#dataType}}{{^isPrimitiveType}}models.{{/isPrimitiveType}}{{{dataType}}}{{/dataType}}{{^dataType}}{}{{/dataType}}{{#hasMore}}|{{/hasMore}}{{/successResponses}}{{^successResponses}}{}{{/successResponses}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/useHttpClient}}{{^useHttpClient}}Response{{/useHttpClient}}> {
 {{#allParams}}
 {{#required}}
         if ({{paramName}} === null || {{paramName}} === undefined) {
