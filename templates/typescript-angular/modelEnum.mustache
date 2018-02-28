@@ -12,7 +12,7 @@ export const {{classname}} = {
 {{^oldEnums}}
 export enum {{nameInCamelCase}}{{^nameInCamelCase}}{{classname}}{{/nameInCamelCase}} {
 {{#allowableValues}}{{#enumVars}}
-  {{name}} = '{{name}}'{{#hasMore}},{{/hasMore}}
+  {{name}} = '{{name}}',
 {{/enumVars}}{{/allowableValues}}
 }
 {{/oldEnums}}

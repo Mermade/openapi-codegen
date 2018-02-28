@@ -275,6 +275,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         operation.bodyParam.isFormParam = false;
         operation.bodyParam.isDate = false;
         operation.bodyParam.isDateTime = false;
+        operation.bodyParam.isPrimitiveType = true;
         operation.bodyParam.baseName = 'body';
         operation.bodyParam.paramName = 'body';
         operation.bodyParam.required = op.requestBody.required||false;
@@ -302,6 +303,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             for (let p in schemaProperties) {
                 if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
             }
+
             if (contentType.schema.type) {
                 operation.bodyParam.type = contentType.schema.type;
                 operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
@@ -337,6 +339,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         if (response.content) {
             entry.baseType = 'object';
             entry.dataType = typeMap(entry.baseType,false,{});;
+            entry.isPrimitiveType = true;
             let contentType = Object.values(response.content)[0];
             let mt = {};
             mt.mediaType = Object.keys(response.content)[0];
@@ -351,7 +354,6 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 entry.schema = contentType.schema;
                 entry.jsonSchema = safeJson({schema:entry.schema},null,2);
                 entry.baseType = contentType.schema.type;
-                entry.isPrimitiveType = true;
                 entry.dataType = typeMap(contentType.schema.type,false,entry.schema);
                 if (contentType.schema["x-oldref"]) {
                     entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
@@ -868,14 +870,14 @@ function transform(api, defaults, callback) {
                 entry.defaultValue = schema.default;
 
                 if (entry.isEnum) {
-                    model.allowableValues = {};
-                    model.allowableValues.enumVars = [];
-                    model["allowableValues.values"] = schema.enum;
+                    entry.allowableValues = {};
+                    entry.allowableValues.enumVars = [];
+                    entry["allowableValues.values"] = schema.enum;
                     for (let v of schema.enum) {
                         let e = { name: v, value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
-                        model.allowableValues.enumVars.push(e);
+                        entry.allowableValues.enumVars.push(e);
                     }
-                    model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
+                    entry.allowableValues.enumVars = convertArray(entry.allowableValues.enumVars);
                 }
 
                 if (entry.name && state.depth<=1) {

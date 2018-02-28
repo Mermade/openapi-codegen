@@ -46,7 +46,7 @@ export class {{classname}} {
     constructor(
         protected {{#useHttpClient}}httpClient: HttpClient{{/useHttpClient}}{{^useHttpClient}}http: Http{{/useHttpClient}},
         @Optional() @Inject(BASE_PATH) basePath: string,
-        @Optional() configuration: Configuration
+        @Optional() configuration: Configuration,
     ) {
         if (basePath) {
             this.basePath = basePath.replace(/\/+$/, '');
@@ -191,7 +191,7 @@ export class {{classname}} {
         // to determine the Accept header
         const httpHeaderAccepts: string[] = [
             {{#produces}}
-            '{{{mediaType}}}'{{#hasMore}},{{/hasMore}}
+            '{{{mediaType}}}',
             {{/produces}}
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
@@ -207,7 +207,7 @@ export class {{classname}} {
         // to determine the Content-Type header
         const consumes: string[] = [
             {{#consumes}}
-            '{{{mediaType}}}'{{#hasMore}},{{/hasMore}}
+            '{{{mediaType}}}',
             {{/consumes}}
         ];
 {{#bodyParam}}
@@ -288,7 +288,7 @@ export class {{classname}} {
                 responseType: 'blob',
 {{/isResponseFile}}
                 withCredentials: this.configuration.withCredentials,
-            }
+            },
         );
 {{/useHttpClient}}
 {{^useHttpClient}}
