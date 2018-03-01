@@ -13,16 +13,19 @@
     "transformations": [
         { "input": "api_client.mustache", "output": "err/api_client.go" },
         { "input": "configuration.mustache", "output": "err/configuration.go" },
+        { "input": "luarocks.mustache", "output": "luarocks" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
         { "input": "model_doc.mustache", "output": "model_doc.md" },
         { "input": "README.mustache", "output": "README.md" }
     ],
     "perModel": [
-        { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.lua" }
+        { "input": "model.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.lua" },
+        { "input": "model_test.mustache", "output": "{{#models}}{{#model}}{{name}}{{/model}}{{/models}}Test.lua" }
     ],
     "perApi": [
         { "input": "api_doc.mustache", "output": "docs/{{name}}.md" },
-        { "input": "api.mustache", "output": "{{name}}Api.lua" }
+        { "input": "api.mustache", "output": "{{name}}Api.lua" },
+        { "input": "api_test.mustache", "output": "{{name}}ApiTest.lua" }
     ]
 }

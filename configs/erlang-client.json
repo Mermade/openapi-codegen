@@ -7,6 +7,7 @@
     "directories": [ "src" ],
     "transformations": [
         { "input": "app.src.mustache", "output": "src/swagger_app.src" },
+        { "input": "utils.mustache", "output": "src/utils.src" },
         { "input": "README.mustache", "output": "README.md" },
         { "input": "rebar.config.mustache", "output": "rebar.config" }
     ],

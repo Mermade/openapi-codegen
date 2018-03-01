@@ -10,8 +10,10 @@
     },
     "transformations": [
         { "input": "api_client.mustache", "output": "api_client.go" },
+        { "input": "client.mustache", "output": "client.go" },
         { "input": "api_doc.mustache", "output": "api_doc.md" },
         { "input": "api_response.mustache", "output": "api_response.go" },
+        { "input": "response.mustache", "output": "response.go" },
         { "input": "configuration.mustache", "output": "configuration.go" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
