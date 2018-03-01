@@ -24,7 +24,7 @@ function tpl(...segments) {
 };
 
 function main(o, config, configName, callback) {
-    let outputDir = config.outputDir || './out/';
+    let outputDir = config.outputDir || './out/'+configName+'/';
     let verbose = config.defaults.verbose;
     config.defaults.configName = configName;
     adaptor.transform(o, config.defaults, function(err, model) {
@@ -33,7 +33,7 @@ function main(o, config, configName, callback) {
             if (verbose) console.log('Processing partial '+partial);
             config.partials[p] = ff.readFileSync(tpl(configName, partial),'utf8');
         }
-    
+
         let actions = [];
         for (let t in config.transformations) {
             let tx = config.transformations[t];
@@ -43,20 +43,20 @@ function main(o, config, configName, callback) {
             }
             actions.push(tx);
         }
-    
+
         if (verbose) console.log('Making/cleaning output directories');
-        ff.mkdirp(outputDir+configName,function(){
-            ff.rimraf(outputDir+configName+'/*',function(){
+        ff.mkdirp(outputDir,function(){
+            ff.rimraf(outputDir+'/*',function(){
                 if (config.directories) {
                     for (let directory of config.directories) {
-                        ff.mkdirp.sync(outputDir+configName+'/'+directory);
+                        ff.mkdirp.sync(outputDir+directory);
                     }
                 }
                 for (let action of actions) {
                     if (verbose) console.log('Rendering '+action.output);
                     let template = Hogan.compile(action.template);
                     let content = template.render(model,config.partials);
-                    ff.createFile(outputDir+configName+'/'+action.output,content,'utf8');
+                    ff.createFile(outputDir+action.output,content,'utf8');
                 }
                 if (config.touch) { // may not now be necessary
                     let touchTmp = Hogan.compile(config.touch);
@@ -65,20 +65,20 @@ function main(o, config, configName, callback) {
                     for (let file of files) {
                         file = file.trim();
                         if (file) {
-                            if (!fs.existsSync(outputDir+configName+'/'+file)) {
-                                ff.createFile(outputDir+configName+'/'+file,'','utf8');
+                            if (!fs.existsSync(outputDir+file)) {
+                                ff.createFile(outputDir+file,'','utf8');
                             }
                         }
                     }
                 }
                 if (config.apache) {
-                    ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync(tpl('_common', 'LICENSE'),'utf8'),'utf8');
+                    ff.createFile(outputDir+'/LICENSE',ff.readFileSync(tpl('_common', 'LICENSE'),'utf8'),'utf8');
                 }
                 else {
-                    ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
+                    ff.createFile(outputDir+'/LICENSE',ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
                 }
                 let outer = model;
-     
+
                 if (config.perApi) {
                     let toplevel = clone(model);
                     delete toplevel.apiInfo;
@@ -89,13 +89,13 @@ function main(o, config, configName, callback) {
                             let cApi = Object.assign({},config.defaults,toplevel,api);
                             let filename = fnTemplate.render(cApi,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                            ff.createFile(outputDir+configName+'/'+filename,template.render(cApi,config.partials),'utf8');
+                            ff.createFile(outputDir+filename,template.render(cApi,config.partials),'utf8');
                         }
                     }
                 }
 
                 if (config.perModel) {
-                    let cModels = clone(model.models); 
+                    let cModels = clone(model.models);
                     for (let pm of config.perModel) {
                         let fnTemplate = Hogan.compile(pm.output);
                         let template = Hogan.compile(ff.readFileSync(tpl(configName, pm.input), 'utf8'));
@@ -104,11 +104,11 @@ function main(o, config, configName, callback) {
                             outer.models.push(model);
                             let filename = fnTemplate.render(outer,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                            ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
+                            ff.createFile(outputDir+filename,template.render(outer,config.partials),'utf8');
                         }
                     }
                 }
-    
+
                 if (config.perOperation) { // now may not be necessary
                     for (let po of config.perOperation) {
                         for (let api of outer.apiInfo.apis) {
@@ -120,7 +120,7 @@ function main(o, config, configName, callback) {
                                 model.operations.push(operation);
                                 let filename = fnTemplate.render(outer,config.partials);
                                 if (verbose) console.log('Rendering '+filename+' (dynamic)');
-                                ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
+                                ff.createFile(outputDir+filename,template.render(outer,config.partials),'utf8');
                             }
                         }
                     }

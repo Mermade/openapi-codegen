@@ -69,9 +69,18 @@ function getAuthData(secSchemes,api) {
         entry.isBasic = false;
         entry.isOAuth = false;
         if (scheme.type === 'http') {
-            entry.isBasic = true;
+            if (scheme.scheme === 'basic') {
+                entry.isBasic = true;
+            }
+            else if (scheme.scheme === 'bearer') {
+                entry.isBearer = true;
+            }
+            else {
+                throw new Error('HTTP Authentication scheme not supported');
+            }
         }
         else if (scheme.type === 'oauth2') {
+            entry.isBearer = true;
             entry.isOAuth = true;
             if (scheme.flows) {
                 entry.flow = Object.keys(scheme.flows)[0];
@@ -99,7 +108,7 @@ function getAuthData(secSchemes,api) {
                 entry.scopes = convertArray(entry.scopes);
             }
         }
-        else if (scheme.type == 'apiKey') {
+        else if (scheme.type === 'apiKey') {
             entry.isApiKey = true;
             entry.keyParamName = scheme.name;
             entry.isKeyInQuery = (scheme.in === 'query');
@@ -266,6 +275,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         operation.bodyParam.isFormParam = false;
         operation.bodyParam.isDate = false;
         operation.bodyParam.isDateTime = false;
+        operation.bodyParam.isPrimitiveType = true;
         operation.bodyParam.baseName = 'body';
         operation.bodyParam.paramName = 'body';
         operation.bodyParam.required = op.requestBody.required||false;
@@ -293,9 +303,14 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             for (let p in schemaProperties) {
                 if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
             }
+
             if (contentType.schema.type) {
                 operation.bodyParam.type = contentType.schema.type;
                 operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
+            }
+            if (contentType.schema["x-oldref"]) {
+                operation.bodyParam.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
+                operation.bodyParam.isPrimitiveType = false;
             }
         }
         operation.bodyParam["%dataType%"] = operation.bodyParam.dataType; // bug in typescript-fetch template?
@@ -314,6 +329,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         let entry = {};
         entry.code = r;
         entry.isDefault = (r === 'default');
+        entry.isError = String(r).match(/[45][\dX]{2}/);
         entry.nickname = 'response'+r;
         entry.message = response.description;
         entry.description = response.description||'';
@@ -323,11 +339,10 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         if (response.content) {
             entry.baseType = 'object';
             entry.dataType = typeMap(entry.baseType,false,{});;
+            entry.isPrimitiveType = true;
             let contentType = Object.values(response.content)[0];
             let mt = {};
             mt.mediaType = Object.keys(response.content)[0];
-            operation.produces.push(mt);
-            operation.hasProduces = true;
             let tmp = obj.produces.find(function(e,i,a){
                 return (e.mediaType === mt.mediaType);
             });
@@ -339,7 +354,6 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 entry.schema = contentType.schema;
                 entry.jsonSchema = safeJson({schema:entry.schema},null,2);
                 entry.baseType = contentType.schema.type;
-                entry.isPrimitiveType = true;
                 entry.dataType = typeMap(contentType.schema.type,false,entry.schema);
                 if (contentType.schema["x-oldref"]) {
                     entry.dataType = contentType.schema["x-oldref"].replace('#/components/schemas/','');
@@ -385,6 +399,9 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.openapi.links = response.links;
         operation.responses.push(entry);
     }
+    operation.successResponses = convertArray(clone(operation.responses.filter(function(r){ return !r.isError; })));
+    operation.errorResponses = convertArray(clone(operation.responses.filter(function(r){ return r.isError; })));
+    operation.responses = convertArray(operation.responses);
 
     if (obj.sortParamsByRequiredFlag) {
         operation.allParams = operation.allParams.sort(function(a,b){
@@ -439,7 +456,7 @@ function convertToApis(source,obj) {
                 if (!entry) {
                     entry = {};
                     entry.name = tagName;
-                    entry.classname = tagName+'Api';
+                    entry.classname = Case.pascal(tagName)+'Api';
                     entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
                     entry.operations = {};
                     entry.operations.operation = [];
@@ -456,7 +473,7 @@ function convertToApis(source,obj) {
             return (e.name === t);
         });
         if (entry) {
-            entry.classname = tag.name+'Api';
+            entry.classname = Case.pascal(tag.name)+'Api';
             entry.description = tag.description;
             entry.externalDocs = tag.externalDocs;
         }
@@ -493,9 +510,9 @@ const typeMaps = {
         let result = type;
         if (result === 'integer') result = 'number';
         if (result === 'array') {
-            result = 'Array';
+            result = 'any[]';
             if (schema.items && schema.items.type) {
-                result += '<'+typeMap(schema.items.type,false,schema.items)+'>';
+                result = typeMap(schema.items.type, false, schema.items)+'[]';
             }
         }
         return result;
@@ -611,7 +628,7 @@ function getPrime(api,defaults) {
     prime.licenseInfo = api.info.license ? api.info.license.name : null;
     prime.licenseUrl = api.info.license ? api.info.license.url : null;
     prime.appName = api.info.title;
-    prime.host = ''
+    prime.host = '';
     prime.basePath = '/';
     prime.basePathWithoutHost = '/';
     prime.contextPath = '/';
@@ -808,11 +825,12 @@ function transform(api, defaults, callback) {
             model.classFilename = obj.classPrefix+model.name;
             model.modelPackage = model.name;
             model.hasEnums = false;
+            model.hasComplex = false;
             model.vars = [];
             walkSchema(schema,{},wsGetState,function(schema,parent,state){
                 let entry = {};
                 entry.name = schema.name || schema.title;
-                if (!entry.name && state.property && (state.property.startsWith('properties') || 
+                if (!entry.name && state.property && (state.property.startsWith('properties') ||
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
                 }
@@ -844,29 +862,35 @@ function transform(api, defaults, callback) {
                 entry.isNotContainer = entry.isPrimitiveType;
                 if (entry.isEnum) entry.isNotContainer = false;
                 entry.isContainer = !entry.isNotContainer;
-                if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
-                    entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
+                if ((schema.type === 'object') && schema["x-oldref"]) {
+                    entry.importType = schema["x-oldref"].replace('#/components/schemas/','');
+                    entry.complexType = entry.importType;
                 }
-                
+                if ((schema.type === 'array') && schema.items["x-oldref"]) {
+                    entry.importType = schema.items["x-oldref"].replace('#/components/schemas/','');
+                    entry.complexType = entry.importType+'[]';
+                }
+
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
 
                 if (entry.isEnum) {
-                    model.allowableValues = {};
-                    model.allowableValues.enumVars = [];
-                    model["allowableValues.values"] = schema.enum;
+                    entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
+                    entry.enumName = entry.name+'Enum';
+                    entry.allowableValues = {};
+                    entry.allowableValues.enumVars = [];
+                    entry["allowableValues.values"] = schema.enum;
                     for (let v of schema.enum) {
                         let e = { name: v, value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
-                        model.allowableValues.enumVars.push(e);
+                        entry.allowableValues.enumVars.push(e);
                     }
-                    model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
+                    entry.allowableValues.enumVars = convertArray(entry.allowableValues.enumVars);
                 }
 
                 if (entry.name && state.depth<=1) {
                     entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
-                    entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
-                    entry.enumName = entry.name+'Enum';
-                    model.hasEnums = true;
+                    model.hasEnums = model.hasEnums || entry.isEnum;
+                    model.hasComplex = model.hasComplex || !!entry.complexType;
                     model.vars.push(entry);
                 }
             });

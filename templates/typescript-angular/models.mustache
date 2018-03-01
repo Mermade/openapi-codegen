@@ -1,5 +1,6 @@
+{{>licenseInfo}}
 {{#models}}
 {{#model}}
-export * from './{{{ classFilename }}}';
+export * from './model/{{ name }}';
 {{/model}}
 {{/models}}

@@ -273,13 +273,13 @@ namespace {{packageName}}.{{apiPackage}}
                 localVarHeaderParams["Authorization"] = "Basic " + ApiClient.Base64Encode(Configuration.Username + ":" + Configuration.Password);
             }
             {{/isBasic}}
-            {{#isOAuth}}
+            {{#isBearer}}
             // oauth required
             if (!String.IsNullOrEmpty(Configuration.AccessToken))
             {
                 localVarHeaderParams["Authorization"] = "Bearer " + Configuration.AccessToken;
             }
-            {{/isOAuth}}
+            {{/isBearer}}
             {{/authMethods}}
 
             // make the HTTP request
