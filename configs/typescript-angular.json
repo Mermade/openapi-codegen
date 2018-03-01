@@ -2,15 +2,16 @@
   "defaults": {
     "language": "typescript",
     "supportsES6": true,
-    "gitUserId": "foxel",
+    "gitUserId": "change-me",
     "gitRepoId": "change-me",
     "releaseNote": "Initial commit",
     "npmName": "change-me",
     "npmVersion": "1.0.0",
-    "npmRepository": "https://github.com/mermade/change-me",
+    "npmRepository": "",
 
     "useHttpClient": true,
-    "injectionToken": "InjectionToken"
+    "injectionToken": "InjectionToken",
+    "ngVersion": "~5.1.0"
   },
   "directories": [ "api", "model" ],
   "partials": {
@@ -19,6 +20,9 @@
     "modelGeneric": "modelGeneric.mustache"
   },
   "transformations": [
+    { "input": "README.mustache", "output": "README" },
+    { "input": "package.mustache", "output": "package.json" },
+    { "input": "tsconfig.mustache", "output": "tsconfig.json" },
     { "input": "api.module.mustache", "output": "api.module.ts" },
     { "input": "apis.mustache", "output": "apis.ts" },
     { "input": "configuration.mustache", "output": "configuration.ts" },
