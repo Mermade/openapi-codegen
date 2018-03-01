@@ -1,7 +1,7 @@
 {{#hasComplex}}
-{{#vars}}{{#complexType}}
-import { {{complexType}} } from './{{complexType}}';
-{{/complexType}}{{/vars}}
+{{#vars}}{{#importType}}
+import { {{importType}} } from './{{importType}}';
+{{/importType}}{{/vars}}
 
 {{/hasComplex}}
 export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{

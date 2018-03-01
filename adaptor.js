@@ -510,9 +510,9 @@ const typeMaps = {
         let result = type;
         if (result === 'integer') result = 'number';
         if (result === 'array') {
-            result = 'Array';
+            result = 'any[]';
             if (schema.items && schema.items.type) {
-                result += '<'+typeMap(schema.items.type,false,schema.items)+'>';
+                result = typeMap(schema.items.type, false, schema.items)+'[]';
             }
         }
         return result;
@@ -628,7 +628,7 @@ function getPrime(api,defaults) {
     prime.licenseInfo = api.info.license ? api.info.license.name : null;
     prime.licenseUrl = api.info.license ? api.info.license.url : null;
     prime.appName = api.info.title;
-    prime.host = ''
+    prime.host = '';
     prime.basePath = '/';
     prime.basePathWithoutHost = '/';
     prime.contextPath = '/';
@@ -863,13 +863,20 @@ function transform(api, defaults, callback) {
                 if (entry.isEnum) entry.isNotContainer = false;
                 entry.isContainer = !entry.isNotContainer;
                 if ((schema.type === 'object') && schema["x-oldref"]) {
-                    entry.complexType = schema["x-oldref"].replace('#/components/schemas/','');
+                    entry.importType = schema["x-oldref"].replace('#/components/schemas/','');
+                    entry.complexType = entry.importType;
+                }
+                if ((schema.type === 'array') && schema.items["x-oldref"]) {
+                    entry.importType = schema.items["x-oldref"].replace('#/components/schemas/','');
+                    entry.complexType = entry.importType+'[]';
                 }
 
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
 
                 if (entry.isEnum) {
+                    entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
+                    entry.enumName = entry.name+'Enum';
                     entry.allowableValues = {};
                     entry.allowableValues.enumVars = [];
                     entry["allowableValues.values"] = schema.enum;
@@ -882,8 +889,6 @@ function transform(api, defaults, callback) {
 
                 if (entry.name && state.depth<=1) {
                     entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
-                    entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
-                    entry.enumName = entry.name+'Enum';
                     model.hasEnums = model.hasEnums || entry.isEnum;
                     model.hasComplex = model.hasComplex || !!entry.complexType;
                     model.vars.push(entry);
