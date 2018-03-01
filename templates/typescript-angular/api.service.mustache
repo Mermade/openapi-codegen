@@ -204,13 +204,14 @@ export class {{classname}} {
 {{/useHttpClient}}
         }
 
+{{#bodyParam}}
         // to determine the Content-Type header
         const consumes: string[] = [
             {{#consumes}}
             '{{{mediaType}}}',
             {{/consumes}}
         ];
-{{#bodyParam}}
+
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected !== undefined) {
 {{^useHttpClient}}
@@ -223,6 +224,15 @@ export class {{classname}} {
 {{/bodyParam}}
 
 {{#hasFormParams}}
+{{^bodyParam}}
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            {{#consumes}}
+            '{{{mediaType}}}',
+            {{/consumes}}
+        ];
+{{/bodyParam}}
+
         const canConsumeForm = this.configuration.canConsumeForm(consumes);
 
         let formParams: { append(param: string, value: any): void; };
