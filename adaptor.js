@@ -350,7 +350,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 obj.produces.push(clone(mt)); // so convertArray works correctly
                 obj.hasProduces = true;
             }
-            if (contentType.schema) {
+            if (contentType && contentType.schema) {
                 entry.schema = contentType.schema;
                 entry.jsonSchema = safeJson({schema:entry.schema},null,2);
                 entry.baseType = contentType.schema.type;
@@ -360,12 +360,12 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                     entry.isPrimitiveType = false;
                 }
             }
-            if (contentType.example) {
+            if (contentType && contentType.example) {
                 entry.hasExamples = true;
                 if (!entry.examples) entry.examples = [];
                 entry.examples.push({contentType: mt.mediaType, example: JSON.stringify(contentType.example,null,2)});
             }
-            if (contentType.examples) {
+            if (contentType && contentType.examples) {
                 for (let example in contentType.examples) {
                     if (example.value) {
                         entry.hasExamples = true;

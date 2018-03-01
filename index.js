@@ -84,7 +84,7 @@ function main(o, config, configName, callback) {
                     delete toplevel.apiInfo;
                     for (let pa of config.perApi) {
                         let fnTemplate = Hogan.compile(pa.output);
-                        let template = Hogan.compile(ff.readFileSync(tpl(configName, pa.input),'utf8'));
+                        let template = Hogan.compile(ff.readFileSync(tpl(configName, pa.input), 'utf8'));
                         for (let api of model.apiInfo.apis) {
                             let cApi = Object.assign({},config.defaults,toplevel,api);
                             let filename = fnTemplate.render(cApi,config.partials);
@@ -98,7 +98,7 @@ function main(o, config, configName, callback) {
                     let cModels = clone(model.models);
                     for (let pm of config.perModel) {
                         let fnTemplate = Hogan.compile(pm.output);
-                        let template = Hogan.compile(ff.readFileSync(tpl(configName, pm.input),'utf8'));
+                        let template = Hogan.compile(ff.readFileSync(tpl(configName, pm.input), 'utf8'));
                         for (let model of cModels) {
                             outer.models = [];
                             outer.models.push(model);
@@ -114,7 +114,7 @@ function main(o, config, configName, callback) {
                         for (let api of outer.apiInfo.apis) {
                             let cOperations = clone(api.operations);
                             let fnTemplate = Hogan.compile(po.output);
-                            let template = Hogan.compile(ff.readFileSync(tpl(configName, po.input),'utf8'));
+                            let template = Hogan.compile(ff.readFileSync(tpl(configName, po.input), 'utf8'));
                             for (let operation of cOperations) {
                                 model.operations = [];
                                 model.operations.push(operation);
