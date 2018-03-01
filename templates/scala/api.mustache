@@ -52,12 +52,12 @@ class {{classname}}(
   implicit val formats = new org.json4s.DefaultFormats {
     override def dateFormatter = dateTimeFormatter
   }
-  implicit val stringReader = ClientResponseReaders.StringReader
-  implicit val unitReader = ClientResponseReaders.UnitReader
-  implicit val jvalueReader = ClientResponseReaders.JValueReader
-  implicit val jsonReader = JsonFormatsReader
-  implicit val stringWriter = RequestWriters.StringWriter
-  implicit val jsonWriter = JsonFormatsWriter
+  implicit val stringReader: ClientResponseReader[String] = ClientResponseReaders.StringReader
+  implicit val unitReader: ClientResponseReader[Unit] = ClientResponseReaders.UnitReader
+  implicit val jvalueReader: ClientResponseReader[JValue] = ClientResponseReaders.JValueReader
+  implicit val jsonReader: ClientResponseReader[Nothing] = JsonFormatsReader
+  implicit val stringWriter: RequestWriter[String] = RequestWriters.StringWriter
+  implicit val jsonWriter: RequestWriter[Nothing] = JsonFormatsWriter
 
   var basePath: String = defBasePath
   var apiInvoker: ApiInvoker = defApiInvoker
@@ -66,7 +66,7 @@ class {{classname}}(
     apiInvoker.defaultHeaders += key -> value
   }
 
-  val config = SwaggerConfig.forUrl(new URI(defBasePath))
+  val config: SwaggerConfig = SwaggerConfig.forUrl(new URI(defBasePath))
   val client = new RestClient(config)
   val helper = new {{classname}}AsyncHelper(client, config)
 
@@ -74,6 +74,7 @@ class {{classname}}(
   /**
    * {{summary}}
    * {{notes}}
+   *
 {{#allParams}}   * @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
 {{/allParams}}   * @return {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}void{{/returnType}}
    */
@@ -88,6 +89,7 @@ class {{classname}}(
   /**
    * {{summary}} asynchronously
    * {{notes}}
+   *
 {{#allParams}}   * @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
 {{/allParams}}   * @return Future({{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}void{{/returnType}})
    */
@@ -106,7 +108,7 @@ class {{classname}}AsyncHelper(client: TransportClient, config: SwaggerConfig) e
     {{/hasMore}}{{/required}}{{/allParams}})(implicit reader: ClientResponseReader[{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Unit{{/returnType}}]{{#bodyParams}}, writer: RequestWriter[{{^required}}Option[{{dataType}}]{{/required}}{{#required}}{{dataType}}{{/required}}]{{/bodyParams}}){{#returnType}}: Future[{{returnType}}]{{/returnType}}{{^returnType}}: Future[Unit]{{/returnType}} = {
     // create path and map variables
     val path = (addFmt("{{path}}"){{#pathParams}}
-      replaceAll ("\\{" + "{{baseName}}" + "\\}",{{paramName}}.toString){{/pathParams}})
+      replaceAll("\\{" + "{{baseName}}" + "\\}", {{paramName}}.toString){{/pathParams}})
 
     // query params
     val queryParams = new mutable.HashMap[String, String]
