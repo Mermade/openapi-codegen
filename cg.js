@@ -40,7 +40,7 @@ let defName = argv._[1] || './defs/petstore3.json';
 
 let zipFiles = {};
 
-function nop(arg, callback) { if (callback) callback(null,true); return true; };
+function nop(arg, callback) { if (callback) callback(null,true); return true; }
 
 function zipFile(filename,contents,encoding) {
     zipFiles[filename] = contents;
@@ -148,7 +148,7 @@ function convert12(api){
 }
 
 function main(s) {
-    let o = yaml.safeLoad(s, { json: true } );
+    let o = yaml.safeLoad(s, { json: true });
     if (argv.verbose) console.log('Loaded definition '+defName);
 
     if (o && o.openapi) {

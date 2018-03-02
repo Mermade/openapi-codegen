@@ -129,7 +129,7 @@ function specificationExtensions(obj) {
 function convertOperation(op,verb,path,pathItem,obj,api) {
     let operation = {};
     operation.httpMethod = verb.toUpperCase();
-    if ('original' === obj.httpMethodCase) operation.httpMethod = verb; // extension
+    if (obj.httpMethodCase === 'original') operation.httpMethod = verb; // extension
     operation.path = path;
     operation.replacedPathName = path; //?
 
@@ -322,7 +322,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.jsonSchema = safeJson({ schema: entry.schema },null,2);
         if (response.content) {
             entry.baseType = 'object';
-            entry.dataType = typeMap(entry.baseType,false,{});;
+            entry.dataType = typeMap(entry.baseType,false,{});
             let contentType = Object.values(response.content)[0];
             let mt = {};
             mt.mediaType = Object.keys(response.content)[0];
@@ -729,7 +729,7 @@ function transform(api, defaults, callback) {
     let message = {};
     let vOptions = {lint:defaults.lint};
     if (defaults.stools && defaults.swagger) {
-        stools.specs['v2_0'].validate(defaults.swagger,function(err,result){
+        stools.specs.v2_0.validate(defaults.swagger,function(err,result){
             if (err) console.error(util.inspect(err));
             if (result.errors) {
                 for (let e of result.errors) {
@@ -812,7 +812,7 @@ function transform(api, defaults, callback) {
             walkSchema(schema,{},wsGetState,function(schema,parent,state){
                 let entry = {};
                 entry.name = schema.name || schema.title;
-                if (!entry.name && state.property && (state.property.startsWith('properties') || 
+                if (!entry.name && state.property && (state.property.startsWith('properties') ||
                     state.property.startsWith('additionalProperties'))) {
                     entry.name = state.property.split('/')[1];
                 }
@@ -847,7 +847,7 @@ function transform(api, defaults, callback) {
                 if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
                     entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
                 }
-                
+
                 entry.dataFormat = schema.format;
                 entry.defaultValue = schema.default;
 

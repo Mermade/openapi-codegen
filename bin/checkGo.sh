@@ -2,6 +2,8 @@
 
 set -e
 
+go version
+
 go get golang.org/x/net/context
 go get golang.org/x/oauth2
 go get github.com/gorilla/mux

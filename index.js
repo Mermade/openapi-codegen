@@ -21,7 +21,7 @@ let ff = {
 
 function tpl(...segments) {
     return path.join(__dirname, 'templates', ...segments)
-};
+}
 
 function main(o, config, configName, callback) {
     let outputDir = config.outputDir || './out/';
@@ -33,7 +33,7 @@ function main(o, config, configName, callback) {
             if (verbose) console.log('Processing partial '+partial);
             config.partials[p] = ff.readFileSync(tpl(configName, partial),'utf8');
         }
-    
+
         let actions = [];
         for (let t in config.transformations) {
             let tx = config.transformations[t];
@@ -43,7 +43,7 @@ function main(o, config, configName, callback) {
             }
             actions.push(tx);
         }
-    
+
         if (verbose) console.log('Making/cleaning output directories');
         ff.mkdirp(outputDir+configName,function(){
             ff.rimraf(outputDir+configName+'/*',function(){
@@ -78,7 +78,7 @@ function main(o, config, configName, callback) {
                     ff.createFile(outputDir+configName+'/LICENSE',ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
                 }
                 let outer = model;
-     
+
                 if (config.perApi) {
                     let toplevel = clone(model);
                     delete toplevel.apiInfo;
@@ -95,7 +95,7 @@ function main(o, config, configName, callback) {
                 }
 
                 if (config.perModel) {
-                    let cModels = clone(model.models); 
+                    let cModels = clone(model.models);
                     for (let pm of config.perModel) {
                         let fnTemplate = Hogan.compile(pm.output);
                         let template = Hogan.compile(ff.readFileSync(tpl(configName, pm.input), 'utf8'));
@@ -108,7 +108,7 @@ function main(o, config, configName, callback) {
                         }
                     }
                 }
-    
+
                 if (config.perOperation) { // now may not be necessary
                     for (let po of config.perOperation) {
                         for (let api of outer.apiInfo.apis) {
