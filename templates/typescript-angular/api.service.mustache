@@ -282,7 +282,7 @@ export class {{classname}} {
 
 {{/hasFormParams}}
 {{#useHttpClient}}
-        return this.httpClient.request{{^isResponseFile}}<any>{{/isResponseFile}}('{{httpMethod}}', `${this.basePath}{{{path}}}`,
+        return this.httpClient.request{{^isResponseFile}}<any>{{/isResponseFile}}('{{httpMethod}}', `${this.basePath}{{{tsPath}}}`,
             {
 {{#bodyParam}}
                 body: {{paramName}},
@@ -324,7 +324,7 @@ export class {{classname}} {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(`${this.basePath}{{{path}}}`, requestOptions);
+        return this.http.request(`${this.basePath}{{{tsPath}}}`, requestOptions);
 {{/useHttpClient}}
     }
 

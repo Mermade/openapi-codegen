@@ -418,6 +418,10 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.allParams = convertArray(operation.allParams);
     operation.examples = convertArray(operation.examples);
 
+    operation.tsPath = operation.pathParams.reduce(function(path, param) {
+        return path.replace('{'+param.paramName+'}', '${'+param.paramName+'}');
+    }, operation.path);
+
     if (operation.hasConsumes) {
         operation.consumes = convertArray(operation.consumes);
     }
