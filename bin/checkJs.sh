@@ -2,6 +2,8 @@
 
 set -e
 
+tsc --version
+
 echo nodejs
 cd out/nodejs
 tsc -t ES6 -m system --allowJs --outFile _ts.js *.js
