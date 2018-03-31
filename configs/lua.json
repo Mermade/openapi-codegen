@@ -2,7 +2,7 @@
     "defaults": {
         "language": "lua",
         "packageName": "openapi",
-        "ximports": [ { "import": "fmt" } ]
+        "imports": []
     },
     "partials": {
         "partial_header": "partial_header.mustache"
@@ -11,8 +11,6 @@
         "err", "docs"
     ],
     "transformations": [
-        { "input": "api_client.mustache", "output": "err/api_client.go" },
-        { "input": "configuration.mustache", "output": "err/configuration.go" },
         { "input": "luarocks.mustache", "output": "luarocks" },
         { "input": "gitignore.mustache", "output": ".gitignore" },
         { "input": "git_push.sh.mustache", "output": "git_push.sh" },
