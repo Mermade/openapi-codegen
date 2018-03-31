@@ -88,7 +88,7 @@ function main(o, config, configName, callback) {
                         for (let api of model.apiInfo.apis) {
                             let cApi = Object.assign({},config.defaults,toplevel,api);
                             let filename = fnTemplate.render(cApi,config.partials);
-                            if (verbose) console.log('Rendering '+filename+' (dynamic)');
+                            if (verbose) console.log('Rendering '+filename+' (dynamic:'+pa.input+')');
                             ff.createFile(outputDir+configName+'/'+filename,template.render(cApi,config.partials),'utf8');
                         }
                     }
@@ -103,7 +103,7 @@ function main(o, config, configName, callback) {
                             outer.models = [];
                             outer.models.push(model);
                             let filename = fnTemplate.render(outer,config.partials);
-                            if (verbose) console.log('Rendering '+filename+' (dynamic)');
+                            if (verbose) console.log('Rendering '+filename+' (dynamic:'+pm.input+')');
                             ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
                         }
                     }
@@ -119,7 +119,7 @@ function main(o, config, configName, callback) {
                                 model.operations = [];
                                 model.operations.push(operation);
                                 let filename = fnTemplate.render(outer,config.partials);
-                                if (verbose) console.log('Rendering '+filename+' (dynamic)');
+                                if (verbose) console.log('Rendering '+filename+' (dynamic:'+po.input+')');
                                 ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
                             }
                         }
