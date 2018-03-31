@@ -9,7 +9,7 @@ before_script:
 script:
   - npm test
   - bin/buildAll.sh
-  - npm i typescript -g
+  - npm i typescript@2.6.1 -g
   - bin/checkJs.sh
   - bin/checkTs.sh
   - bin/checkLua.sh
