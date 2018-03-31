@@ -17,3 +17,4 @@ script:
   - bin/checkRuby.sh
   - bin/checkBash.sh
   - bin/checkHaskell.sh
+  - bin/checkPython.sh

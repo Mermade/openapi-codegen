@@ -1,37 +1,62 @@
 {
-    "defaults": {
-        "asyncio": true,
-        "tornado": true
-    },
-    "directories": [
-        "asyncio", "tornado"
-    ],
-    "partials": {
-        "partial_header": "partial_header.mustache"
-    },
-    "transformations": [
-        { "input": "travis.mustache", "output": ".travis.yml" },
-        { "input": "asyncio/rest.mustache", "output": "asyncio/rest.py" },
-        { "input": "tornado/rest.mustache", "output": "tornado/rest.py" },
-        { "input": "rest.mustache", "output": "rest.py" },
-        { "input": "setup.mustache", "output": "setup.py" },
-        { "input": "configuration.mustache", "output": "configuration.py" },
-        { "input": "api.mustache", "output": "api.py" },
-        { "input": "api_client.mustache", "output": "api_client.py" },
-        { "input": "api_doc.mustache", "output": "api_doc.md" },
-        { "input": "api_test.mustache", "output": "api_test.py" },
-        { "input": "model.mustache", "output": "model.py" },
-        { "input": "model_doc.mustache", "output": "model_doc.md" },
-        { "input": "model_test.mustache", "output": "model_test.py" },
-        { "input": "README.mustache", "output": "README.md" },
-        { "input": "requirements.mustache", "output": "requirements.txt" },
-        { "input": "test-requirements.mustache", "output": "test-requirements.txt" },
-        { "input": "tox.mustache", "output": "tox.ini" },
-        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
-        { "input": "gitignore.mustache", "output": ".gitignore" },
-        { "input": "__init__api.mustache", "output": "__init__api.py" },
-        { "input": "__init__test.mustache", "output": "__init__test.py" },
-        { "input": "__init__model.mustache", "output": "__init__model.py" },
-        { "input": "__init__package.mustache", "output": "__init_package.py" }
-    ]
+  "name": "Python",
+  "type": "client",
+  "defaults": {
+    "asyncio": false,
+    "tornado": false,
+    "packageName": "swagger_client",
+    "package": "swagger_client",
+    "baseNamespace": "swagger_client",
+    "generatorPackage": "swagger_client",
+    "invokerPackage": "swagger_client",
+    "importPath": "swagger_client",
+    "apiPackage": "swagger_client.api",
+    "pythonPackageName":"swagger_client",
+    "modelPackage": "swagger_client.model",
+    "clientPackage": "swagger_client.api_client",
+    "modelNaming": "PascalCase",
+    "modelPropertyNaming": "snake_case",
+    "imports": []
+  },
+  "directories": [
+    "swagger_client",
+    "swagger_client/models",
+    "swagger_client/api",
+    "test",
+    "asyncio",
+    "tornado",
+    "docs"
+  ],
+  "partials": {
+    "partial_header": "partial_header.mustache"
+  },
+  "transformations": [
+    { "input": "travis.mustache", "output": ".travis.yml" },
+    { "input": "rest.mustache", "output": "swagger_client/rest.py" },
+    { "input": "setup.mustache", "output": "setup.py" },
+    { "input": "configuration.mustache", "output": "swagger_client/configuration.py" },
+    { "input": "api_client.mustache", "output": "swagger_client/api_client.py" },
+    { "input": "api_test.mustache", "output": "api_test.py" },
+    { "input": "README.mustache", "output": "README.md" },
+    { "input": "requirements.mustache", "output": "requirements.txt" },
+    { "input": "test-requirements.mustache", "output": "test-requirements.txt" },
+    { "input": "tox.mustache", "output": "tox.ini" },
+    { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+    { "input": "gitignore.mustache", "output": ".gitignore" },
+    { "input": "tornado/rest.mustache", "output": "tornado/rest.py" },
+    { "input": "asyncio/rest.mustache", "output": "asyncio/rest.py" },
+    { "input": "__init__api.mustache", "output": "swagger_client/api/__init__.py" },
+    { "input": "__init__test.mustache", "output": "test/__init__.py" },
+    { "input": "__init__model.mustache", "output": "swagger_client/models/__init__.py" },
+    { "input": "__init__package.mustache", "output": "swagger_client/__init__.py" }
+  ],
+  "perApi":[
+    { "input": "api_doc.mustache", "output": "docs/{{name}}Api.md" },
+    { "input": "api.mustache", "output": "swagger_client/api/{{name}}_api.py" }
+  ],
+  "perModel": [
+    { "input": "model.mustache", "output": "swagger_client/models/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.py" },
+    { "input": "model_test.mustache", "output": "test/test_{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.py" },
+    { "input": "model_doc.mustache", "output": "docs/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.md" }
+  ]
 }
