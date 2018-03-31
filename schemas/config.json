@@ -48,6 +48,9 @@
                     "output": {
                         "type": "string",
                         "description": "The output filename, can be templated"
+                    },
+                    "defaults": {
+                        "type": "object"
                     }
                 },
                 "additionalProperties": false
@@ -82,6 +85,9 @@
                     "output": {
                         "type": "string",
                         "description": "The output filename, can be templated"
+                    },
+                    "defaults": {
+                        "type": "object"
                     }
                 },
                 "additionalProperties": false

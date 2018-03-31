@@ -86,7 +86,7 @@ function main(o, config, configName, callback) {
                         let fnTemplate = Hogan.compile(pa.output);
                         let template = Hogan.compile(ff.readFileSync(tpl(configName, pa.input), 'utf8'));
                         for (let api of model.apiInfo.apis) {
-                            let cApi = Object.assign({},config.defaults,toplevel,api);
+                            let cApi = Object.assign({},config.defaults,pa.defaults||{},toplevel,api);
                             let filename = fnTemplate.render(cApi,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic:'+pa.input+')');
                             ff.createFile(outputDir+configName+'/'+filename,template.render(cApi,config.partials),'utf8');
@@ -101,7 +101,8 @@ function main(o, config, configName, callback) {
                         let template = Hogan.compile(ff.readFileSync(tpl(configName, pm.input), 'utf8'));
                         for (let model of cModels) {
                             outer.models = [];
-                            outer.models.push(model);
+                            let effModel = Object.assign({},model,pm.defaults||{});
+                            outer.models.push(effModel);
                             let filename = fnTemplate.render(outer,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic:'+pm.input+')');
                             ff.createFile(outputDir+configName+'/'+filename,template.render(outer,config.partials),'utf8');
