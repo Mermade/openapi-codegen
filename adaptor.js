@@ -257,6 +257,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.bodyParams = [];
     if (op.requestBody) {
         operation.openapi.requestBody = op.requestBody;
+        operation.hasParams = true;
         operation.hasBodyParam = true;
         operation.bodyParam = {};
         operation.bodyParam.isBodyParam = true;
@@ -295,7 +296,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             }
             if (contentType.schema.type) {
                 operation.bodyParam.type = contentType.schema.type;
-                operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema);
+                operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema); // this is the below mentioned
             }
         }
         operation.bodyParam["%dataType%"] = operation.bodyParam.dataType; // bug in typescript-fetch template?
