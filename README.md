@@ -125,7 +125,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |php-symfony||
 |pistache-server||
 |powershell||
-|**python**|?|**needs testing**||
+|**python**|client|**needs testing**|||@pnordland
 |qt5cpp||
 |r||
 |rails5||
