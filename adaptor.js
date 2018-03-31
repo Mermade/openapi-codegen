@@ -440,6 +440,7 @@ function convertToApis(source,obj) {
                     entry = {};
                     entry.name = tagName;
                     entry.classname = tagName+'Api';
+                    entry.classVarName = tagName; // see issue #21
                     entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
                     entry.operations = {};
                     entry.operations.operation = [];
@@ -602,7 +603,7 @@ function getPrime(api,defaults) {
     prime.swaggerCodegenVersion = 'openapi-codegen-v'+prime.generatorVersion;
     prime.appDescription = api.info.description||'No description';
     prime.projectDescription = prime.appDescription;
-    prime.classVarName = 'default'; //? possibly an array of these based on tags (a la widdershins)
+    prime.classVarName = 'default'; // see issue #21
     prime.exportedName = prime.classname;
     prime.packageTitle = prime.classname; /* Specifies an AssemblyTitle for the .NET Framework global assembly attributes stored in the AssemblyInfo file. */
     prime.infoEmail = api.info.contact ? api.info.contact.email : null;
