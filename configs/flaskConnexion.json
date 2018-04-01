@@ -1,8 +1,10 @@
 {
     "defaults": {
-        "supportPython2": false
+        "supportPython2": true
     },
     "directories": [
+        "controllers",
+        "controllers/test"
     ],
     "partials": {
         "param_type": "param_type.mustache"
@@ -24,11 +26,13 @@
         { "input": "__init__test.mustache", "output": "__init__test.py" },
         { "input": "__main__.mustache", "output": "__main__.py" },
         { "input": "base_model_.mustache", "output": "base_model_.py" },
-        { "input": "controller.mustache", "output": "controller.py" },
-        { "input": "controller_test.mustache", "output": "controller_test.py" },
         { "input": "encoder.mustache", "output": "encoder.py" },
         { "input": "model.mustache", "output": "model.py" },
         { "input": "setup.mustache", "output": "setup.py" },
         { "input": "util.mustache", "output": "util.py" }
+    ],
+    "perApi": [
+        { "input": "controller.mustache", "output": "controllers/{{name}}.py" },
+        { "input": "controller_test.mustache", "output": "controllers/test/{{name}}.py" }
     ]
 }
