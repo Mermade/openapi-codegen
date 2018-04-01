@@ -197,6 +197,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         for (let p of schemaProperties) {
             if (typeof param.schema[p] !== 'undefined') parameter[p] = param.schema[p];
         }
+        parameter.example = JSON.stringify(sampler.sample(param.schema,{},api));
         parameter.isBoolean = (param.schema.type === 'boolean');
         parameter.isPrimitiveType = (!param.schema["x-oldref"]);
         parameter.dataFormat = param.schema.format;
@@ -253,7 +254,8 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             operation.formParams.push(clone(parameter));
             operation.hasFormParams = true;
         }
-    }
+    } // end of effective parameters
+
     operation.bodyParams = [];
     if (op.requestBody) {
         operation.openapi.requestBody = op.requestBody;
@@ -269,6 +271,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         operation.bodyParam.isDateTime = false;
         operation.bodyParam.baseName = 'body';
         operation.bodyParam.paramName = 'body';
+        operation.bodyParam.baseType = 'object';
         operation.bodyParam.required = op.requestBody.required||false;
         operation.bodyParam.optional = !operation.bodyParam.required;
         if (operation.bodyParam.required) operation.hasRequiredParams = true;
@@ -291,6 +294,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 obj.hasConsumes = true;
             }
             operation.bodyParam.schema = contentType.schema;
+            operation.bodyParam.example = JSON.stringify(sampler.sample(contentType.schema,{},api));
             for (let p in schemaProperties) {
                 if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
             }
