@@ -44,7 +44,8 @@ var argv = require('yargs')
 
 let configStr = argv._[0] || 'nodejs';
 let configName = path.basename(configStr);
-let configPath = path.dirname(configStr) || './configs';
+let configPath = path.dirname(configStr);
+if (!configPath || (configPath === '.')) configPath = './configs';
 let configFile = path.resolve(configPath,configName)+'.json';
 let config = require(configFile);
 let defName = argv._[1] || './defs/petstore3.json';
