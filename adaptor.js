@@ -428,7 +428,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     return operation;
 }
 
-function convertToApis(source,obj) {
+function convertToApis(source,obj,defaults) {
     let apis = [];
     for (let p in source.paths) {
         for (let m in source.paths[p]) {
@@ -444,7 +444,13 @@ function convertToApis(source,obj) {
                 if (!entry) {
                     entry = {};
                     entry.name = tagName;
-                    entry.classname = tagName+'Api';
+                    if (defaults.language === 'typescript') {
+                        entry.classname = Case.pascal(entry.name);
+                    }
+                    else {
+                        entry.classname = tagName+'Api';
+                    }
+                    entry.classFilename = tagName+'Api';
                     entry.classVarName = tagName; // see issue #21
                     entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
                     entry.operations = {};
@@ -789,7 +795,7 @@ function transform(api, defaults, callback) {
     obj.produces = [];
 
     obj.apiInfo = {};
-    obj.apiInfo.apis = convertToApis(api,obj);
+    obj.apiInfo.apis = convertToApis(api,obj,defaults);
 
     obj.produces = convertArray(obj.produces);
     obj.consumes = convertArray(obj.consumes);
