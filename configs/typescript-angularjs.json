@@ -2,6 +2,7 @@
     "defaults": {
         "language": "typescript",
         "supportsES6": true,
+        "classPrefix": "",
         "gitUserId": "mermade",
         "gitRepoId": "change-me",
         "releaseNote": "Initial commit",
@@ -14,13 +15,17 @@
         "licenseInfo": "licenseInfo.mustache"
     },
     "transformations": [
-        { "input": "api.module.mustache", "output": "api.module.ts" },
-        { "input": "api.mustache", "output": "api.ts" },
-        { "input": "apis.mustache", "output": "api/apis.ts" },
+        { "input": "apis.mustache", "output": "api/api.ts" },
         { "input": "index.mustache", "output": "index.ts" },
-        { "input": "model.mustache", "output": "model.ts" },
         { "input": "models.mustache", "output": "model/models.ts" },
         { "input": "gitignore", "output": ".gitignore" },
-        { "input": "git_push.sh.mustache", "output": "git_push.sh" }
+        { "input": "git_push.sh.mustache", "output": "git_push.sh" },
+        { "input": "api.module.mustache", "output": "api/apiModule.ts" }
+    ],
+    "perApi": [
+        { "input": "api.mustache", "output": "api/{{name}}Api.ts" }
+    ],
+    "perModel": [
+        { "input": "model.mustache", "output": "model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.ts" }
     ]
 }
