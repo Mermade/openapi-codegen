@@ -23,16 +23,19 @@ or
 ### CLI
 
 ```
-cg [options] {configName} {openapi-definition}
+cg [options] {[path]configName} {openapi-definition}
 
 Options:
-  -d, --debug    Turn on debugging information in the model            [boolean]
-  --help         Show help                                             [boolean]
-  -l, --lint     Lint input definition                                 [boolean]
-  -s, --stools   Use swagger-tools to validate OpenAPI 2.0 definitions [boolean]
-  --version      Show version number                                   [boolean]
-  -v, --verbose  Increase verbosity                                    [boolean]
-  -z, --zip      Create a .zip file instead of individual files        [boolean]
+  --help           Show help                                           [boolean]
+  --version        Show version number                                 [boolean]
+  -d, --debug      Turn on debugging information in the model          [boolean]
+  -l, --lint       Lint input definition                               [boolean]
+  -o, --output     Specify output directory         [string] [default: "./out/"]
+  -s, --stools     Use swagger-tools to validate OpenAPI 2.0 definitions
+                                                                       [boolean]
+  -t, --templates  Specify templates directory                          [string]
+  -v, --verbose    Increase verbosity                                  [boolean]
+  -z, --zip        Create a .zip file instead of individual files      [boolean]
 ```
 
 e.g.

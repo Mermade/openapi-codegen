@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const url = require('url');
 const util = require('util');
 
@@ -15,16 +16,23 @@ const admzip = require('adm-zip');
 const processor = require('./index.js');
 
 var argv = require('yargs')
-    .usage('cg [options] {configName} {openapi-definition}')
+    .usage('cg [options] {[path]configName} {openapi-definition}')
     .boolean('debug')
     .alias('d','debug')
     .describe('debug','Turn on debugging information in the model')
     .boolean('lint')
     .alias('l','lint')
     .describe('lint','Lint input definition')
+    .string('output')
+    .alias('o','output')
+    .describe('output','Specify output directory')
+    .default('output','./out/')
     .boolean('stools')
     .alias('s','stools')
     .describe('stools','Use swagger-tools to validate OpenAPI 2.0 definitions')
+    .string('templates')
+    .alias('t','templates')
+    .describe('templates','Specify templates directory')
     .boolean('verbose')
     .describe('verbose','Increase verbosity')
     .alias('v','verbose')
@@ -34,9 +42,15 @@ var argv = require('yargs')
     .version()
     .argv;
 
-let configName = argv._[0] || 'nodejs';
-let config = require('./configs/'+configName+'.json');
+let configStr = argv._[0] || 'nodejs';
+let configName = path.basename(configStr);
+let configPath = path.dirname(configStr) || './configs';
+let configFile = path.resolve(configPath,configName)+'.json';
+let config = require(configFile);
 let defName = argv._[1] || './defs/petstore3.json';
+
+config.outputDir = argv.output;
+config.templateDir = argv.templates;
 
 let zipFiles = {};
 
@@ -56,7 +70,7 @@ function finish(err,result) {
             zip.addFile(f, new Buffer(zipFiles[f]), 'Created with OpenAPI-CodeGen');
         }
         // write everything to disk
-        zip.writeZip('./out/'+configName+'.zip');
+        zip.writeZip(path.join(config.outputDir,configName+'.zip'));
     }
 }
 
