@@ -2,7 +2,7 @@
 
 set -e
 
-echo bash
+echo bash $BASH_VERSION
 cd out/bash
 bash -n *.sh
 cd ../..
