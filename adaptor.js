@@ -444,12 +444,12 @@ function convertToApis(source,obj,defaults) {
                 if (!entry) {
                     entry = {};
                     entry.name = tagName;
-                    if (defaults.language === 'typescript') {
-                        entry.classname = Case.pascal(entry.name);
-                    }
-                    else {
-                        entry.classname = tagName+'Api';
-                    }
+                    //if (defaults.language === 'typescript') {
+                    //    entry.classname = Case.pascal(entry.name);
+                    //}
+                    //else {
+                    entry.classname = tagName+'Api';
+                    //}
                     entry.classFilename = tagName+'Api';
                     entry.classVarName = tagName; // see issue #21
                     entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
