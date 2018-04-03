@@ -39,6 +39,9 @@ var argv = require('yargs')
     .boolean('zip')
     .alias('z','zip')
     .describe('zip','Create a .zip file instead of individual files')
+    .string('outputDir')
+    .describe('outputDir','Output directory')
+    .alias('o','outputDir')
     .version()
     .argv;
 
@@ -189,6 +192,7 @@ if (argv.verbose) {
 if (argv.lint) config.defaults.lint = true;
 if (argv.debug) config.defaults.debug = true;
 if (argv.stools) config.defaults.stools = true;
+if (argv.outputDir) config.outputDir = argv.outputDir.replace(/\/*$/, '/');
 if (argv.zip) {
     processor.fileFunctions.createFile = zipFile;
     processor.fileFunctions.rimraf = nop;
