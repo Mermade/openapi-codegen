@@ -29,6 +29,8 @@ Options:
   --help           Show help                                           [boolean]
   --version        Show version number                                 [boolean]
   -d, --debug      Turn on debugging information in the model          [boolean]
+  -f, --flat       Do not include config-name in output directory structure
+                                                                       [boolean]
   -l, --lint       Lint input definition                               [boolean]
   -o, --output     Specify output directory         [string] [default: "./out/"]
   -s, --stools     Use swagger-tools to validate OpenAPI 2.0 definitions
