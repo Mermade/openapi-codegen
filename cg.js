@@ -20,6 +20,9 @@ var argv = require('yargs')
     .boolean('debug')
     .alias('d','debug')
     .describe('debug','Turn on debugging information in the model')
+    .boolean('flat')
+    .alias('f','flat')
+    .describe('flat','Do not include config-name in output directory structure')
     .boolean('lint')
     .alias('l','lint')
     .describe('lint','Lint input definition')
@@ -188,6 +191,7 @@ if (argv.verbose) {
 }
 if (argv.lint) config.defaults.lint = true;
 if (argv.debug) config.defaults.debug = true;
+if (argv.flat) config.defaults.flat = true;
 if (argv.stools) config.defaults.stools = true;
 if (argv.zip) {
     processor.fileFunctions.createFile = zipFile;

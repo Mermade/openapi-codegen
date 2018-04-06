@@ -44,19 +44,21 @@ function main(o, config, configName, callback) {
             actions.push(tx);
         }
 
+        const subDir = (config.defaults.flat ? '' : configName);
+
         if (verbose) console.log('Making/cleaning output directories');
-        ff.mkdirp(path.join(outputDir,configName),function(){
-            ff.rimraf(path.join(outputDir,configName)+'/*',function(){
+        ff.mkdirp(path.join(outputDir,subDir),function(){
+            ff.rimraf(path.join(outputDir,subDir)+'/*',function(){
                 if (config.directories) {
                     for (let directory of config.directories) {
-                        ff.mkdirp.sync(path.join(outputDir,configName,directory));
+                        ff.mkdirp.sync(path.join(outputDir,subDir,directory));
                     }
                 }
                 for (let action of actions) {
                     if (verbose) console.log('Rendering '+action.output);
                     let template = Hogan.compile(action.template);
                     let content = template.render(model,config.partials);
-                    ff.createFile(path.join(outputDir,configName,action.output),content,'utf8');
+                    ff.createFile(path.join(outputDir,subDir,action.output),content,'utf8');
                 }
                 if (config.touch) { // may not now be necessary
                     let touchTmp = Hogan.compile(config.touch);
@@ -65,17 +67,17 @@ function main(o, config, configName, callback) {
                     for (let file of files) {
                         file = file.trim();
                         if (file) {
-                            if (!fs.existsSync(path.join(outputDir,configName,file))) {
-                                ff.createFile(path.join(outputDir,configName,file),'','utf8');
+                            if (!fs.existsSync(path.join(outputDir,subDir,file))) {
+                                ff.createFile(path.join(outputDir,subDir,file),'','utf8');
                             }
                         }
                     }
                 }
                 if (config.apache) {
-                    ff.createFile(path.join(outputDir,configName,'LICENSE'),ff.readFileSync(tpl('_common', 'LICENSE'),'utf8'),'utf8');
+                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl('_common', 'LICENSE'),'utf8'),'utf8');
                 }
                 else {
-                    ff.createFile(path.join(outputDir,configName,'LICENSE'),ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
+                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
                 }
                 let outer = model;
 
@@ -89,7 +91,7 @@ function main(o, config, configName, callback) {
                             let cApi = Object.assign({},config.defaults,pa.defaults||{},toplevel,api);
                             let filename = fnTemplate.render(cApi,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic:'+pa.input+')');
-                            ff.createFile(path.join(outputDir,configName,filename),template.render(cApi,config.partials),'utf8');
+                            ff.createFile(path.join(outputDir,subDir,filename),template.render(cApi,config.partials),'utf8');
                         }
                     }
                 }
@@ -105,7 +107,7 @@ function main(o, config, configName, callback) {
                             outer.models.push(effModel);
                             let filename = fnTemplate.render(outer,config.partials);
                             if (verbose) console.log('Rendering '+filename+' (dynamic:'+pm.input+')');
-                            ff.createFile(path.join(outputDir,configName,filename),template.render(outer,config.partials),'utf8');
+                            ff.createFile(path.join(outputDir,subDir,filename),template.render(outer,config.partials),'utf8');
                         }
                     }
                 }
@@ -121,7 +123,7 @@ function main(o, config, configName, callback) {
                                 model.operations.push(operation);
                                 let filename = fnTemplate.render(outer,config.partials);
                                 if (verbose) console.log('Rendering '+filename+' (dynamic:'+po.input+')');
-                                ff.createFile(path.join(outputDir,configName,filename),template.render(outer,config.partials),'utf8');
+                                ff.createFile(path.join(outputDir,subDir,filename),template.render(outer,config.partials),'utf8');
                             }
                         }
                     }
