@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "8"
+  - "10"
 before_script:
   - sudo apt-get install lua5.2
   - sudo apt-get install golang
