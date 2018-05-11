@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 
 const util = require('util');
@@ -357,7 +358,8 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 entry.examples.push({contentType: mt.mediaType, example: JSON.stringify(contentType.example,null,2)});
             }
             if (contentType && contentType.examples) {
-                for (let example in contentType.examples) {
+                for (let ex in contentType.examples) {
+                    const example = contentType.examples[ex];
                     if (example.value) {
                         entry.hasExamples = true;
                         if (!entry.examples) entry.examples = [];
@@ -806,86 +808,88 @@ function transform(api, defaults, callback) {
     if (api.components) {
         for (let s in api.components.schemas) {
             let schema = api.components.schemas[s];
-            let container = {};
-            let model = {};
-            model.name = s;
-            if (obj.modelNaming === 'snake_case') {
-                model.name = Case.snake(model.name);
-            }
-            model.classname = model.name;
-            model.classVarName = s;
-            model.modelJson = safeJson(schema,null,2);
-            model.title = schema.title;
-            model.unescapedDescription = schema.description;
-            model.classFilename = obj.classPrefix+model.name;
-            model.modelPackage = model.name;
-            model.hasEnums = false;
-            model.vars = [];
-            walkSchema(schema,{},wsGetState,function(schema,parent,state){
-                let entry = {};
-                entry.name = schema.name || schema.title;
-                if (!entry.name && state.property && (state.property.startsWith('properties') ||
-                    state.property.startsWith('additionalProperties'))) {
-                    entry.name = state.property.split('/')[1];
+            if (schema !== null) {
+                let container = {};
+                let model = {};
+                model.name = s;
+                if (obj.modelNaming === 'snake_case') {
+                    model.name = Case.snake(model.name);
                 }
-                if (obj.modelPropertyNaming === 'snake_case') {
-                    entry.name = Case.snake(entry.name);
-                }
-                if (reserved.indexOf(entry.name)>=0) {
-                    entry.name = Case.pascal(entry.name);
-                }
-                if (entry.name) {
-                    entry.baseName = entry.name.toLowerCase();
-                }
-                entry.getter = Case.camel('get_'+entry.name);
-                entry.setter = Case.camel('set_'+entry.name);
-                entry.description = schema.description||'';
-                entry.unescapedDescription = entry.description;
-                entry.type = schema.type;
-                entry.required = (parent.required && parent.required.indexOf(entry.name)>=0)||false;
-                entry.isNotRequired = !entry.required;
-                entry.readOnly = !!schema.readOnly;
-                entry.type = typeMap(entry.type,entry.required,schema);
-                entry.datatype = entry.type; //?
-                entry.jsonSchema = safeJson(schema,null,2);
-                for (let p in schemaProperties) {
-                    if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
-                }
-                entry.isEnum = !!schema.enum;
-                entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
-                entry.isNotContainer = entry.isPrimitiveType;
-                if (entry.isEnum) entry.isNotContainer = false;
-                entry.isContainer = !entry.isNotContainer;
-                if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
-                    entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
-                }
-
-                entry.dataFormat = schema.format;
-                entry.defaultValue = schema.default;
-
-                if (entry.isEnum) {
-                    model.allowableValues = {};
-                    model.allowableValues.enumVars = [];
-                    model["allowableValues.values"] = schema.enum;
-                    for (let v of schema.enum) {
-                        let e = { name: v, value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
-                        model.allowableValues.enumVars.push(e);
+                model.classname = model.name;
+                model.classVarName = s;
+                model.modelJson = safeJson(schema,null,2);
+                model.title = schema.title;
+                model.unescapedDescription = schema.description;
+                model.classFilename = obj.classPrefix+model.name;
+                model.modelPackage = model.name;
+                model.hasEnums = false;
+                model.vars = [];
+                walkSchema(schema,{},wsGetState,function(schema,parent,state){
+                    let entry = {};
+                    entry.name = schema.name || schema.title;
+                    if (!entry.name && state.property && (state.property.startsWith('properties') ||
+                        state.property.startsWith('additionalProperties'))) {
+                        entry.name = state.property.split('/')[1];
                     }
-                    model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
-                }
+                    if (obj.modelPropertyNaming === 'snake_case') {
+                        entry.name = Case.snake(entry.name);
+                    }
+                    if (reserved.indexOf(entry.name)>=0) {
+                        entry.name = Case.pascal(entry.name);
+                    }
+                    if (entry.name) {
+                        entry.baseName = entry.name.toLowerCase();
+                    }
+                    entry.getter = Case.camel('get_'+entry.name);
+                    entry.setter = Case.camel('set_'+entry.name);
+                    entry.description = schema.description||'';
+                    entry.unescapedDescription = entry.description;
+                    entry.type = schema.type;
+                    entry.required = (parent.required && parent.required.indexOf(entry.name)>=0)||false;
+                    entry.isNotRequired = !entry.required;
+                    entry.readOnly = !!schema.readOnly;
+                    entry.type = typeMap(entry.type,entry.required,schema);
+                    entry.datatype = entry.type; //?
+                    entry.jsonSchema = safeJson(schema,null,2);
+                    for (let p in schemaProperties) {
+                        if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
+                    }
+                    entry.isEnum = !!schema.enum;
+                    entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
+                    entry.isNotContainer = entry.isPrimitiveType;
+                    if (entry.isEnum) entry.isNotContainer = false;
+                    entry.isContainer = !entry.isNotContainer;
+                    if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
+                        entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
+                    }
 
-                if (entry.name && state.depth<=1) {
-                    entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
-                    entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
-                    entry.enumName = entry.name+'Enum';
-                    model.hasEnums = true;
-                    model.vars.push(entry);
-                }
-            });
-            model.vars = convertArray(model.vars);
-            container.model = model;
-            container.importPath = model.name;
-            obj.models.push(container);
+                    entry.dataFormat = schema.format;
+                    entry.defaultValue = schema.default;
+
+                    if (entry.isEnum) {
+                        model.allowableValues = {};
+                        model.allowableValues.enumVars = [];
+                        model["allowableValues.values"] = schema.enum;
+                        for (let v of schema.enum) {
+                            let e = { name: v, value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
+                            model.allowableValues.enumVars.push(e);
+                        }
+                        model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
+                    }
+
+                    if (entry.name && state.depth<=1) {
+                        entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
+                        entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
+                        entry.enumName = entry.name+'Enum';
+                        model.hasEnums = true;
+                        model.vars.push(entry);
+                    }
+                });
+                model.vars = convertArray(model.vars);
+                container.model = model;
+                container.importPath = model.name;
+                obj.models.push(container);
+            }
         }
     }
 
