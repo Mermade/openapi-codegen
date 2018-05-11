@@ -40,7 +40,8 @@ function main(o, config, configName, callback) {
             let tx = config.transformations[t];
             if (tx.input) {
                 if (verbose) console.log('Processing template '+tx.input);
-                tx.template = ff.readFileSync(tpl(configName, tx.input),'utf8');
+                let template = config.templateDir ? path.resolve(config.templateDir, tx.input) : tpl(configName, tx.input);
+                tx.template = ff.readFileSync(template,'utf8');
             }
             actions.push(tx);
         }
