@@ -20,7 +20,11 @@ let ff = {
     mkdirp: mkdirp
 };
 
-function tpl(...segments) {
+function tpl(config, ...segments) {
+    if (config.templateDir) {
+        segments.splice(0,1);
+        return path.join(config.templateDir, ...segments);
+    }
     return path.join(__dirname, 'templates', ...segments)
 }
 
@@ -32,15 +36,15 @@ function main(o, config, configName, callback) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
-            config.partials[p] = ff.readFileSync(tpl(configName, partial),'utf8');
+            config.partials[p] = ff.readFileSync(tpl(config, configName, partial),'utf8');
         }
 
         let actions = [];
         for (let t in config.transformations) {
             let tx = config.transformations[t];
             if (tx.input) {
-                if (verbose) console.log('Processing template '+tx.input);
-                tx.template = ff.readFileSync(tpl(configName, tx.input),'utf8');
+                if (verbose) console.log('Processing template ' + tx.input);
+                tx.template = ff.readFileSync(tpl(config, configName, tx.input),'utf8');
             }
             actions.push(tx);
         }
@@ -75,10 +79,10 @@ function main(o, config, configName, callback) {
                     }
                 }
                 if (config.apache) {
-                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl('_common', 'LICENSE'),'utf8'),'utf8');
+                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl({}, '_common', 'LICENSE'),'utf8'),'utf8');
                 }
                 else {
-                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl('_common', 'UNLICENSE'),'utf8'),'utf8');
+                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl({}, '_common', 'UNLICENSE'),'utf8'),'utf8');
                 }
                 let outer = model;
 
@@ -87,7 +91,7 @@ function main(o, config, configName, callback) {
                     delete toplevel.apiInfo;
                     for (let pa of config.perApi) {
                         let fnTemplate = Hogan.compile(pa.output);
-                        let template = Hogan.compile(ff.readFileSync(tpl(configName, pa.input), 'utf8'));
+                        let template = Hogan.compile(ff.readFileSync(tpl(config, configName, pa.input), 'utf8'));
                         for (let api of model.apiInfo.apis) {
                             let cApi = Object.assign({},config.defaults,pa.defaults||{},toplevel,api);
                             let filename = fnTemplate.render(cApi,config.partials);
@@ -101,7 +105,7 @@ function main(o, config, configName, callback) {
                     let cModels = clone(model.models);
                     for (let pm of config.perModel) {
                         let fnTemplate = Hogan.compile(pm.output);
-                        let template = Hogan.compile(ff.readFileSync(tpl(configName, pm.input), 'utf8'));
+                        let template = Hogan.compile(ff.readFileSync(tpl(config, configName, pm.input), 'utf8'));
                         for (let model of cModels) {
                             outer.models = [];
                             let effModel = Object.assign({},model,pm.defaults||{});
@@ -118,7 +122,7 @@ function main(o, config, configName, callback) {
                         for (let api of outer.apiInfo.apis) {
                             let cOperations = clone(api.operations);
                             let fnTemplate = Hogan.compile(po.output);
-                            let template = Hogan.compile(ff.readFileSync(tpl(configName, po.input), 'utf8'));
+                            let template = Hogan.compile(ff.readFileSync(tpl(config, configName, po.input), 'utf8'));
                             for (let operation of cOperations) {
                                 model.operations = [];
                                 model.operations.push(operation);
