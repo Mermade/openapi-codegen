@@ -206,11 +206,11 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         parameter.isDateTime = (parameter.dataFormat == 'date-time');
         parameter.description = param.description||'';
         parameter.unescapedDescription = param.description;
-        parameter.defaultValue = param.default;
+        parameter.defaultValue = (param.schema && typeof param.schema.default !== 'undefined') ? param.schema.default : undefined;
         parameter.isFile = false;
         parameter.isEnum = false; // TODO?
         parameter.vendorExtensions = specificationExtensions(param);
-        if (param.nullable) {
+        if (param.schema && param.schema.nullable) {
             parameter.vendorExtensions["x-nullable"] = true;
         }
         if (param.style === 'form') {
@@ -250,11 +250,11 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             operation.headerParams.push(clone(parameter));
             operation.hasHeaderParams = true;
         }
-        if (param.in === 'form') {
+        /* if (param.in === 'form') { // TODO need to do this in requestBody
             parameter.isFormParam = true;
             operation.formParams.push(clone(parameter));
             operation.hasFormParams = true;
-        }
+        }*/
     } // end of effective parameters
 
     operation.bodyParams = [];
