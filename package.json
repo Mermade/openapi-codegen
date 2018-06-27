@@ -39,7 +39,7 @@
     "rimraf": "^2.6.2",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
     "swagger-tools": "^0.10.3",
-    "swagger2openapi": "^2.11.9",
+    "swagger2openapi": "^3.0.0",
     "uuid": "^3.1.0",
     "yargs": "^11.0.0"
   },
