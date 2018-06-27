@@ -12,9 +12,9 @@ const stools = require('swagger-tools');
 const sampler = require('openapi-sampler');
 const deref = require('reftools/lib/dereference.js').dereference;
 const clone = require('reftools/lib/clone.js').clone;
-const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
-const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
-const validator = require('swagger2openapi/validate').validateSync;
+const walkSchema = require('oas-schema-walker').walkSchema;
+const wsGetState = require('oas-schema-walker').getDefaultState;
+const validator = require('oas-validator').validateSync;
 const downconverter = require('./lib/orange/downconvert.js');
 
 const schemaProperties = [
