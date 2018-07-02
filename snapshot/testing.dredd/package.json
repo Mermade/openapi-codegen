@@ -1,0 +1,20 @@
+{
+  "name": "testing.dredd",
+  "version": "1.0.0",
+  "description": "Dredd testing harness",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx dredd"
+  },
+  "keywords": [
+    "testing",
+    "swagger",
+    "openapi",
+    "dredd"
+  ],
+  "author": "OpenAPI Codegen",
+  "license": "Unlicense",
+  "dependencies": {
+    "dredd": "^4.7.0"
+  }
+}

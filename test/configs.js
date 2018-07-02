@@ -4,7 +4,8 @@ const fs = require('fs');
 const util = require('util');
 
 const should = require('should');
-const rf = require('node-readfiles');
+const {gatherConfigs, gatherTemplates} = require('./lib/loaders');
+
 const ajv = require('ajv')({
     allErrors: true,
     verbose: true,
@@ -15,42 +16,9 @@ const ajv = require('ajv')({
 let schema = fs.readFileSync('./schemas/config.json');
 let validator = ajv.compile(JSON.parse(schema));
 
-let configs = {};
-let templates = {};
-
-function gatherConfigs(){
-    return rf('./configs')
-    .then(function(files){
-        for (let file of files) {
-            let s = fs.readFileSync('./configs/'+file,'utf8');
-            let obj = JSON.parse(s);
-            obj.name = file.replace('.json','');
-            configs[obj.name] = obj;
-        }
-        return configs;
-    });
-}
-
-function gatherTemplates(){
-    return rf('./templates')
-    .then(function(files){
-        for (let file of files) {
-            let components = file.split('\\').join('/').split('/');
-            let config = components[0];
-            components.shift();
-            let name = components.join('/');
-            if (!templates[config]) {
-                templates[config] = [];
-            }
-            templates[config].push(name);
-        }
-        return templates;
-    });
-}
-
 async function main(){
-    await gatherConfigs();
-    await gatherTemplates();
+    let configs = await gatherConfigs();
+    let templates = await gatherTemplates();
 
     describe('validate against schema',function(){
         Object.values(configs).forEach(function(config){
@@ -60,7 +28,7 @@ async function main(){
             });
         });
     });
-    
+
     describe('partials existence',function(){
         Object.values(configs).forEach(function(config){
             if (config.partials) {
@@ -72,7 +40,7 @@ async function main(){
             }
         });
     });
-    
+
     describe('templates existence',function(){
         Object.values(configs).forEach(function(config){
             if (config.transformations) {
@@ -114,7 +82,7 @@ async function main(){
                         let found = 0;
                         if (config.partials) {
                             for (let p in config.partials) {
-                            if (config.partials[p] === name) found++; 
+                            if (config.partials[p] === name) found++;
                             }
                         }
                         for (let tx of config.transformations) {

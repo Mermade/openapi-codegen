@@ -1,0 +1,36 @@
+package = "openapi"
+version = "1.0.0"
+source = {
+	url = "https://github.com//.git"
+}
+
+description = {
+	summary = "API client genreated by Swagger Codegen",
+	detailed = [[
+This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.]],
+	homepage = "https://github.com/swagger-api/swagger-codegen",
+	license = "Unlicense",
+	maintainer = "Swagger Codegen contributors",
+}
+
+dependencies = {
+	"lua >= 5.2",
+	"http",
+	"dkjson",
+	"basexx"
+}
+
+build = {
+	type = "builtin",
+	modules = {
+		["openapi.api.petApi"] = "openapi/api/petApi.lua";
+		["openapi.api.storeApi"] = "openapi/api/storeApi.lua";
+		["openapi.api.userApi"] = "openapi/api/userApi.lua";
+		["openapi.model.Order"] = "openapi/model/Order.lua";
+		["openapi.model.Category"] = "openapi/model/Category.lua";
+		["openapi.model.User"] = "openapi/model/User.lua";
+		["openapi.model.Tag"] = "openapi/model/Tag.lua";
+		["openapi.model.Pet"] = "openapi/model/Pet.lua";
+		["openapi.model.ApiResponse"] = "openapi/model/ApiResponse.lua";
+	}
+}

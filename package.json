@@ -50,6 +50,8 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
+    "dir-compare": "^1.4.0",
+    "jsdiff": "^1.1.1",
     "mocha": "^5.0.0",
     "node-readfiles": "^0.2.0",
     "should": "^13.1.3",

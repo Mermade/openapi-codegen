@@ -1,0 +1,29 @@
+{
+  "name": "change-me",
+  "version": "1.0.0",
+  "description": "swagger client for change-me",
+  "author": "Swagger Codegen Contributors",
+  "keywords": [
+    "fetch",
+    "typescript",
+    "swagger-client",
+    "change-me"
+  ],
+  "license": "Unlicense",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts" : {
+    "build": "tsc --outDir dist/",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "portable-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.9",
+    "typescript": "^2.0"
+  },
+  "publishConfig":{
+    "registry":"https://github.com/mermade/change-me"
+  }
+}
