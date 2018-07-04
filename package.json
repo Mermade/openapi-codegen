@@ -37,7 +37,7 @@
     "oas-schema-walker": "^1.0.0",
     "oas-validator": "^1.0.1",
     "openapi-sampler": "^1.0.0-beta.8",
-    "reftools": "0.0.20",
+    "reftools": "1.0.1",
     "rimraf": "^2.6.2",
     "safe-json-stringify": "^1.2.0",
     "swagger-tools": "^0.10.3",
