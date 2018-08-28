@@ -482,6 +482,64 @@ function convertToApis(source,obj,defaults) {
     return apis;
 }
 
+function convertToPaths(source,obj,defaults) {
+    let paths = [];
+    for (let p in source.paths) {
+        for (let m in source.paths[p]) {
+            if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
+                let op = source.paths[p][m];
+                let tagName = 'Default';
+                if (op.tags && op.tags.length > 0) {
+                    tagName = op.tags[0];
+                }
+                let entry = paths.find(function(e,i,a){
+                    return (e.name === p);
+                });
+                if (!entry) {
+                    const split = p.replace(/^\//,'').split(/\//g);
+                    const dirname = split.slice(0,-1).join('/');
+                    const filename = split.slice(-1).join('');
+                    const className = split.map(v=>v.replace(/{([^}]+)}/g,(v,v1)=>`By${v1[0].toUpperCase()}${v1.slice(1)}`).replace(/^./,(v)=>`${v[0].toUpperCase()}${v.slice(1)}`)).join('')
+
+                    entry = {};
+                    entry.name = p;
+                    //if (defaults.language === 'typescript') {
+                    //    entry.classname = Case.pascal(entry.name);
+                    //}
+                    //else {
+                    entry.classname = className+'Api';
+                    //}
+                    entry.classDirName = dirname;
+                    entry.classFilename = filename;
+                    entry.classVarName = tagName; // see issue #21
+                    entry.packageName = obj.packageName; //! this may not be enough / sustainable. Or many props at wrong level :(
+                    entry.operations = {};
+                    entry.operations.operation = [];
+                    paths.push(entry);
+                }
+                let operation = convertOperation(op,m,p,source.paths[p],obj,source);
+                entry.operations.operation.push(operation);
+            }
+        }
+    }
+    for (let t in source.tags) {
+        let tag = source.tags[t];
+        let entry = paths.find(function(e,i,a){
+            return (e.name === t);
+        });
+        if (entry) {
+            entry.classname = tag.name+'Api';
+            entry.description = tag.description;
+            entry.externalDocs = tag.externalDocs;
+        }
+    }
+    for (let path of paths) {
+        path.operations.operation = convertArray(path.operations.operation);
+    }
+    paths = convertArray(paths);
+    return paths;
+}
+
 // TODO add html and possibly termcap (https://www.npmjs.com/package/hermit) renderers
 const markdownPPs = {
     nop: function(markdown) {
@@ -798,6 +856,7 @@ function transform(api, defaults, callback) {
 
     obj.apiInfo = {};
     obj.apiInfo.apis = convertToApis(api,obj,defaults);
+    obj.apiInfo.paths = convertToPaths(api,obj,defaults);
 
     obj.produces = convertArray(obj.produces);
     obj.consumes = convertArray(obj.consumes);
