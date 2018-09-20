@@ -41,6 +41,16 @@ const schemaProperties = [
 let arrayMode = 'length';
 let thisFunc = encodeURIComponent;
 
+function safeSample(schema,options,api) {
+    try {
+        return sampler.sample(schema,options,api);
+    }
+    catch (ex) {
+        console.warn('Sampler:',ex.message);
+    }
+    return {};
+}
+
 function convertArray(arr) {
     if (!arr) arr = [];
     if (arr.length) {
@@ -198,7 +208,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         for (let p of schemaProperties) {
             if (typeof param.schema[p] !== 'undefined') parameter[p] = param.schema[p];
         }
-        parameter.example = JSON.stringify(sampler.sample(param.schema,{},api));
+        parameter.example = JSON.stringify(safeSample(param.schema,{},api));
         parameter.isBoolean = (param.schema.type === 'boolean');
         parameter.isPrimitiveType = (!param.schema["x-oldref"]);
         parameter.dataFormat = param.schema.format;
@@ -295,7 +305,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 obj.hasConsumes = true;
             }
             operation.bodyParam.schema = contentType.schema;
-            operation.bodyParam.example = JSON.stringify(sampler.sample(contentType.schema,{},api));
+            operation.bodyParam.example = JSON.stringify(safeSample(contentType.schema,{},api));
             for (let p in schemaProperties) {
                 if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
             }
@@ -369,7 +379,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             }
 
             if (!entry.hasExamples && entry.schema) {
-                let example = sampler.sample(entry.schema,{},api);
+                let example = safeSample(entry.schema,{},api);
                 if (example) {
                     entry.hasExamples = true;
                     if (!entry.examples) entry.examples = [];
