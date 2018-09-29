@@ -499,6 +499,14 @@ function convertToPaths(source,obj,defaults) {
                     const split = p.replace(/^\//,'').split(/\//g);
                     const dirname = split.slice(0,-1).join('/');
                     const filename = split.slice(-1).join('');
+                    // Generates class name from path using the rules
+                    // * the slashes are stripped out
+                    // * each path part is capitalised
+                    // * each parameter is changed to By<param>
+                    // i.e.
+                    // /users => Users
+                    // /users/{id} => UsersById
+                    // /users/{id}/delete => UsersByIdDelete
                     const className = split.map(v=>v.replace(/{([^}]+)}/g,(v,v1)=>`By${v1[0].toUpperCase()}${v1.slice(1)}`).replace(/^./,(v)=>`${v[0].toUpperCase()}${v.slice(1)}`)).join('')
 
                     entry = {};
