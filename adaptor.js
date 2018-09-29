@@ -507,7 +507,7 @@ function convertToPaths(source,obj,defaults) {
                     // /users => Users
                     // /users/{id} => UsersById
                     // /users/{id}/delete => UsersByIdDelete
-                    const className = split.map(v=>v.replace(/{([^}]+)}/g,(v,v1)=>`By${v1[0].toUpperCase()}${v1.slice(1)}`).replace(/^./,(v)=>`${v[0].toUpperCase()}${v.slice(1)}`)).join('')
+                    const className = split.map(v=>v.replace(/{([^}]+)}/g,(v,v1)=>`By${v1[0].toUpperCase()}${v1.slice(1)}`).replace(/^./,(v)=>`${v[0].toUpperCase()}${v.slice(1)}`)).join('');
 
                     entry = {};
                     entry.name = p;
