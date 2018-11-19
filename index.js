@@ -101,6 +101,23 @@ function main(o, config, configName, callback) {
                     }
                 }
 
+                if (config.perPath) {
+                    let toplevel = clone(model);
+                    delete toplevel.apiInfo;
+                    for (let pa of config.perPath) {
+                        let fnTemplate = Hogan.compile(pa.output);
+                        let template = Hogan.compile(ff.readFileSync(tpl(config, configName, pa.input), 'utf8'));
+                        for (let pat of model.apiInfo.paths) {
+                            let cPath = Object.assign({},config.defaults,pa.defaults||{},toplevel,pat);
+                            let filename = fnTemplate.render(cPath,config.partials);
+                            let dirname = path.dirname(filename);
+                            if (verbose) console.log('Rendering '+filename+' (dynamic:'+pa.input+')');
+                            ff.mkdirp.sync(path.join(outputDir,subDir,dirname));
+                            ff.createFile(path.join(outputDir,subDir,filename),template.render(cPath,config.partials),'utf8');
+                        }
+                    }
+                }
+
                 if (config.perModel) {
                     let cModels = clone(model.models);
                     for (let pm of config.perModel) {
@@ -123,7 +140,7 @@ function main(o, config, configName, callback) {
                             let cOperations = clone(api.operations);
                             let fnTemplate = Hogan.compile(po.output);
                             let template = Hogan.compile(ff.readFileSync(tpl(config, configName, po.input), 'utf8'));
-                            for (let operation of cOperations) {
+                            for (let operation of cOperations.operation) {
                                 model.operations = [];
                                 model.operations.push(operation);
                                 let filename = fnTemplate.render(outer,config.partials);
