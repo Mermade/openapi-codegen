@@ -200,6 +200,7 @@ if (argv.zip) {
     processor.fileFunctions.mkdirp = nop;
     processor.fileFunctions.mkdirp.sync = nop;
 }
+config.defaults.source = defName;
 
 let up = url.parse(defName);
 if (up.protocol && up.protocol.startsWith('http')) {

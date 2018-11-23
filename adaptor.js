@@ -767,7 +767,11 @@ function transform(api, defaults, callback) {
         obj.swagger = defaults.swagger;
     }
     else {
-        obj.swagger = downconverter(api);
+        const container = {};
+        container.spec = api;
+        container.source = defaults.source;
+        let conv = new downconverter(container);
+        obj.swagger = conv.convert();
     }
 
     obj["swagger-yaml"] = yaml.safeDump(obj.swagger, {lineWidth:-1}); // set to original if converted v2.0
