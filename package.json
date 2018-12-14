@@ -35,7 +35,7 @@
     "mkdirp": "^0.5.1",
     "node-fetch": "^2.0.0",
     "oas-schema-walker": "^1.0.0",
-    "oas-validator": "^1.0.1",
+    "oas-validator": "^2.0.0",
     "openapi-sampler": "^1.0.0-beta.8",
     "reftools": "^1.0.2",
     "rimraf": "^2.6.2",
