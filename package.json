@@ -41,7 +41,7 @@
     "rimraf": "^2.6.2",
     "safe-json-stringify": "^1.2.0",
     "swagger-tools": "^0.10.4",
-    "swagger2openapi": "^4.0.0",
+    "swagger2openapi": "^5.0.0",
     "uuid": "^3.1.0",
     "yargs": "^12.0.1"
   },
