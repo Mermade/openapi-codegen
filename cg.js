@@ -7,7 +7,7 @@ const path = require('path');
 const url = require('url');
 const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fetch = require('node-fetch');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
@@ -140,7 +140,7 @@ function convert12(api){
                 return res.text();
             })
             .then(data => {
-                apiDeclarations.push(yaml.safeLoad(data,{json:true}));
+                apiDeclarations.push(yaml.parse(data));
             })
             .catch(err => {
                 console.error(util.inspect(err));
@@ -167,7 +167,7 @@ function convert12(api){
 }
 
 function main(s) {
-    let o = yaml.safeLoad(s, { json: true });
+    let o = yaml.parse(s);
     if (argv.verbose) console.log('Loaded definition '+defName);
 
     if (o && o.openapi) {

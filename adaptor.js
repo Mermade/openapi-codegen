@@ -4,7 +4,7 @@
 const util = require('util');
 const url = require('url');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
 const Case = require('case');
@@ -774,9 +774,9 @@ function transform(api, defaults, callback) {
         obj.swagger = conv.convert();
     }
 
-    obj["swagger-yaml"] = yaml.safeDump(obj.swagger, {lineWidth:-1}); // set to original if converted v2.0
+    obj["swagger-yaml"] = yaml.stringify(obj.swagger); // set to original if converted v2.0
     obj["swagger-json"] = JSON.stringify(obj.swagger, null, 2); // set to original if converted 2.0
-    obj["openapi-yaml"] = yaml.safeDump(api, {lineWidth:-1});
+    obj["openapi-yaml"] = yaml.stringify(api);
     obj["openapi-json"] = JSON.stringify(api, null, 2);
 
     // openapi3 extensions
