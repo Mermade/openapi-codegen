@@ -48,7 +48,7 @@
   "devDependencies": {
     "ajv": "^6.0.1",
     "babel-preset-env": "^1.7.0",
-    "mocha": "^5.0.0",
+    "mocha": "^6.0.0",
     "node-readfiles": "^0.2.0",
     "should": "^13.1.3",
     "webpack": "^4.15.1",
