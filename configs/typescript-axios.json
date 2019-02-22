@@ -1,0 +1,42 @@
+{
+    "defaults": {
+        "language": "typescript",
+        "supportsES6": true,
+        "gitUserId": "mermade",
+        "gitRepoId": "change-me",
+        "releaseNote": "Initial commit",
+        "npmName": "change-me",
+        "npmVersion": "1.0.0",
+        "npmRepository": "https://github.com/mermade/change-me"
+    },
+    "partials": {
+        "licenseInfo": "licenseInfo.mustache",
+        "modelEnum": "modelEnum.mustache",
+        "modelGeneric": "modelGeneric.mustache"
+    },
+    "directories": ["api", "model"],
+    "perApi": [{
+        "input": "api.mustache",
+        "output": "api/{{name}}Api.ts"
+    }],
+    "perModel": [{
+        "input": "model.mustache",
+        "output": "model/{{#models}}{{#model}}{{name}}{{/model}}{{/models}}.ts"
+    }],
+    "transformations": [{
+        "input": "axios.config.mustache",
+        "output": "axios.config.ts"
+    }, {
+        "input": "README.mustache",
+        "output": "README.md"
+    }, {
+        "input": "package.mustache",
+        "output": "package.json"
+    }, {
+        "input": "tsconfig.mustache",
+        "output": "tsconfig.json"
+    }, {
+        "input": "gitignore",
+        "output": ".gitignore"
+    }]
+}
