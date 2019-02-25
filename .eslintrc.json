@@ -17,7 +17,7 @@
             "as-needed"
         ],
         "arrow-spacing": [
-            "error",
+            "off",
             {
                 "after": true,
                 "before": true

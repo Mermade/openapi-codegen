@@ -7,6 +7,7 @@
     "cg": "./cg.js"
   },
   "scripts": {
+    "lint": "npx eslint *.js",
     "test": "npx mocha --delay"
   },
   "repository": {
@@ -48,6 +49,7 @@
   "devDependencies": {
     "ajv": "^6.0.1",
     "babel-preset-env": "^1.7.0",
+    "eslint": "^5.14.1",
     "mocha": "^6.0.0",
     "node-readfiles": "^0.2.0",
     "should": "^13.1.3",
