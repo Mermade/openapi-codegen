@@ -20,6 +20,10 @@ or
 * clone the repository, and
 * `npm i`
 
+or
+
+`npx -p openapi-codegen cg ...`
+
 ### CLI
 
 ```
