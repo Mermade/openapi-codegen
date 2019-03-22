@@ -14,6 +14,12 @@ npm i
 npx tsc -t ES6 -m commonjs *.ts
 cd ../..
 
+echo typescript-axios
+cd out/typescript-axios
+npm i
+npx tsc -t ES6 -m commonjs *.ts
+cd ../..
+
 #echo typescript-angularjs
 #cd out/typescript-angularjs
 #npx tsc -t ES6 -m commonjs *.ts

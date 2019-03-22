@@ -155,6 +155,7 @@ The templates with a status have a working (if not necessarily tested) configura
 |tizen||
 |typescript-angular||
 |typescript-angularjs||
+|**typescript-axios**|client|**tested**||jaredpalmer|
 |typescript-aurelia||
 |**typescript-fetch**|client|**compiles with tsc ok**||
 |typescript-jquery||
