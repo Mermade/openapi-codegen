@@ -7,7 +7,7 @@
     "oas-cg": "./dist/cg.js"
   },
   "scripts": {
-    "lint": "npx eslint src/*.js",
+    "lint": "npx eslint dist/*.js",
     "build": "npx tsc ; echo Forced OK",
     "test": "npx mocha --delay"
   },
