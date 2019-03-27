@@ -1,17 +1,16 @@
 #!/usr/bin/env node
-// @ts-check
 'use strict';
 
-const fs = require('fs');
+//const fs = require('fs');
 const path = require('path');
-const url = require('url');
-const util = require('util');
+//const url = require('url');
+//const util = require('util');
 
-const yaml = require('yaml');
-const fetch = require('node-fetch');
+//const yaml = require('yaml');
+//const fetch = require('node-fetch');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
-const stools = require('swagger-tools');
+//const stools = require('swagger-tools');
 const admzip = require('adm-zip');
 
 const processor = require('./index.js');
@@ -57,15 +56,15 @@ let defName = argv._[1] || './defs/petstore3.json';
 config.outputDir = argv.output;
 config.templateDir = argv.templates;
 
-let zipFiles = {};
+let zipFiles:any = {};
 
-function nop(arg, callback) { if (callback) callback(null,true); return true; }
+function nop(arg:any, callback:Function) { if (callback) callback(null,true); return true; }
 
-function zipFile(filename,contents,encoding) {
+function zipFile(filename:string, contents:any, encoding:string) {
     zipFiles[filename] = contents;
 }
 
-function finish(err,result) {
+function finish(err:Error, result:any) {
     if (argv.zip) {
         // create archive
         var zip = new admzip();
@@ -79,9 +78,9 @@ function finish(err,result) {
     }
 }
 
-function convert20(obj){
+function convert20(obj:object){
     if (argv.verbose) console.log('Converting OpenAPI 2.0 definition');
-    swagger2openapi.convertObj(obj,{patch:true,warnOnly:true,direct:true},function(err,openapi){
+    swagger2openapi.convertObj(obj,{patch:true,warnOnly:true,direct:true},function(err:Error, openapi:any){
         if (err) {
             console.error(util.inspect(err));
         }
@@ -92,9 +91,9 @@ function convert20(obj){
     });
 }
 
-function convert12(api){
+function convert12(api:any){
     if (argv.verbose) console.log('Converting Swagger 1.2 definition');
-    let options = {};
+    let options:any = {};
     options.source = defName;
     var aBase = options.source.split('/');
     var filename = aBase.pop();
@@ -114,8 +113,8 @@ function convert12(api){
     //    extension = '';
     //}
 
-    var retrieve = [];
-    var apiDeclarations = [];
+    var retrieve:Promise<any>[] = [];
+    var apiDeclarations:any[] = [];
     if (api.apis) {
         for (var component of api.apis) {
             component.path = component.path.replace('.{format}','.json');
@@ -152,7 +151,7 @@ function convert12(api){
       // resolve multiple promises in parallel
       var res = yield retrieve;
       var sVersion = 'v1_2';
-      stools.specs[sVersion].convert(api,apiDeclarations,true,function(err,converted){
+      stools.specs[sVersion].convert(api, apiDeclarations, true, function(err:Error, converted:any){
           if (err) {
               console.error(util.inspect(err));
           }
@@ -166,7 +165,7 @@ function convert12(api){
     });
 }
 
-function main(s) {
+function cg(s:string) {
     let o = yaml.parse(s);
     if (argv.verbose) console.log('Loaded definition '+defName);
 
@@ -208,12 +207,12 @@ if (up.protocol && up.protocol.startsWith('http')) {
     .then(function (res) {
         return res.text();
     }).then(function (body) {
-        main(body);
+        cg(body);
     }).catch(function (err) {
         console.error(err.message);
     });
 }
 else {
    let s = fs.readFileSync(defName,'utf8');
-   main(s);
+   cg(s);
 }

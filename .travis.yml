@@ -11,6 +11,7 @@ before_script:
   - sudo apt-get install ruby
   - sudo apt-get install ghc
 script:
+  - npm run build
   - npm run lint
   - npm test
   - bin/buildAll.sh

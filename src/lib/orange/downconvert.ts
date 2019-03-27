@@ -5,7 +5,7 @@ var HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 
     ARRAY_PROPERTIES = ['type', 'items'];
 
 var APPLICATION_JSON_REGEX = /^(application\/json|[^;\/ \t]+\/[^;\/ \t]+[+]json)[ \t]*(;.*)?$/;
-var SUPPORTED_MIME_TYPES = {
+var SUPPORTED_MIME_TYPES: { [key:string]:string } = {
     APPLICATION_X_WWW_URLENCODED: 'application/x-www-form-urlencoded',
     MUTIPLART_FORM_DATA: 'multipart/form-data',
     APPLICATION_OCTET_STREAM: 'application/octet-stream'
@@ -19,7 +19,7 @@ var YAML = require('js-yaml');
 /**
  * Transforms OpenApi 3.0 to Swagger 2
  */
-var Converter = module.exports = function(data) {
+var Converter = module.exports = function(this: any, data:any) {
   this.spec = JSON.parse(JSON.stringify(data.spec));
   if (!data.source.startsWith('http')) {
     this.directory = npath.dirname(data.source);
@@ -41,13 +41,13 @@ Converter.prototype.convert = function() {
   return this.spec;
 }
 
-function fixRef(ref) {
+function fixRef(ref:string) {
   return ref
       .replace('#/components/schemas/', '#/definitions/')
       .replace('#/components/', '#/x-components/')
 }
 
-function fixRefs(obj) {
+function fixRefs(obj:any) {
   if (Array.isArray(obj)) {
     obj.forEach(fixRefs);
   } else if (typeof obj === 'object') {
@@ -61,14 +61,14 @@ function fixRefs(obj) {
   }
 }
 
-Converter.prototype.resolveReference = function(base, obj) {
+Converter.prototype.resolveReference = function(base:string, obj:any) {
   if (!obj || !obj.$ref) return obj;
   var ref = obj.$ref;
   if (ref.startsWith('#')) {
-    var keys = ref.split('/');
+    var keys:Array<string> = ref.split('/');
     keys.shift();
     var cur = base;
-    keys.forEach(function(k) { cur = cur[k] });
+    keys.forEach(function(k:string) { cur = cur[k] });
     return cur;
   } else if (ref.startsWith('http') || !this.directory) {
     throw new Error("Remote $ref URLs are not currently supported for openapi_3");
@@ -120,7 +120,7 @@ Converter.prototype.convertOperations = function() {
     }
 }
 
-Converter.prototype.convertOperationParameters = function(operation) {
+Converter.prototype.convertOperationParameters = function(operation:any) {
     var content, param, contentKey;
     operation.parameters = operation.parameters || [];
     if (operation.requestBody) {
@@ -172,7 +172,7 @@ Converter.prototype.convertOperationParameters = function(operation) {
     this.convertParameters(operation);
 }
 
-Converter.prototype.convertParameters = function(obj) {
+Converter.prototype.convertParameters = function(obj:any) {
     var param;
 
     if (obj.parameters === undefined) {
@@ -181,7 +181,7 @@ Converter.prototype.convertParameters = function(obj) {
 
     obj.parameters = obj.parameters || [];
 
-    (obj.parameters || []).forEach((param, i) => {
+    (obj.parameters || []).forEach((param:any, i:number) => {
         param = obj.parameters[i] = this.resolveReference(this.spec, param);
         this.copySchemaProperties(param, SCHEMA_PROPERTIES);
         if (param.in !== 'body') {
@@ -216,7 +216,7 @@ Converter.prototype.convertParameters = function(obj) {
     });
 }
 
-Converter.prototype.copySchemaProperties = function(obj, props) {
+Converter.prototype.copySchemaProperties = function(obj:any, props:Array<string>) {
     let schema = this.resolveReference(this.spec, obj.schema);
     if (!schema) return;
     props.forEach(function(prop) {
@@ -226,7 +226,7 @@ Converter.prototype.copySchemaProperties = function(obj, props) {
     });
 }
 
-Converter.prototype.convertResponses = function(operation) {
+Converter.prototype.convertResponses = function(operation:any) {
     var code, content, contentType, response, resolved, headers;
     for (code in operation.responses) {
         content = false;
@@ -310,11 +310,11 @@ Converter.prototype.convertSecurityDefinitions = function() {
     delete this.spec.components.securitySchemes;
 }
 
-function isJsonMimeType(type) {
+function isJsonMimeType(type:string) {
     return new RegExp(APPLICATION_JSON_REGEX, 'i').test(type);
 }
 
-function getSupportedMimeTypes(content) {
+function getSupportedMimeTypes(content:any) {
     var MIME_VALUES = Object.keys(SUPPORTED_MIME_TYPES).map((key) => { return SUPPORTED_MIME_TYPES[key] });
     return Object.keys(content).filter(key => {
         return MIME_VALUES.indexOf(key) > -1 || isJsonMimeType(key);

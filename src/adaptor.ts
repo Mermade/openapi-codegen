@@ -1,10 +1,9 @@
-// @ts-check
 'use strict';
 
 const util = require('util');
 const url = require('url');
 
-const yaml = require('yaml');
+//const yaml = require('yaml');
 const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
 const Case = require('case');
@@ -41,7 +40,7 @@ const schemaProperties = [
 let arrayMode = 'length';
 let thisFunc = encodeURIComponent;
 
-function safeSample(schema,options,api) {
+function safeSample(schema:any, options:any, api:any) {
     try {
         return sampler.sample(schema,options,api);
     }
@@ -51,7 +50,7 @@ function safeSample(schema,options,api) {
     return {};
 }
 
-function convertArray(arr) {
+function convertArray(arr:Array<any>) {
     if (!arr) arr = [];
     if (arr.length) {
         arr.isEmpty = false;
@@ -62,19 +61,19 @@ function convertArray(arr) {
         }
     }
     else arr.isEmpty = true;
-    arr.toString = function() { if (arrayMode === 'length') return this.length.toString() };
+    arr.toString = function() { if (arrayMode === 'length') return this.length.toString(); else return '' };
     return arr;
 }
 
-function getAuthData(secSchemes,api) {
-    let result = {};
+function getAuthData(secSchemes:any, api:any) {
+    let result:any = {};
     result.hasAuthMethods = (secSchemes && secSchemes.length>0);
     result.authMethods = [];
     if (result.hasAuthMethods) {
     for (let ss of secSchemes) {
         for (let s in ss) {
         let scheme = api.components.securitySchemes[s];
-        let entry = {};
+        let entry:any = {};
         entry.name = s;
         entry.isApiKey = false;
         entry.isBasic = false;
@@ -86,13 +85,13 @@ function getAuthData(secSchemes,api) {
             entry.isOAuth = true;
             if (scheme.flows) {
                 entry.flow = Object.keys(scheme.flows)[0];
-                let flow = Object.values(scheme.flows)[0];
+                let flow:any = Object.values(scheme.flows)[0];
                 entry.authorizationUrl = flow.authorizationUrl;
                 entry.tokenUrl = flow.tokenUrl;
                 entry.scopes = [];
                 if (flow.scopes) {
                     for (let scope in flow.scopes) {
-                        let sc = {};
+                        let sc:any = {};
                         sc.scope = scope;
                         entry.scopes.push(sc);
                     }
@@ -129,16 +128,16 @@ function getAuthData(secSchemes,api) {
     return result;
 }
 
-function specificationExtensions(obj) {
-    let result = {};
+function specificationExtensions(obj:any) {
+    let result:any = {};
     for (let k in obj) {
        if (k.startsWith('x-')) result[k] = obj[k];
     }
     return result;
 }
 
-function convertOperation(op,verb,path,pathItem,obj,api) {
-    let operation = {};
+function convertOperation(op:any, verb:string, path:string, pathItem:any, obj:any, api:any) {
+    let operation:any = {};
     operation.httpMethod = verb.toUpperCase();
     if (obj.httpMethodCase === 'original') operation.httpMethod = verb; // extension
     operation.path = path;
@@ -185,13 +184,13 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     let authData = getAuthData(op.security||api.security,api);
     operation = Object.assign(operation,authData);
 
-    let effParameters = (op.parameters||[]).concat(pathItem.parameters||[]);
-    effParameters = effParameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+    let effParameters:Array<any> = (op.parameters||[]).concat(pathItem.parameters||[]);
+    effParameters = effParameters.filter((param:any, index:number, self:Array<any>) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
 
     for (let pa in effParameters) {
         operation.hasParams = true;
         let param = effParameters[pa];
-        let parameter = {};
+        let parameter:any = {};
         parameter.isHeaderParam = false;
         parameter.isQueryParam = false;
         parameter.isPathParam = false;
@@ -293,11 +292,11 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         operation.bodyParam.isEnum = false; // TODO?
         operation.bodyParam.vendorExtensions = specificationExtensions(op.requestBody);
         if (op.requestBody.content) {
-            let contentType = Object.values(op.requestBody.content)[0];
+            let contentType:any = Object.values(op.requestBody.content)[0];
             let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
             operation.consumes.push(mt);
             operation.hasConsumes = true;
-            let tmp = obj.consumes.find(function(e,i,a){
+            let tmp = obj.consumes.find(function(e:any, i:number, a:Array<string>){
                 return (e.mediaType === mt.mediaType);
             });
             if (!tmp) {
@@ -327,7 +326,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.responses = [];
     for (let r in op.responses) {
         let response = op.responses[r];
-        let entry = {};
+        let entry:any = {};
         entry.code = r;
         entry.isDefault = (r === 'default');
         entry.nickname = 'response'+r;
@@ -339,12 +338,12 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         if (response.content) {
             entry.baseType = 'object';
             entry.dataType = typeMap(entry.baseType,false,{});
-            let contentType = Object.values(response.content)[0];
-            let mt = {};
+            let contentType:any = Object.values(response.content)[0];
+            let mt:any = {};
             mt.mediaType = Object.keys(response.content)[0];
             operation.produces.push(mt);
             operation.hasProduces = true;
-            let tmp = obj.produces.find(function(e,i,a){
+            let tmp = obj.produces.find(function(e:any, i:number, a:Array<any>){
                 return (e.mediaType === mt.mediaType);
             });
             if (!tmp) {
@@ -404,7 +403,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     }
 
     if (obj.sortParamsByRequiredFlag) {
-        operation.allParams = operation.allParams.sort(function(a,b){
+        operation.allParams = operation.allParams.sort(function(a:any, b:any){
             if (a.required && !b.required) return -1;
             if (b.required && !a.required) return +1;
             return 0;
@@ -440,7 +439,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     return operation;
 }
 
-function convertToApis(source,obj,defaults) {
+function convertToApis(source:any, obj:any, defaults:any) {
     let apis = [];
     for (let p in source.paths) {
         for (let m in source.paths[p]) {
@@ -450,7 +449,7 @@ function convertToApis(source,obj,defaults) {
                 if (op.tags && op.tags.length > 0) {
                     tagName = op.tags[0];
                 }
-                let entry = apis.find(function(e,i,a){
+                let entry:any = apis.find(function(e,i,a){
                     return (e.name === tagName);
                 });
                 if (!entry) {
@@ -492,7 +491,7 @@ function convertToApis(source,obj,defaults) {
     return apis;
 }
 
-function convertToPaths(source,obj,defaults) {
+function convertToPaths(source:any, obj:any, defaults:any) {
     let paths = [];
     for (let p in source.paths) {
         for (let m in source.paths[p]) {
@@ -502,7 +501,7 @@ function convertToPaths(source,obj,defaults) {
                 if (op.tags && op.tags.length > 0) {
                     tagName = op.tags[0];
                 }
-                let entry = paths.find(function(e,i,a){
+                let entry:any = paths.find(function(e,i,a){
                     return (e.name === p);
                 });
                 if (!entry) {
@@ -560,26 +559,26 @@ function convertToPaths(source,obj,defaults) {
 
 // TODO add html and possibly termcap (https://www.npmjs.com/package/hermit) renderers
 const markdownPPs = {
-    nop: function(markdown) {
+    nop: function(markdown:string) {
         return markdown;
     }
 };
 
-const typeMaps = {
-    nop: function(type,required,schema) {
+const typeMaps:{ [key:string]: (arg0: string, arg1: boolean, arg2: any) => string } = {
+    nop: function(type, required, schema):string {
         return type;
     },
-    java: function(type,required,schema) {
+    java: function(type:string, required:boolean, schema:any):string {
         let result = type;
         if (!required) result += '?';
         return result;
     },
-    javascript: function(type,required,schema) {
+    javascript: function(type:string, required:boolean, schema:any):string {
         let result = type;
         if (result === 'integer') result = 'number';
         return result;
     },
-    typescript: function(type,required,schema) {
+    typescript: function(type:string, required:boolean, schema:any):string {
         let result = type;
         if (result === 'integer') result = 'number';
         if (result === 'array') {
@@ -590,7 +589,7 @@ const typeMaps = {
         }
         return result;
     },
-    go: function(type,required,schema) {
+    go: function(type:string, required:boolean, schema:any):string {
         let result = type;
         if (result === 'integer') result = 'int';
         if (result === 'boolean') result = 'bool';
@@ -605,7 +604,7 @@ const typeMaps = {
     }
 };
 
-const reservedWords = {
+const reservedWords:any = {
     nop: [],
     go: [ 'type' ]
 };
@@ -615,7 +614,7 @@ let markdownPP = markdownPPs.nop;
 let reserved = reservedWords.nop;
 
 function getBase() {
-    let base = {};
+    let base:any = {};
     base.supportingFiles = [];
     base.modelTests = [];
     base.modelDocs = [];
@@ -677,8 +676,8 @@ function getBase() {
     return base;
 }
 
-function getPrime(api,defaults) {
-    let prime = {};
+function getPrime(api:any, defaults:any) {
+    let prime:any = {};
     prime.classname = api.info.title.toLowerCase().split(' ').join('_').split('-').join('_');
     prime.projectName = prime.classname;
     prime.appVersion = api.info.version;
@@ -753,7 +752,7 @@ function getPrime(api,defaults) {
     return prime;
 }
 
-function transform(api, defaults, callback) {
+function transform(api:any, defaults:any, callback:Function) {
     let base = getBase(); // defaults which are hard-coded
 
     let lang = (defaults.language||'').toLowerCase();
@@ -767,7 +766,7 @@ function transform(api, defaults, callback) {
         obj.swagger = defaults.swagger;
     }
     else {
-        const container = {};
+        const container:any = {};
         container.spec = api;
         container.source = defaults.source;
         let conv = new downconverter(container);
@@ -788,9 +787,9 @@ function transform(api, defaults, callback) {
     // helper functions (seen in erlang-client)
     obj.qsEncode = function() {
         thisFunc = encodeURIComponent;
-        return function(template,context){
+        return function(template:string, context:any){
             console.warn(util.inspect(template));
-            console.warn(util.inspect(this));
+            //console.warn(util.inspect(this));
         };
     };
     obj.this = function() {
@@ -809,7 +808,7 @@ function transform(api, defaults, callback) {
     let allSecurity = [];
     if (api.components && api.components.securitySchemes) {
         for (let s in api.components.securitySchemes) {
-            let entry = {};
+            let entry:any = {};
             entry[s] = api.components.securitySchemes[s];
             allSecurity.push(entry);
         }
@@ -820,14 +819,14 @@ function transform(api, defaults, callback) {
     api = deref(api,api,{$ref:'x-oldref'});
 
     obj.messages = [];
-    let message = {};
-    let vOptions = {lint:defaults.lint};
+    let message:any = {};
+    let vOptions:any = {lint:defaults.lint};
     if (defaults.stools && defaults.swagger) {
-        stools.specs.v2_0.validate(defaults.swagger,function(err,result){
+        stools.specs.v2_0.validate(defaults.swagger,function(err:Error, result:any){
             if (err) console.error(util.inspect(err));
             if (result.errors) {
                 for (let e of result.errors) {
-                    let message = {};
+                    let message:any = {};
                     message.level = 'Error';
                     message.elementType = 'Path';
                     message.message = e.message;
@@ -836,7 +835,7 @@ function transform(api, defaults, callback) {
                     if (defaults.verbose) console.log(message);
                 }
                 for (let w of result.warnings) {
-                    let message = {};
+                    let message:any = {};
                     message.level = 'Warning';
                     message.elementType = 'Path';
                     message.message = w.message;
@@ -890,8 +889,8 @@ function transform(api, defaults, callback) {
         for (let s in api.components.schemas) {
             let schema = api.components.schemas[s];
             if (schema !== null) {
-                let container = {};
-                let model = {};
+                let container:any = {};
+                let model:any = {};
                 model.name = s;
                 if (obj.modelNaming === 'snake_case') {
                     model.name = Case.snake(model.name);
@@ -905,8 +904,8 @@ function transform(api, defaults, callback) {
                 model.modelPackage = model.name;
                 model.hasEnums = false;
                 model.vars = [];
-                walkSchema(schema,{},wsGetState,function(schema,parent,state){
-                    let entry = {};
+                walkSchema(schema,{},wsGetState,function(schema:any, parent:any, state:any){
+                    let entry:any = {};
                     entry.name = schema.name || schema.title;
                     if (!entry.name && state.property && (state.property.startsWith('properties') ||
                         state.property.startsWith('additionalProperties'))) {

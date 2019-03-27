@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": true,
+        "sourceMap": false,
+        "alwaysStrict": true,
+        "declaration": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "importHelpers": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "outDir": "dist/",
+        "strictNullChecks": true
+    },
+    "types": [
+        "node"
+    ],
+    "include": [
+        "src/**/*"
+    ]
+}

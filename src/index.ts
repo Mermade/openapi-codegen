@@ -1,14 +1,13 @@
-// @ts-check
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
+//const fs = require('fs');
+//const path = require('path');
+//const util = require('util');
 
 const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 const Hogan = require('hogan.js');
-const clone = require('reftools/lib/clone.js').circularClone; // must preserve functions
+//const clone = require('reftools/lib/clone.js').circularClone; // must preserve functions
 
 const adaptor = require('./adaptor.js');
 
@@ -20,7 +19,7 @@ let ff = {
     mkdirp: mkdirp
 };
 
-function tpl(config, ...segments) {
+function tpl(config:any, ...segments:Array<string>) {
     if (config.templateDir) {
         segments.splice(0,1);
         return path.join(config.templateDir, ...segments);
@@ -28,18 +27,18 @@ function tpl(config, ...segments) {
     return path.join(__dirname, 'templates', ...segments)
 }
 
-function main(o, config, configName, callback) {
+function main(o:object, config:any, configName:string, callback:Function) {
     let outputDir = config.outputDir || './out/';
     let verbose = config.defaults.verbose;
     config.defaults.configName = configName;
-    adaptor.transform(o, config.defaults, function(err, model) {
+    adaptor.transform(o, config.defaults, function(err:Error, model:any) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
             config.partials[p] = ff.readFileSync(tpl(config, configName, partial),'utf8');
         }
 
-        let actions = [];
+        let actions:any[] = [];
         for (let t in config.transformations) {
             let tx = config.transformations[t];
             if (tx.input) {

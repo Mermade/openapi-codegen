@@ -1,5 +1,5 @@
 const yaml = require('js-yaml');
-const fs = require('fs');
+//const fs = require('fs');
 const converter = require('./downconvert.js');
 
 const input = process.argv[2];
