@@ -52,7 +52,7 @@ function safeSample(schema:any, options:any, api:any) {
 
 class outputArray extends Array<any> {
     isEmpty: boolean
-};
+}
 
 function convertArray(arr:outputArray) {
     if (!arr) arr = new outputArray();
