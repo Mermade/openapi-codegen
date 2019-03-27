@@ -1,13 +1,13 @@
 'use strict';
 
-//const fs = require('fs');
-//const path = require('path');
-//const util = require('util');
+const fs = require('fs');
+const path = require('path');
+export const util = require('util');
 
 const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 const Hogan = require('hogan.js');
-//const clone = require('reftools/lib/clone.js').circularClone; // must preserve functions
+const clone = require('reftools/lib/clone.js').circularClone; // must preserve functions
 
 const adaptor = require('./adaptor.js');
 
@@ -24,7 +24,7 @@ function tpl(config:any, ...segments:Array<string>) {
         segments.splice(0,1);
         return path.join(config.templateDir, ...segments);
     }
-    return path.join(__dirname, 'templates', ...segments)
+    return path.join(__dirname, '..', 'templates', ...segments)
 }
 
 function main(o:object, config:any, configName:string, callback:Function) {

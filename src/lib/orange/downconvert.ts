@@ -14,7 +14,7 @@ var SUPPORTED_MIME_TYPES: { [key:string]:string } = {
 var npath = require('path');
 var fs = require('fs');
 var urlParser = require('url');
-//const yaml = require('yaml');
+export const yaml = require('yaml');
 
 /**
  * Transforms OpenApi 3.0 to Swagger 2

@@ -3,7 +3,7 @@
 const util = require('util');
 const url = require('url');
 
-//const yaml = require('yaml');
+const yaml = require('yaml');
 const uuidv4 = require('uuid/v4');
 const safeJson = require('safe-json-stringify');
 const Case = require('case');
@@ -691,7 +691,7 @@ function getPrime(api:any, defaults:any) {
     prime.version = api.info.version;
     prime.title = api.info.title;
     prime.swaggerVersion = '2.0';
-    prime.generatorVersion = require('./package.json').version;
+    prime.generatorVersion = require('../package.json').version;
     prime.swaggerCodegenVersion = 'openapi-codegen-v'+prime.generatorVersion;
     prime.appDescription = api.info.description||'No description';
     prime.projectDescription = prime.appDescription;

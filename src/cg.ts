@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 'use strict';
 
-//const fs = require('fs');
-const path = require('path');
-//const url = require('url');
-//const util = require('util');
+export const fs = require('fs');
+export const path = require('path');
+export const url = require('url');
+export const util = require('util');
 
-//const yaml = require('yaml');
-//const fetch = require('node-fetch');
+const yaml = require('yaml');
+const fetch = require('node-fetch');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
-//const stools = require('swagger-tools');
+const stools = require('swagger-tools');
 const admzip = require('adm-zip');
 
 const processor = require('./index.js');
@@ -134,14 +134,14 @@ function convert12(api:any){
             if (!u.endsWith(extension)) u += extension;
             if (argv.verbose) console.log(u);
             retrieve.push(fetch(u,options.fetchOptions)
-            .then(res => {
+            .then((res:any) => {
                 if (argv.verbose) console.log(res.status);
                 return res.text();
             })
-            .then(data => {
+            .then((data:any) => {
                 apiDeclarations.push(yaml.parse(data));
             })
-            .catch(err => {
+            .catch((err:Error) => {
                 console.error(util.inspect(err));
             }));
         }
@@ -204,11 +204,11 @@ config.defaults.source = defName;
 let up = url.parse(defName);
 if (up.protocol && up.protocol.startsWith('http')) {
     fetch(defName)
-    .then(function (res) {
+    .then(function(res:any) {
         return res.text();
-    }).then(function (body) {
+    }).then(function(body:string) {
         cg(body);
-    }).catch(function (err) {
+    }).catch(function(err:Error) {
         console.error(err.message);
     });
 }

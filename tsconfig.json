@@ -12,7 +12,8 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "outDir": "dist/",
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "lib": [ "es6" ]
     },
     "types": [
         "node"
