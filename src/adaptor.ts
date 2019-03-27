@@ -50,8 +50,12 @@ function safeSample(schema:any, options:any, api:any) {
     return {};
 }
 
-function convertArray(arr:Array<any>) {
-    if (!arr) arr = [];
+class outputArray extends Array<any> {
+    isEmpty: boolean
+};
+
+function convertArray(arr:outputArray) {
+    if (!arr) arr = new outputArray();
     if (arr.length) {
         arr.isEmpty = false;
         for (let i=0;i<arr.length;i++) {
@@ -440,7 +444,7 @@ function convertOperation(op:any, verb:string, path:string, pathItem:any, obj:an
 }
 
 function convertToApis(source:any, obj:any, defaults:any) {
-    let apis = [];
+    let apis = new outputArray();
     for (let p in source.paths) {
         for (let m in source.paths[p]) {
             if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
@@ -492,7 +496,7 @@ function convertToApis(source:any, obj:any, defaults:any) {
 }
 
 function convertToPaths(source:any, obj:any, defaults:any) {
-    let paths = [];
+    let paths = new outputArray();
     for (let p in source.paths) {
         for (let m in source.paths[p]) {
             if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {

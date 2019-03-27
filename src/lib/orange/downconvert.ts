@@ -14,7 +14,7 @@ var SUPPORTED_MIME_TYPES: { [key:string]:string } = {
 var npath = require('path');
 var fs = require('fs');
 var urlParser = require('url');
-var YAML = require('js-yaml');
+//const yaml = require('yaml');
 
 /**
  * Transforms OpenApi 3.0 to Swagger 2
@@ -79,7 +79,7 @@ Converter.prototype.resolveReference = function(base:string, obj:any) {
       external = JSON.parse(content);
     } catch (e) {
       try {
-        external = YAML.safeLoad(content);
+        external = yaml.parse(content);
       } catch (e) {
         throw new Error("Could not parse $ref " + ref + " as JSON or YAML");
       }
