@@ -1,5 +1,7 @@
 'use strict';
 
+import { Oas30Document, Oas30Operation, Oas30Response, OasParameterBase, Oas30Parameter, Oas30PathItem, Oas30Schema, Oas30SchemaDefinition } from 'oai-ts-core';
+
 const util = require('util');
 const url = require('url');
 
@@ -140,7 +142,7 @@ function specificationExtensions(obj:any) {
     return result;
 }
 
-function convertOperation(op:any, verb:string, path:string, pathItem:any, obj:any, api:any) {
+function convertOperation(op:Oas30Operation, verb:string, path:string, pathItem:Oas30PathItem, obj:any, api:any) {
     let operation:any = {};
     operation.httpMethod = verb.toUpperCase();
     if (obj.httpMethodCase === 'original') operation.httpMethod = verb; // extension
@@ -185,15 +187,27 @@ function convertOperation(op:any, verb:string, path:string, pathItem:any, obj:an
     operation.hasBodyParam = false;
     operation.openapi = {};
 
-    let authData = getAuthData(op.security||api.security,api);
-    operation = Object.assign(operation,authData);
+    //let effParameters:Array<any> = (op.parameters||[]).concat(pathItem.parameters||[]);
+    //let effParameters = (op.parameters||emptyParameters).concat(pathItem.parameters||emptyParameters);
+    //effParameters = effParameters.filter((param:any, index:number, self:Array<any>) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+    const effParameters:Array<OasParameterBase> = [];
+    if (op.parameters && op.parameters.length) {
+        for (let p of op.parameters) {
+            effParameters.push(p);
+        }
+    }
+    if (pathItem.parameters && pathItem.parameters.length) {
+        for (let p of pathItem.parameters) {
+            effParameters.push(p);
+        }
+    }
 
-    let effParameters:Array<any> = (op.parameters||[]).concat(pathItem.parameters||[]);
-    effParameters = effParameters.filter((param:any, index:number, self:Array<any>) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+    let authData = getAuthData(op.security||api.security,api);
+    let operationWithAuth = Object.assign(operation,authData);
 
     for (let pa in effParameters) {
         operation.hasParams = true;
-        let param = effParameters[pa];
+        let param = <Oas30Parameter>effParameters[pa];
         let parameter:any = {};
         parameter.isHeaderParam = false;
         parameter.isQueryParam = false;
@@ -329,7 +343,7 @@ function convertOperation(op:any, verb:string, path:string, pathItem:any, obj:an
 
     operation.responses = [];
     for (let r in op.responses) {
-        let response = op.responses[r];
+        let response:Oas30Response = <Oas30Response>op.responses[r];
         let entry:any = {};
         entry.code = r;
         entry.isDefault = (r === 'default');
@@ -443,7 +457,7 @@ function convertOperation(op:any, verb:string, path:string, pathItem:any, obj:an
     return operation;
 }
 
-function convertToApis(source:any, obj:any, defaults:any) {
+function convertToApis(source:Oas30Document, obj:any, defaults:any) {
     let apis = new outputArray();
     for (let p in source.paths) {
         for (let m in source.paths[p]) {
@@ -756,7 +770,7 @@ function getPrime(api:any, defaults:any) {
     return prime;
 }
 
-function transform(api:any, defaults:any, callback:Function) {
+function transform(api:Oas30Document, native:any, defaults:any, callback:Function) {
     let base = getBase(); // defaults which are hard-coded
 
     let lang = (defaults.language||'').toLowerCase();
@@ -771,7 +785,7 @@ function transform(api:any, defaults:any, callback:Function) {
     }
     else {
         const container:any = {};
-        container.spec = api;
+        container.spec = native;
         container.source = defaults.source;
         let conv = new downconverter(container);
         obj.swagger = conv.convert();
@@ -779,8 +793,8 @@ function transform(api:any, defaults:any, callback:Function) {
 
     obj["swagger-yaml"] = yaml.stringify(obj.swagger); // set to original if converted v2.0
     obj["swagger-json"] = JSON.stringify(obj.swagger, null, 2); // set to original if converted 2.0
-    obj["openapi-yaml"] = yaml.stringify(api);
-    obj["openapi-json"] = JSON.stringify(api, null, 2);
+    obj["openapi-yaml"] = yaml.stringify(native);
+    obj["openapi-json"] = JSON.stringify(native, null, 2);
 
     // openapi3 extensions
     obj.openapi = {};
@@ -851,7 +865,7 @@ function transform(api:any, defaults:any, callback:Function) {
         });
     }
     else try {
-        validator(api,vOptions);
+        validator(native, vOptions);
         message.level = 'Valid';
         message.elementType = 'Context';
         message.elementId = 'None';
@@ -889,9 +903,9 @@ function transform(api:any, defaults:any, callback:Function) {
     if (defaults.debug) obj.debugOperations = JSON.stringify(obj,null,2);
 
     obj.models = [];
-    if (api.components) {
-        for (let s in api.components.schemas) {
-            let schema = api.components.schemas[s];
+    if (native.components) { // was api.
+        for (let s in native.components.schemas) { // was api.
+            let schema = native.components.schemas[s]; // was api.
             if (schema !== null) {
                 let container:any = {};
                 let model:any = {};
@@ -910,7 +924,8 @@ function transform(api:any, defaults:any, callback:Function) {
                 model.vars = [];
                 walkSchema(schema,{},wsGetState,function(schema:any, parent:any, state:any){
                     let entry:any = {};
-                    entry.name = schema.name || schema.title;
+                    //entry.name = schema.name || schema.title;
+                    entry.name = schema.title || s;
                     if (!entry.name && state.property && (state.property.startsWith('properties') ||
                         state.property.startsWith('additionalProperties'))) {
                         entry.name = state.property.split('/')[1];

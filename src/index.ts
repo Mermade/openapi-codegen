@@ -8,6 +8,8 @@ const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 const Hogan = require('hogan.js');
 const clone = require('reftools/lib/clone.js').circularClone; // must preserve functions
+import { OasLibraryUtils, Oas30Document } from 'oai-ts-core';
+const library:OasLibraryUtils = new OasLibraryUtils();
 
 const adaptor = require('./adaptor.js');
 
@@ -27,11 +29,14 @@ function tpl(config:any, ...segments:Array<string>) {
     return path.join(__dirname, '..', 'templates', ...segments)
 }
 
-function main(o:object, config:any, configName:string, callback:Function) {
+function main(input:object, config:any, configName:string, callback:Function) {
     let outputDir = config.outputDir || './out/';
     let verbose = config.defaults.verbose;
     config.defaults.configName = configName;
-    adaptor.transform(o, config.defaults, function(err:Error, model:any) {
+
+    const oas:Oas30Document = <Oas30Document>library.createDocument(input);
+
+    adaptor.transform(oas, input, config.defaults, function(err:Error, model:any) {
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
