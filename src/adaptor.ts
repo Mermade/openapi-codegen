@@ -799,8 +799,8 @@ function transform(api:Oas30Document, native:any, defaults:any, callback:Functio
     // openapi3 extensions
     obj.openapi = {};
     obj.openapi.operationCounter = 1;
-    obj.openapi.version = api.openapi;
-    obj.openapi.servers = api.servers;
+    obj.openapi.version = native.openapi;
+    obj.openapi.servers = native.servers;
 
     // helper functions (seen in erlang-client)
     obj.qsEncode = function() {
@@ -900,7 +900,7 @@ function transform(api:Oas30Document, native:any, defaults:any, callback:Functio
     obj.produces = convertArray(obj.produces);
     obj.consumes = convertArray(obj.consumes);
 
-    if (defaults.debug) obj.debugOperations = JSON.stringify(obj,null,2);
+    if (defaults.debug) obj.debugOperations = safeJson(obj,null,2); // was plain JSON.stringify
 
     obj.models = [];
     if (native.components) { // was api.
