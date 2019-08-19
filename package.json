@@ -38,7 +38,7 @@
     "oas-validator": "^3.0.0",
     "openapi-sampler": "^1.0.0-beta.8",
     "reftools": "^1.0.5",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.0",
     "safe-json-stringify": "^1.2.0",
     "swagger-tools": "^0.10.4",
     "swagger2openapi": "^5.0.1",
