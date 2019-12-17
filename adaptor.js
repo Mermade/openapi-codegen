@@ -646,6 +646,7 @@ function getBase() {
     base.interfacePrefix = ''; /* Prefix interfaces with a community standard or widely accepted prefix. */
     base.returnICollection = false; /* Return ICollection<T> instead of the concrete type. */
     base.optionalProjectFile = false; /* Generate {PackageName}.csproj. */
+    base.variableNamingConvention = 'original'; /* {camelCase, PascalCase, snake_case, original, UPPERCASE} */
     base.modelPropertyNaming = 'original'; /* {camelCase, PascalCase, snake_case, original, UPPERCASE} */
     base.targetFramework = 4; /* The target .NET framework version. */
     base.modelNamePrefix = ''; /* Prefix that will be prepended to all model names. Default is the empty string. */
@@ -912,20 +913,35 @@ function transform(api, defaults, callback) {
                         state.property.startsWith('additionalProperties'))) {
                         entry.name = state.property.split('/')[1];
                     }
-                    if (obj.modelPropertyNaming === 'snake_case') {
-                        entry.name = Case.snake(entry.name);
-                    }
-                    if (reserved.indexOf(entry.name)>=0) {
-                        entry.name = Case.pascal(entry.name);
-                    }
+
                     if (entry.name) {
                         entry.baseName = entry.name.toLowerCase();
                     }
+
+                    if (obj.variableNamingConvention === 'original') {
+                        if (obj.modelPropertyNaming === 'snake_case') {
+                            entry.name = Case.snake(entry.name);
+                        }
+                    } else {
+                        if (obj.variableNamingConvention === 'snake_case') {
+                            entry.baseName = entry.name;
+                            entry.name = Case.snake(entry.name);
+                        }
+                    }
+
+                    if (reserved.indexOf(entry.name)>=0) {
+                        entry.name = Case.pascal(entry.name);
+                    }
+
                     entry.getter = Case.camel('get_'+entry.name);
                     entry.setter = Case.camel('set_'+entry.name);
                     entry.description = schema.description||'';
                     entry.unescapedDescription = entry.description;
-                    entry.type = schema.type;
+                    if (entry.name && !schema.type && schema["x-oldref"]) {
+                        entry.type = obj.modelPackage + '\\' + schema["x-oldref"].replace('#/components/schemas/', '');
+                    } else {
+                        entry.type = schema.type;
+                    }
                     entry.required = (parent.required && parent.required.indexOf(entry.name)>=0)||false;
                     entry.isNotRequired = !entry.required;
                     entry.readOnly = !!schema.readOnly;
