@@ -932,7 +932,8 @@ function transform(api, defaults, callback) {
                     entry.isNotRequired = !entry.required;
                     entry.readOnly = !!schema.readOnly;
                     entry.type = typeMap(entry.type,entry.required,schema);
-                    entry.dataType = entry.type; //?
+                    entry.dataType = entry.type; //camelCase for imported files
+                    entry.datatype = entry.type; //lower for other files
                     entry.jsonSchema = safeJson(schema,null,2);
                     for (let p in schemaProperties) {
                         if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
