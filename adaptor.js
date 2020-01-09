@@ -936,7 +936,9 @@ function transform(api, defaults, callback) {
                         if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
                     }
                     entry.isEnum = !!schema.enum;
-                    entry.isPrimitiveType = ((schema.type !== 'object') && (schema.type !== 'array'));
+                    entry.isListContainer = schema.type === 'array';
+                    entry.isMapContainer = schema.type === 'object';
+                    entry.isPrimitiveType = !entry.isListContainer && !entry.isMapContainer;
                     entry.isNotContainer = entry.isPrimitiveType;
                     if (entry.isEnum) entry.isNotContainer = false;
                     entry.isContainer = !entry.isNotContainer;
