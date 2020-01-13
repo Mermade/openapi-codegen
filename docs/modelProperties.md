@@ -154,3 +154,5 @@
 |modelPackage|model|Order||
 |hasEnums|model|false||
 |vars|model|[array]||
+|isMapContainer|model|false|boolean - set to true when container is a map|
+|isArrayContainer|model|false|boolean - set to true when container is a array|
