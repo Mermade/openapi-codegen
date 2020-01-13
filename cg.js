@@ -167,7 +167,7 @@ function convert12(api){
 }
 
 function main(s) {
-    let o = yaml.parse(s);
+    let o = yaml.parse(s, { prettyErrors: true });
     if (argv.verbose) console.log('Loaded definition '+defName);
 
     if (o && o.openapi) {
