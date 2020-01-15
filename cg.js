@@ -14,7 +14,13 @@ const swagger2openapi = require('swagger2openapi');
 const stools = require('swagger-tools');
 const admzip = require('adm-zip');
 
-const processor = require('./index.js');
+const processor = require('./local.js');
+const remote = require('./remote.js');
+
+async function list(provider) {
+    await remote.list(provider);
+    process.exit(1);
+}
 
 var argv = require('yargs')
     .usage('cg [options] {[path]configName} {openapi-definition}')
@@ -27,6 +33,8 @@ var argv = require('yargs')
     .boolean('lint')
     .alias('l','lint')
     .describe('lint','Lint input definition')
+    .string('list')
+    .describe('list','List available templates for provider (og or sc)')
     .string('output')
     .alias('o','output')
     .describe('output','Specify output directory')
@@ -46,13 +54,20 @@ var argv = require('yargs')
     .version()
     .argv;
 
+if (argv.list) {
+    list(argv.list);
+}
+
 let configStr = argv._[0] || 'nodejs';
 let configName = path.basename(configStr);
+let remoteConfig = configName.indexOf(':')>-1;
 let configPath = path.dirname(configStr);
 if (!configPath || (configPath === '.')) configPath = './configs';
 let configFile = path.resolve(configPath,configName)+'.json';
 let config = require(configFile);
 let defName = argv._[1] || './defs/petstore3.json';
+
+let finish = remoteConfig ? finishRemote : finishLocal;
 
 config.outputDir = argv.output;
 config.templateDir = argv.templates;
@@ -70,7 +85,7 @@ function zipFile(filename,contents,encoding) {
     zipFiles[filename] = contents;
 }
 
-function finish(err,result) {
+function finishLocal(err,result) {
     if (argv.zip) {
         // create archive
         var zip = new admzip();
@@ -84,6 +99,24 @@ function finish(err,result) {
     }
 }
 
+function finishRemote(err,result) {
+    if (argv.zip) {
+        // just save the zip file
+    }
+    else {
+        // unpack the zip file
+    }
+}
+
+function despatch(obj, config, configName, callback) {
+    if (remoteConfig) {
+        remote.main(obj, config, configName, callback);
+    }
+    else {
+        processor.main(obj, config, configName, callback);
+    }
+}
+
 function convert20(obj){
     if (argv.verbose) console.log('Converting OpenAPI 2.0 definition');
     swagger2openapi.convertObj(obj,{patch:true,warnOnly:true,direct:true},function(err,openapi){
@@ -92,7 +125,7 @@ function convert20(obj){
         }
         else {
             config.defaults.swagger = obj;
-            processor.main(openapi,config,configName,finish);
+            despatch(openapi,config,configName,finish);
         }
     });
 }
@@ -176,14 +209,19 @@ function main(s) {
     if (argv.verbose) console.log('Loaded definition '+defName);
 
     if (o && o.openapi) {
-        processor.main(o,config,configName,finish);
+        despatch(o,config,configName,finish);
     }
     else {
         if (o && o.swaggerVersion && o.swaggerVersion === '1.2') {
             convert12(o);
         }
         else if (o && o.swagger && o.swagger === '2.0') {
-            convert20(o);
+            if (remoteConfig) {
+                despatch(o,config,configName,finish);
+            }
+            else {
+                convert20(o);
+            }
         }
         else {
             console.error('Unrecognised OpenAPI/Swagger version');
