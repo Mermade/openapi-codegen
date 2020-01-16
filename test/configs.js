@@ -60,7 +60,7 @@ async function main(){
             });
         });
     });
-    
+
     describe('partials existence',function(){
         Object.values(configs).forEach(function(config){
             if (config.partials) {
@@ -72,7 +72,7 @@ async function main(){
             }
         });
     });
-    
+
     describe('templates existence',function(){
         Object.values(configs).forEach(function(config){
             if (config.transformations) {
@@ -114,7 +114,7 @@ async function main(){
                         let found = 0;
                         if (config.partials) {
                             for (let p in config.partials) {
-                            if (config.partials[p] === name) found++; 
+                                if (config.partials[p] === name) found++;
                             }
                         }
                         for (let tx of config.transformations) {
