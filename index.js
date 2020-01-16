@@ -41,10 +41,10 @@ function main(o, config, configName, callback) {
         if (verbose) console.log('Processing lambdas '+Object.keys(lambdas));
         Object.keys(lambdas).forEach(key => model[key] = lambdas[key]);
 
-        if (config.defaults.generator && config.defaults.generator.lambdas) {
-            for (let lambda in config.defaults.generator.lambdas) {
+        if (config.generator && config.generator.lambdas) {
+            for (let lambda in config.generator.lambdas) {
                 if (verbose) console.log('Processing lambda '+lambda);
-                model[lambda] = config.defaults.generator.lambdas[lambda];
+                model[lambda] = config.generator.lambdas[lambda];
             }
         }
         for (let p in config.partials) {
