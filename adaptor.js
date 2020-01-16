@@ -945,7 +945,9 @@ function transform(api, defaults, callback) {
                     if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
                         entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
                     }
-
+                    if ((schema.type === 'array') && schema.items && schema.items["x-oldref"]) {
+                        entry.itemsComplexType = schema.items["x-oldref"].replace('#/components/schemas/','');
+                    }
                     entry.dataFormat = schema.format;
                     entry.defaultValue = schema.default;
 
