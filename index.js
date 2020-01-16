@@ -11,6 +11,7 @@ const Hogan = require('hogan.js');
 const clone = require('reftools/lib/clone.js').circularClone; // must preserve functions
 
 const adaptor = require('./adaptor.js');
+const lambdas = require('./lambdas.js');
 
 // allows other backends, such as a stream writer for .tar.gz files
 let ff = {
@@ -32,7 +33,20 @@ function main(o, config, configName, callback) {
     let outputDir = config.outputDir || './out/';
     let verbose = config.defaults.verbose;
     config.defaults.configName = configName;
+
     adaptor.transform(o, config.defaults, function(err, model) {
+        if (config.generator) {
+            model.generator = config.generator;
+        }
+        if (verbose) console.log('Processing lambdas '+Object.keys(lambdas));
+        Object.keys(lambdas).forEach(key => model[key] = lambdas[key]);
+
+        if (config.defaults.generator && config.defaults.generator.lambdas) {
+            for (let lambda in config.defaults.generator.lambdas) {
+                if (verbose) console.log('Processing lambda '+lambda);
+                model[lambda] = config.defaults.generator.lambdas[lambda];
+            }
+        }
         for (let p in config.partials) {
             let partial = config.partials[p];
             if (verbose) console.log('Processing partial '+partial);
