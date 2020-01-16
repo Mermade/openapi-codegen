@@ -7,7 +7,7 @@
     "cg": "./cg.js"
   },
   "scripts": {
-    "lint": "npx eslint *.js test/*.js",
+    "lint": "npx eslint *.js test/*.js lib/",
     "test": "npx mocha --delay"
   },
   "repository": {
