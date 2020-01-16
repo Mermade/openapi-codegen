@@ -57,6 +57,11 @@ let defName = argv._[1] || './defs/petstore3.json';
 config.outputDir = argv.output;
 config.templateDir = argv.templates;
 
+if (config.generator) {
+    let generator_path = path.resolve(configPath, config.generator);
+    config.generator = require(generator_path);
+}
+
 let zipFiles = {};
 
 function nop(arg, callback) { if (callback) callback(null,true); return true; }
