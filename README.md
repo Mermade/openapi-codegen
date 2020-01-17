@@ -3,11 +3,11 @@
 [![Build status](https://travis-ci.org/Mermade/openapi-codegen.svg?branch=master)](https://travis-ci.org/Mermade/openapi-codegen)
 [![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/openapi-codegen.svg)](https://greenkeeper.io/)
 
-Experimental port of [swagger-codegen](https://github.com/swagger-api/swagger-codegen) templates to Node.js. This project was initially a 24-hour hackathon. The model adaptor code is entirely original and has been reverse-engineered from the existing documentation and template usage.
+Node.js-based codegen for OpenAPI documents. This project was initially a 24-hour hackathon. The local model adaptor code is entirely original and has been reverse-engineered from the existing documentation and template usage.
 
 **Work in progress**
 
-Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 1.2 and 2.0 by internal conversion
+Supports OpenAPI 3.0.x natively, and Swagger/OpenAPI 1.2 and 2.0 by internal conversion. Node.js LTS versions are supported.
 
 ## Usage
 
@@ -32,6 +32,8 @@ cg [options] {[path]configName} {openapi-definition}
 Options:
   --help           Show help                                           [boolean]
   --version        Show version number                                 [boolean]
+  --filter         Filter term to use with --list                       [string]
+  --list           List available templates for provider (og or sc)     [string]
   -d, --debug      Turn on debugging information in the model          [boolean]
   -f, --flat       Do not include config-name in output directory structure
                                                                        [boolean]
@@ -54,8 +56,6 @@ In this case, the generated code will be written to the `.out/nodejs` directory.
 
 You can also load the OpenAPI definition from a URL.
 
-If you are using Node 6.x or lower, please specify the `--harmony` flag.
-
 ### API
 
 ```javascript
@@ -66,7 +66,9 @@ renderer.main(definition,config,configName);
 
 ## Templates
 
-Templates are taken directly from `swagger-codegen`. This project is also licensed under [Apache-2.0](LICENSE) for this reason. Generated code is explicitly covered by the [Unlicense](templates/_common/UNLICENSE). Code to downconvert OpenAPI 3.0 definitions is taken from [Angular-Swagger-UI](https://github.com/Orange-OpenSource/angular-swagger-ui) and is MIT licensed.
+The local templates were taken directly from `swagger-codegen`. This project is also licensed under [Apache-2.0](LICENSE) for this reason. Generated code is explicitly covered by the [Unlicense](templates/_common/UNLICENSE). Code to downconvert OpenAPI 3.0 definitions is taken from [Angular-Swagger-UI](https://github.com/Orange-OpenSource/angular-swagger-ui) and is MIT licensed.
+
+You can also use the latest online templates from two providers: `og` ([openapi-generator](https://github.com/OpenAPITools/openapi-generator)) and `sc` ([swagger-codegen](https://github.com/swagger-api/swagger-codegen)). The `--list` and `--filter` options allow you to see which templates are available. Note that using the online templates involves sending your API definition to a remote server.
 
 ### Contributors
 
@@ -74,7 +76,7 @@ See [here](https://github.com/swagger-api/swagger-codegen#template-creator) for 
 
 ### Status of the template configurations
 
-The templates with a status have a working (if not necessarily tested) configuration in the **configs** directory.
+The local templates with a status have a working (if not necessarily tested) configuration in the **configs** directory. Contributions are welcomed from the community of new and updated configurations and template updates.
 
 <details>
 <summary>Click here to expand...</summary>
@@ -176,12 +178,4 @@ These templates are examples of how features of OpenAPI Codegen may be used, and
 ## Documentation
 
 * [See here](docs/README.md) - contributions welcome
-
-## See also
-
-These projects use their own template model, not that of `swagger-codegen`
-
-* https://github.com/fmvilas/swagger-node-codegen
-* https://github.com/wcandillon/swagger-js-codegen
-* https://github.com/Cian-Chambliss/swagger-codegen-prepare
 
