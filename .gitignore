@@ -1,4 +1,5 @@
 node_modules/
+.vscode/
 templates/META-INF/
 templates/logback.xml
 *.log
