@@ -44,12 +44,12 @@ We support the following pre-defined lambdas at the moment:
 
 | lambda     | example                                | description           |
 |------------|----------------------------------------|-----------------------|
-| lowercase  | {{#lowercase}}{{name}}{{/lowercase}}   | Convert to lowercase  |
-| uppercase  | {{#uppercase}}{{name}}{{/uppercase}}   | Convert to UPPERCASE  |
-| snakecase  | {{#snakecase}}{{name}}{{/snakecase}}   | Convert to snake_case |
-| pascalcase | {{#pascalcase}}{{name}}{{/pascalcase}} | Convert to PascalCase |
-| camelcase  | {{#camelcase}}{{name}}{{/camelcase}}   | Convert to camelCase  |
-| kebabcase  | {{#kebabcase}}{{name}}{{/kebabcase}}   | Convert to kebab-case |
+| lowercase  | \{\{#lowercase\}\}\{\{name\}\}\{\{/lowercase\}\}   | Convert to lowercase  |
+| uppercase  | \{\{#uppercase\}\}\{\{name\}\}\{\{/uppercase\}\}   | Convert to UPPERCASE  |
+| snakecase  | \{\{#snakecase\}\}\{\{name\}\}\{\{/snakecase\}\}   | Convert to snake_case |
+| pascalcase | \{\{#pascalcase\}\}\{\{name\}\}\{\{/pascalcase\}\} | Convert to PascalCase |
+| camelcase  | \{\{#camelcase\}\}\{\{name\}\}\{\{/camelcase\}\}   | Convert to camelCase  |
+| kebabcase  | \{\{#kebabcase\}\}\{\{name\}\}\{\{/kebabcase\}\}   | Convert to kebab-case |
 
 ### Custom generators
 
