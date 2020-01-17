@@ -144,12 +144,6 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.path = path;
     operation.replacedPathName = path; //?
 
-    operation.operationId = op.operationId||('operation'+obj.openapi.operationCounter++);
-    operation.operationIdLowerCase = operation.operationId.toLowerCase();
-    operation.operationIdSnakeCase = Case.snake(operation.operationId);
-    operation.nickname = operation.operationId;
-    //operation.classname = obj.classPrefix+operation.nickname;
-
     operation.description = op.description;
     operation.summary = op.summary;
     operation.allParams = [];
@@ -188,6 +182,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     let effParameters = (op.parameters||[]).concat(pathItem.parameters||[]);
     effParameters = effParameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
 
+    const paramList = [];
     for (let pa in effParameters) {
         operation.hasParams = true;
         let param = effParameters[pa];
@@ -199,6 +194,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         parameter.isFormParam = false;
         parameter.paramName = param.name;
         parameter.baseName = param.name;
+        paramList.push(param.name);
         parameter.required = param.required||false;
         parameter.optional = !parameter.required;
         if (parameter.required) operation.hasRequiredParams = true;
@@ -266,6 +262,11 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             operation.hasFormParams = true;
         }*/
     } // end of effective parameters
+
+    operation.operationId = op.operationId || Case.camel(op.tags[0] + (paramList ? '_' + paramList.join('_') + '_' : '') + verb);
+    operation.operationIdLowerCase = operation.operationId.toLowerCase();
+    operation.operationIdSnakeCase = Case.snake(operation.operationId);
+    operation.nickname = operation.operationId;
 
     operation.bodyParams = [];
     if (op.requestBody) {
@@ -401,6 +402,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         entry.openapi = {};
         entry.openapi.links = response.links;
         operation.responses.push(entry);
+        operation.responses = convertArray(operation.responses);
     }
 
     if (obj.sortParamsByRequiredFlag) {
@@ -930,7 +932,8 @@ function transform(api, defaults, callback) {
                     entry.isNotRequired = !entry.required;
                     entry.readOnly = !!schema.readOnly;
                     entry.type = typeMap(entry.type,entry.required,schema);
-                    entry.datatype = entry.type; //?
+                    entry.dataType = entry.type; //camelCase for imported files
+                    entry.datatype = entry.type; //lower for other files
                     entry.jsonSchema = safeJson(schema,null,2);
                     for (let p in schemaProperties) {
                         if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
