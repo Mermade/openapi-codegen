@@ -12,6 +12,8 @@ const fetch = require('node-fetch');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
 const stools = require('swagger-tools');
+const mkdirp = require('mkdirp');
+const rimraf = require('rimraf');
 const admzip = require('adm-zip');
 
 const processor = require('./local.js');
@@ -66,7 +68,7 @@ let remoteConfig = configName.indexOf(':')>-1;
 let configPath = path.dirname(configStr);
 if (!configPath || (configPath === '.')) configPath = './configs';
 let configFile = path.resolve(configPath,configName)+'.json';
-let config = require(configFile);
+let config = remoteConfig ? { defaults: {} } : require(configFile);
 let defName = argv._[1] || './defs/petstore3.json';
 
 let finish = remoteConfig ? finishRemote : finishLocal;
@@ -102,12 +104,26 @@ function finishLocal(err,result) {
 }
 
 function finishRemote(err,result) {
-    if (argv.zip) {
-        // just save the zip file
-    }
-    else {
-        // unpack the zip file
-    }
+   configName = configName.split(':').pop();
+   if (argv.verbose) console.log('Making/cleaning output directories');
+   mkdirp(path.join(config.outputDir,configName),function(){
+       rimraf(path.join(config.outputDir,configName)+'/*',function(){
+           if (argv.zip) {
+              fs.writeFileSync(path.join(config.outputDir,configName,configName+'.zip'),result);
+           }
+           else {
+               const zip = new admzip(result);
+               if (argv.verbose) {
+                   console.log('Unzipping...');
+                   const zipEntries = zip.getEntries(); // an array of ZipEntry records
+                   zipEntries.forEach(function(zipEntry) {
+                       console.log(zipEntry.entryName);
+                   });
+                }
+                zip.extractAllTo(config.outputDir,true);
+            }
+        });
+    });
 }
 
 function despatch(obj, config, configName, callback) {
