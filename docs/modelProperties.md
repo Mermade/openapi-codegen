@@ -156,3 +156,4 @@
 |vars|model|[array]||
 |isMapContainer|model|false|boolean - set to true when container is a map|
 |isArrayContainer|model|false|boolean - set to true when container is a array|
+|itemsComplexType|vars|OrderDetails|Stores the name of the model for array elements|
