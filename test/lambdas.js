@@ -17,7 +17,7 @@ const reservedWords = new Set([
 
 function escapeReservedWord(text) {
     return "'"+text+"'";
-};
+}
 
 function model() {
     let model = {
@@ -36,16 +36,16 @@ function model() {
         snakeCaseReservedWord: 'SnakeCase',
         pascalCaseReservedWord: 'pascalCase',
         camelCaseReservedWord: 'CamelCase',
-        kebabCaseReservedWord: 'KebabCase',
+        kebabCaseReservedWord: 'KebabCase'
     };
     Object.keys(lambdas).forEach(key => model[key] = lambdas[key]);
     return model;
-};
+}
 
 function renderTmpl(model, templateStr, partials) {
     let template = Hogan.compile(templateStr);
     return template.render(model,partials);
-};
+}
 
 function render(template) {
     return renderTmpl(model(), template, {})
@@ -283,3 +283,4 @@ async function main(){
 }
 
 main();
+
