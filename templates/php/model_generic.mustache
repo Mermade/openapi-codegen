@@ -1,21 +1,21 @@
 class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^parentSchema}}implements ModelInterface, ArrayAccess{{/parentSchema}}
 {
-    const DISCRIMINATOR = {{#discriminator}}'{{discriminator}}'{{/discriminator}}{{^discriminator}}null{{/discriminator}};
+    const DISCRIMINATOR = {{#discriminator}}'{{discriminatorName}}'{{/discriminator}}{{^discriminator}}null{{/discriminator}};
 
     /**
       * The original name of the model.
       *
       * @var string
       */
-    protected static $swaggerModelName = '{{name}}';
+    protected static $openAPIModelName = '{{name}}';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
       *
       * @var string[]
       */
-    protected static $swaggerTypes = [
-        {{#vars}}'{{name}}' => '{{{datatype}}}'{{#hasMore}},
+    protected static $openAPITypes = [
+        {{#vars}}'{{name}}' => '{{{dataType}}}'{{#hasMore}},
         {{/hasMore}}{{/vars}}
     ];
 
@@ -24,7 +24,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
       *
       * @var string[]
       */
-    protected static $swaggerFormats = [
+    protected static $openAPIFormats = [
         {{#vars}}'{{name}}' => {{#dataFormat}}'{{{dataFormat}}}'{{/dataFormat}}{{^dataFormat}}null{{/dataFormat}}{{#hasMore}},
         {{/hasMore}}{{/vars}}
     ];
@@ -34,9 +34,9 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
      *
      * @return array
      */
-    public static function swaggerTypes()
+    public static function openAPITypes()
     {
-        return self::$swaggerTypes{{#parentSchema}} + parent::swaggerTypes(){{/parentSchema}};
+        return self::$openAPITypes{{#parentSchema}} + parent::openAPITypes(){{/parentSchema}};
     }
 
     /**
@@ -44,9 +44,9 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
      *
      * @return array
      */
-    public static function swaggerFormats()
+    public static function openAPIFormats()
     {
-        return self::$swaggerFormats{{#parentSchema}} + parent::swaggerFormats(){{/parentSchema}};
+        return self::$openAPIFormats{{#parentSchema}} + parent::openAPIFormats(){{/parentSchema}};
     }
 
     /**
@@ -118,7 +118,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
      */
     public function getModelName()
     {
-        return self::$swaggerModelName;
+        return self::$openAPIModelName;
     }
 
     {{#vars}}{{#isEnum}}{{#allowableValues}}{{#enumVars}}const {{enumName}}_{{{name}}} = {{{value}}};
@@ -166,8 +166,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
         {{#discriminator}}
 
         // Initialize discriminator property with the model name.
-        $discriminator = array_search('{{discriminator}}', self::$attributeMap);
-        $this->container[$discriminator] = static::$swaggerModelName;
+        $this->container['{{discriminatorName}}'] = static::$openAPIModelName;
         {{/discriminator}}
     }
 
@@ -194,7 +193,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
         {{#isEnum}}
         {{^isContainer}}
         $allowedValues = $this->{{getter}}AllowableValues();
-        if (!in_array($this->container['{{name}}'], $allowedValues)) {
+        if (!is_null($this->container['{{name}}']) && !in_array($this->container['{{name}}'], $allowedValues, true)) {
             $invalidProperties[] = sprintf(
                 "invalid value for '{{name}}', must be one of '%s'",
                 implode("', '", $allowedValues)
@@ -205,13 +204,13 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
         {{/isEnum}}
         {{#hasValidation}}
         {{#maxLength}}
-        if ({{^required}}!is_null($this->container['{{name}}']) && {{/required}}(strlen($this->container['{{name}}']) > {{maxLength}})) {
+        if ({{^required}}!is_null($this->container['{{name}}']) && {{/required}}(mb_strlen($this->container['{{name}}']) > {{maxLength}})) {
             $invalidProperties[] = "invalid value for '{{name}}', the character length must be smaller than or equal to {{{maxLength}}}.";
         }
 
         {{/maxLength}}
         {{#minLength}}
-        if ({{^required}}!is_null($this->container['{{name}}']) && {{/required}}(strlen($this->container['{{name}}']) < {{minLength}})) {
+        if ({{^required}}!is_null($this->container['{{name}}']) && {{/required}}(mb_strlen($this->container['{{name}}']) < {{minLength}})) {
             $invalidProperties[] = "invalid value for '{{name}}', the character length must be bigger than or equal to {{{minLength}}}.";
         }
 
@@ -259,65 +258,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
      */
     public function valid()
     {
-        {{#parent}}
-        if (!parent::valid()) {
-            return false;
-        }
-        {{/parent}}
-
-        {{#vars}}
-        {{#required}}
-        if ($this->container['{{name}}'] === null) {
-            return false;
-        }
-        {{/required}}
-        {{#isEnum}}
-        {{^isContainer}}
-        $allowedValues = $this->{{getter}}AllowableValues();
-        if (!in_array($this->container['{{name}}'], $allowedValues)) {
-            return false;
-        }
-        {{/isContainer}}
-        {{/isEnum}}
-        {{#hasValidation}}
-        {{#maxLength}}
-        if (strlen($this->container['{{name}}']) > {{maxLength}}) {
-            return false;
-        }
-        {{/maxLength}}
-        {{#minLength}}
-        if (strlen($this->container['{{name}}']) < {{minLength}}) {
-            return false;
-        }
-        {{/minLength}}
-        {{#maximum}}
-        if ($this->container['{{name}}'] >{{#exclusiveMaximum}}={{/exclusiveMaximum}} {{maximum}}) {
-            return false;
-        }
-        {{/maximum}}
-        {{#minimum}}
-        if ($this->container['{{name}}'] <{{#exclusiveMinimum}}={{/exclusiveMinimum}} {{minimum}}) {
-            return false;
-        }
-        {{/minimum}}
-        {{#pattern}}
-        if (!preg_match("{{{pattern}}}", $this->container['{{name}}'])) {
-            return false;
-        }
-        {{/pattern}}
-        {{#maxItems}}
-        if (count($this->container['{{name}}']) > {{maxItems}}) {
-            return false;
-        }
-        {{/maxItems}}
-        {{#minItems}}
-        if (count($this->container['{{name}}']) < {{minItems}}) {
-            return false;
-        }
-        {{/minItems}}
-        {{/hasValidation}}
-        {{/vars}}
-        return true;
+        return count($this->listInvalidProperties()) === 0;
     }
 
     {{#vars}}
@@ -325,7 +266,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
     /**
      * Gets {{name}}
      *
-     * @return {{datatype}}
+     * @return {{dataType}}{{^required}}|null{{/required}}
      */
     public function {{getter}}()
     {
@@ -335,7 +276,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
     /**
      * Sets {{name}}
      *
-     * @param {{datatype}} ${{name}}{{#description}} {{{description}}}{{/description}}{{^description}} {{{name}}}{{/description}}
+     * @param {{dataType}}{{^required}}|null{{/required}} ${{name}}{{#description}} {{{description}}}{{/description}}{{^description}} {{{name}}}{{/description}}
      *
      * @return $this
      */
@@ -344,7 +285,7 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
         {{#isEnum}}
         $allowedValues = $this->{{getter}}AllowableValues();
         {{^isContainer}}
-        if ({{^required}}!is_null(${{name}}) && {{/required}}!in_array(${{{name}}}, $allowedValues)) {
+        if ({{^required}}!is_null(${{name}}) && {{/required}}!in_array(${{{name}}}, $allowedValues, true)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     "Invalid value for '{{name}}', must be one of '%s'",
@@ -366,11 +307,11 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
         {{/isEnum}}
         {{#hasValidation}}
         {{#maxLength}}
-        if ({{^required}}!is_null(${{name}}) && {{/required}}(strlen(${{name}}) > {{maxLength}})) {
+        if ({{^required}}!is_null(${{name}}) && {{/required}}(mb_strlen(${{name}}) > {{maxLength}})) {
             throw new \InvalidArgumentException('invalid length for ${{name}} when calling {{classname}}.{{operationId}}, must be smaller than or equal to {{maxLength}}.');
         }{{/maxLength}}
         {{#minLength}}
-        if ({{^required}}!is_null(${{name}}) && {{/required}}(strlen(${{name}}) < {{minLength}})) {
+        if ({{^required}}!is_null(${{name}}) && {{/required}}(mb_strlen(${{name}}) < {{minLength}})) {
             throw new \InvalidArgumentException('invalid length for ${{name}} when calling {{classname}}.{{operationId}}, must be bigger than or equal to {{minLength}}.');
         }
         {{/minLength}}
@@ -464,13 +405,19 @@ class {{classname}} {{#parentSchema}}extends {{{parent}}} {{/parentSchema}}{{^pa
      */
     public function __toString()
     {
-        if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
-                ObjectSerializer::sanitizeForSerialization($this),
-                JSON_PRETTY_PRINT
-            );
-        }
+        return json_encode(
+            ObjectSerializer::sanitizeForSerialization($this),
+            JSON_PRETTY_PRINT
+        );
+    }
 
+    /**
+     * Gets a header-safe presentation of the object
+     *
+     * @return string
+     */
+    public function toHeaderValue()
+    {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
 }
