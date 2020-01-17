@@ -17,9 +17,9 @@ const admzip = require('adm-zip');
 const processor = require('./local.js');
 const remote = require('./remote.js');
 
-async function list(provider) {
-    await remote.list(provider);
-    process.exit(1);
+async function list(provider, filter) {
+    process.exitCode = await remote.list(provider, filter);
+    process.exit();
 }
 
 var argv = require('yargs')
@@ -27,6 +27,8 @@ var argv = require('yargs')
     .boolean('debug')
     .alias('d','debug')
     .describe('debug','Turn on debugging information in the model')
+    .string('filter')
+    .describe('filter','Filter term to use with --list')
     .boolean('flat')
     .alias('f','flat')
     .describe('flat','Do not include config-name in output directory structure')
@@ -55,7 +57,7 @@ var argv = require('yargs')
     .argv;
 
 if (argv.list) {
-    list(argv.list);
+    list(argv.list, argv.filter);
 }
 
 let configStr = argv._[0] || 'nodejs';
