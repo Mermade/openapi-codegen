@@ -78,6 +78,7 @@
 |generatePropertyChanged||true|Specifies that models support raising property changed events.|
 |nonPublicApi||false|Generates code with reduced access modifiers; allows embedding elsewhere without exposing non-public API calls to consumers.|
 |validatable||true|Generates self-validatable models.|
+|variableNamingConvention||original|camelCase, PascalCase, snake_case, original, or UPPERCASE.|
 |ignoreFileOverride||.swagger-codegen-ignore|Specifies an override location for the .swagger-codegen-ignore file. Most useful on initial generation.|
 |removeOperationIdPrefix||false|Remove prefix of operationId, e.g. config_getId => getId|
 |nickname|operation|addPet||
