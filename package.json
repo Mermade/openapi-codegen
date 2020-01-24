@@ -32,7 +32,7 @@
     "co": "^4.6.0",
     "connect": "^3.6.5",
     "hogan.js": "^3.0.2",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.2",
     "node-fetch": "^2.0.0",
     "oas-schema-walker": "^1.1.2",
     "oas-validator": "^3.3.2",
