@@ -66,10 +66,10 @@ let configStr = argv._[0] || 'nodejs';
 let configName = path.basename(configStr);
 let remoteConfig = configName.indexOf(':')>-1;
 let configPath = path.dirname(configStr);
-if (!configPath || (configPath === '.')) configPath = './configs';
-let configFile = path.resolve(configPath,configName)+'.json';
-let config = remoteConfig ? { defaults: {} } : require(configFile);
-let defName = argv._[1] || './defs/petstore3.json';
+if (!configPath || (configPath === '.')) configPath = path.resolve(__dirname,'configs');
+let configFile = path.join(configPath,configName)+'.json';
+let config = remoteConfig ? { defaults: {} } : yaml.parse(fs.readFileSync(configFile,'utf8'), {prettyErrors: true});
+let defName = argv._[1] || path.resolve(__dirname,'defs/petstore3.json');
 
 let finish = remoteConfig ? finishRemote : finishLocal;
 
