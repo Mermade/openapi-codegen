@@ -28,15 +28,18 @@ async function main(obj, config, configName, callback) {
         headers: { 'Content-Type': 'application/json' }
     })
     .then(res => res.json())
-    .then(json => json);
-    if (response.link) {
+    .then(json => json)
+    .catch(ex => {
+      console.warn(ex.message);
+    });
+    if (response && response.link) {
         const zipfile = await fetch(response.link)
         .then(res => res.buffer())
         .then(buffer => buffer);
         callback(null, zipfile);
     }
     else {
-        console.warn(util.inspect(response));
+        if (response) console.warn(util.inspect(response));
     }
 }
 

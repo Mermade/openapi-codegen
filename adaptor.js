@@ -263,7 +263,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         }*/
     } // end of effective parameters
 
-    operation.operationId = op.operationId || Case.camel(op.tags[0] + (paramList ? '_' + paramList.join('_') + '_' : '') + verb);
+    operation.operationId = op.operationId || Case.camel((op.tags ? op.tags[0] :  '') + (paramList ? '_' + paramList.join('_') + '_' : '') + verb);
     operation.operationIdLowerCase = operation.operationId.toLowerCase();
     operation.operationIdSnakeCase = Case.snake(operation.operationId);
     operation.nickname = operation.operationId;
@@ -327,6 +327,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
 
     operation.responses = [];
     for (let r in op.responses) {
+        if (!r.startsWith('x-')) {
         let response = op.responses[r];
         let entry = {};
         entry.code = r;
@@ -411,6 +412,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             if (b.required && !a.required) return +1;
             return 0;
         });
+    }
     }
     operation.queryParams = convertArray(operation.queryParams);
     operation.headerParams = convertArray(operation.headerParams);
