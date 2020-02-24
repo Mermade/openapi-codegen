@@ -42,7 +42,7 @@
     "safe-json-stringify": "^1.2.0",
     "swagger-tools": "^0.10.4",
     "swagger2openapi": "^5.3.2",
-    "uuid": "^3.1.0",
+    "uuid": "^7.0.0",
     "yaml": "^1.7.2",
     "yargs": "^14.0.0"
   },
