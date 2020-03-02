@@ -5,7 +5,7 @@ const util = require('util');
 const url = require('url');
 
 const yaml = require('yaml');
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require('uuid').v4;
 const safeJson = require('safe-json-stringify');
 const Case = require('case');
 const stools = require('swagger-tools');
