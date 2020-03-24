@@ -28,7 +28,7 @@
   "homepage": "https://github.com/Mermade/openapi-codegen#readme",
   "dependencies": {
     "adm-zip": "^0.4.13",
-    "case": "^1.5.4",
+    "case": "^1.6.3",
     "co": "^4.6.0",
     "connect": "^3.6.5",
     "hogan.js": "^3.0.2",
