@@ -826,7 +826,7 @@ function transform(api, defaults, callback) {
 
     obj.messages = [];
     let message = {};
-    let vOptions = {lint:defaults.lint};
+    let vOptions = {anchors:true, lint:defaults.lint};
     if (defaults.stools && defaults.swagger) {
         stools.specs.v2_0.validate(defaults.swagger,function(err,result){
             if (err) console.error(util.inspect(err));
@@ -852,24 +852,25 @@ function transform(api, defaults, callback) {
             }
         });
     }
-    else try {
-        validator(api,vOptions);
-        message.level = 'Valid';
-        message.elementType = 'Context';
-        message.elementId = 'None';
-        message.message = 'No validation errors detected';
-        obj.messages.push(message);
-        if (defaults.verbose) console.log(message);
+    else {
+        validator(api,vOptions)
+        .then(options => {
+            message.level = 'Valid';
+            message.elementType = 'Context';
+            message.elementId = 'None';
+            message.message = 'No validation errors detected';
+            obj.messages.push(message);
+            if (defaults.verbose) console.log(message);
+        })
+        .catch(ex => {
+            message.level = 'Error';
+            message.elementType = 'Context';
+            message.elementId = vOptions.context.pop();
+            message.message = ex.message;
+            obj.messages.push(message);
+            console.error(message);
+        });
     }
-    catch (ex) {
-        message.level = 'Error';
-        message.elementType = 'Context';
-        message.elementId = vOptions.context.pop();
-        message.message = ex.message;
-        obj.messages.push(message);
-        console.error(message);
-    }
-
     if (api.servers && api.servers.length) {
         let u = api.servers[0].url;
         let up = url.parse(u);
