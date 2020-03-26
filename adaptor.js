@@ -14,7 +14,7 @@ const deref = require('reftools/lib/dereference.js').dereference;
 const clone = require('reftools/lib/clone.js').circularClone;
 const walkSchema = require('oas-schema-walker').walkSchema;
 const wsGetState = require('oas-schema-walker').getDefaultState;
-const validator = require('oas-validator').validateSync;
+const validator = require('oas-validator').validateInner;
 const downconverter = require('./lib/orange/downconvert.js');
 
 const schemaProperties = [
