@@ -6,7 +6,7 @@ const url = require('url');
 
 const yaml = require('yaml');
 const uuidv4 = require('uuid').v4;
-const safeJson = require('safe-json-stringify');
+const safeJson = require('fast-safe-stringify');
 const Case = require('case');
 const stools = require('swagger-tools');
 const sampler = require('openapi-sampler');
