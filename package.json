@@ -47,7 +47,7 @@
     "yargs": "^14.0.0"
   },
   "devDependencies": {
-    "ajv": "^6.0.1",
+    "ajv": "^6.12.1",
     "babel-preset-env": "^1.7.0",
     "eslint": "^6.2.0",
     "mocha": "^7.0.0",
