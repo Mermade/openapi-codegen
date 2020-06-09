@@ -909,6 +909,7 @@ function transform(api, defaults, callback) {
                 model.unescapedDescription = schema.description;
                 model.classFilename = obj.classPrefix+model.name;
                 model.modelPackage = model.name;
+                model.isEnum = !!schema.enum;
                 model.hasEnums = false;
                 model.vars = [];
                 walkSchema(schema,{},wsGetState,function(schema,parent,state){
