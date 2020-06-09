@@ -943,7 +943,7 @@ function transform(api, defaults, callback) {
                     entry.description = schema.description||'';
                     entry.unescapedDescription = entry.description;
                     if (entry.name && !schema.type && schema["x-oldref"]) {
-                        entry.type = obj.modelPackage + '\\' + schema["x-oldref"].replace('#/components/schemas/', '');
+                        entry.type = schema["x-oldref"].replace('#/components/schemas/', '');
                     } else {
                         entry.type = schema.type;
                     }
