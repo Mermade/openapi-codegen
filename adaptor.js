@@ -569,6 +569,14 @@ const markdownPPs = {
     }
 };
 
+function getSchemaType(schema) {
+    if (!schema.type && schema["x-oldref"]) {
+        return schema["x-oldref"].replace('#/components/schemas/', '');
+    }
+
+    return schema.type;
+}
+
 const typeMaps = {
     nop: function(type,required,schema) {
         return type;
@@ -588,8 +596,8 @@ const typeMaps = {
         if (result === 'integer') result = 'number';
         if (result === 'array') {
             result = 'Array';
-            if (schema.items && schema.items.type) {
-                result += '<'+typeMap(schema.items.type,false,schema.items)+'>';
+            if (schema.items) {
+                result += '<'+typeMap(getSchemaType(schema.items), false, schema.items)+'>';
             }
         }
         return result;
@@ -942,15 +950,10 @@ function transform(api, defaults, callback) {
                     entry.setter = Case.camel('set_'+entry.name);
                     entry.description = schema.description||'';
                     entry.unescapedDescription = entry.description;
-                    if (entry.name && !schema.type && schema["x-oldref"]) {
-                        entry.type = obj.modelPackage + '\\' + schema["x-oldref"].replace('#/components/schemas/', '');
-                    } else {
-                        entry.type = schema.type;
-                    }
                     entry.required = (parent.required && parent.required.indexOf(entry.name)>=0)||false;
                     entry.isNotRequired = !entry.required;
                     entry.readOnly = !!schema.readOnly;
-                    entry.type = typeMap(entry.type,entry.required,schema);
+                    entry.type = typeMap(getSchemaType(schema), entry.required, schema);
                     entry.dataType = entry.type; //camelCase for imported files
                     entry.datatype = entry.type; //lower for other files
                     entry.jsonSchema = safeJson(schema,null,2);
