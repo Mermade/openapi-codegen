@@ -204,7 +204,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
         for (let p of schemaProperties) {
             if (typeof param.schema[p] !== 'undefined') parameter[p] = param.schema[p];
         }
-        parameter.example = JSON.stringify(safeSample(param.schema,{},api));
+        parameter.example = JSON.stringify(safeSample(param.schema,{quiet:true},api));
         parameter.isBoolean = (param.schema.type === 'boolean');
         parameter.isPrimitiveType = (!param.schema["x-oldref"]);
         parameter.dataFormat = param.schema.format;
@@ -306,7 +306,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                 obj.hasConsumes = true;
             }
             operation.bodyParam.schema = contentType.schema;
-            operation.bodyParam.example = JSON.stringify(safeSample(contentType.schema,{},api));
+            operation.bodyParam.example = JSON.stringify(safeSample(contentType.schema,{quiet:true},api));
             for (let p in schemaProperties) {
                 if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
             }
@@ -381,7 +381,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             }
 
             if (!entry.hasExamples && entry.schema) {
-                let example = safeSample(entry.schema,{},api);
+                let example = safeSample(entry.schema,{quiet:true},api);
                 if (example) {
                     entry.hasExamples = true;
                     if (!entry.examples) entry.examples = [];
