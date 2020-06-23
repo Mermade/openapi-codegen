@@ -6,10 +6,7 @@ node_js:
 install:
   - npm i
 before_script:
-  - sudo apt-get install lua5.2
-  - sudo apt-get install golang
-  - sudo apt-get install ruby
-  - sudo apt-get install ghc
+  - sudo apt-get install lua5.2 golang ruby ghc
 script:
   - npm run lint
   - npm test
