@@ -978,22 +978,22 @@ function transform(api, defaults, callback) {
                     entry.defaultValue = schema.default;
 
                     if (entry.isEnum) {
-                        model.allowableValues = {};
-                        model.allowableValues.enumVars = [];
-                        model["allowableValues.values"] = schema.enum;
-                        model.allowableValues.values = schema.enum;
+                        model.hasEnums = true;
+                        entry.allowableValues = {};
+                        entry.allowableValues.enumVars = [];
+                        entry["allowableValues.values"] = schema.enum;
+                        entry.allowableValues.values = schema.enum;
                         for (let v of schema.enum) {
                             let e = { name: v, nameInCamelCase: Case.camel(v), value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
-                            model.allowableValues.enumVars.push(e);
+                            entry.allowableValues.enumVars.push(e);
                         }
-                        model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
+                        entry.allowableValues.enumVars = convertArray(entry.allowableValues.enumVars);
                     }
 
                     if (entry.name && state.depth<=1) {
                         entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
                         entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
                         entry.enumName = entry.name+'Enum';
-                        model.hasEnums = true;
                         model.vars.push(entry);
                     }
                 });
