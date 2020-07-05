@@ -75,8 +75,13 @@ function main(o, config, configName, callback) {
                 }
                 for (let action of actions) {
                     if (verbose) console.log('Rendering '+action.output);
-                    let template = Hogan.compile(action.template);
-                    let content = template.render(model,config.partials);
+                    let content;
+                    if (config.generator && config.generator.render) {
+                        content = config.generator.render(action.template, model, config.partials);
+                    } else {
+                        let template = Hogan.compile(action.template);
+                        content = template.render(model,config.partials);
+                    }
                     ff.createFile(path.join(outputDir,subDir,action.output),content,'utf8');
                 }
                 if (config.touch) { // may not now be necessary
