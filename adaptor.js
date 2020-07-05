@@ -962,6 +962,7 @@ function transform(api, defaults, callback) {
                         if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
                     }
                     entry.isEnum = !!schema.enum;
+                    entry.isString = schema.type == 'string';
                     entry.isListContainer = schema.type === 'array';
                     entry.isMapContainer = schema.type === 'object';
                     entry.isPrimitiveType = !entry.isListContainer && !entry.isMapContainer;
@@ -973,6 +974,9 @@ function transform(api, defaults, callback) {
                     }
                     if ((schema.type === 'array') && schema.items && schema.items["x-oldref"]) {
                         entry.itemsComplexType = schema.items["x-oldref"].replace('#/components/schemas/','');
+                    }
+                    if ((schema.type === 'array') && schema.items && schema.items.type === 'string') {
+                        entry.itemsComplexType = 'string';
                     }
                     entry.dataFormat = schema.format;
                     entry.defaultValue = schema.default;
