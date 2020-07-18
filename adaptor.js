@@ -1003,8 +1003,8 @@ function transform(api, defaults, callback) {
                     entry.isNotContainer = entry.isPrimitiveType;
                     if (entry.isEnum) entry.isNotContainer = false;
                     entry.isContainer = !entry.isNotContainer;
-                    if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
-                        entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
+                    if ((schema.type === 'object') && schema["x-oldref"]) {
+                        entry.complexType = schema["x-oldref"].replace('#/components/schemas/','');
                     }
                     if ((schema.type === 'array') && schema.items && schema.items["x-oldref"]) {
                         entry.itemsComplexType = schema.items["x-oldref"].replace('#/components/schemas/','');
