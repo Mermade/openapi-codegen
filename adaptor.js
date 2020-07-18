@@ -277,17 +277,11 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
             if (type === 'application/x-www-form-urlencoded') {
                 for (const paramName in contentType.schema.properties) {
                     const prop = contentType.schema.properties[paramName];
-                    const parameter = {
-                        paramName: paramName,
-                        baseName: paramName,
-                        type: prop.type,
-                        dataType: prop.type,
-                        datatype: prop.type,
-                        baseType: prop.type,
-                        format: prop.format,
-                        dataFormat: prop.format,
-                        required: contentType.schema.required.indexOf(paramName) >= 0
-                    };
+                    const parameter = {};
+                    parameter.paramName = parameter.baseName = paramName;
+                    parameter.type = parameter.dataType = parameter.datatype = parameter.baseType = prop.type;
+                    parameter.format = parameter.dataFormat = prop.format;
+                    parameter.required = contentType.schema.required && contentType.schema.required.indexOf(paramName) >= 0;
                     parameter.isBoolean = (parameter.type === 'boolean');
                     parameter.isDate = (parameter.dataFormat === 'date');
                     parameter.isDateTime = (parameter.dataFormat === 'date-time');
