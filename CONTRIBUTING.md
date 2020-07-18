@@ -10,16 +10,8 @@ Please run the test before submitting your pull request.
 
 1. `npm run lint`
 1. `npm test`
-1. `bin/buildAll.sh`
-1. `npm i typescript@2.6.1 -g`
-1. `bin/checkJs.sh`
-1. `bin/checkTs.sh`
-1. `bin/checkLua.sh`
-1. `bin/checkGo.sh`
-1. `bin/checkRuby.sh`
-1. `bin/checkBash.sh`
-1. `bin/checkHaskell.sh`
-1. `bin/checkPython.sh`
+
+The code will run these tests as well as all generators on Travis CI on https://travis-ci.org/github/Mermade/openapi-codegen
 
 ## Configs
 
