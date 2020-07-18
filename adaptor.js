@@ -287,11 +287,16 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
                     parameter.isDateTime = (parameter.dataFormat === 'date-time');
                     parameter.isBodyParam = false;
                     parameter.isFormParam = true;
-                    operation.allParams.push(parameter);
-                    operation.formParams.push(parameter);
+                    operation.allParams.push(clone(parameter));
+                    operation.formParams.push(clone(parameter));
+                    if (parameter.required) operation.hasRequiredParams = true;
+                    if (!parameter.required) operation.hasOptionalParams = true;
                 }
                 operation.hasParams = true;
                 operation.hasFormParams = true;
+                let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
+                operation.consumes.push(mt);
+                operation.hasConsumes = true;
             } else {
                 operation.bodyParam = {};
                 operation.bodyParam.isHeaderParam = false;
@@ -445,7 +450,9 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.queryParams = convertArray(operation.queryParams);
     operation.headerParams = convertArray(operation.headerParams);
     operation.pathParams = convertArray(operation.pathParams);
+    console.log("formParams for" + operation.nickname, operation.formParams);
     operation.formParams = convertArray(operation.formParams);
+    console.log("formParams", operation.formParams);
     operation.bodyParams = convertArray(operation.bodyParams);
     operation.allParams = convertArray(operation.allParams);
     operation.examples = convertArray(operation.examples);
