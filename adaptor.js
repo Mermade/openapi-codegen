@@ -450,9 +450,7 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.queryParams = convertArray(operation.queryParams);
     operation.headerParams = convertArray(operation.headerParams);
     operation.pathParams = convertArray(operation.pathParams);
-    console.log("formParams for" + operation.nickname, operation.formParams);
     operation.formParams = convertArray(operation.formParams);
-    console.log("formParams", operation.formParams);
     operation.bodyParams = convertArray(operation.bodyParams);
     operation.allParams = convertArray(operation.allParams);
     operation.examples = convertArray(operation.examples);
