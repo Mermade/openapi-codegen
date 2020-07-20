@@ -1,10 +1,10 @@
 'use strict';
+
 const Hogan = require('hogan.js');
 const util = require('util');
 const should = require('should');
 
 const lambdas = require('../lambdas.js');
-
 
 const reservedWords = new Set([
     'lowercase',
@@ -52,7 +52,7 @@ function render(template) {
 }
 
 async function main(){
-    describe('check conersion to lowercase',function(){
+    describe('check conversion to lowercase',function(){
         it('should convert from lowerCaseVar', function() {
             should(
                 render('{{#lowercase}}{{lowerCaseVar}}{{/lowercase}}')
@@ -90,7 +90,7 @@ async function main(){
         })
     });
 
-    describe('check conersion to UPPERCASE',function(){
+    describe('check conversion to UPPERCASE',function(){
         it('should convert from lowerCaseVar', function() {
             should(
                 render('{{#uppercase}}{{lowerCaseVar}}{{/uppercase}}')
@@ -128,7 +128,7 @@ async function main(){
         })
     });
 
-    describe('check conersion to snake_case',function(){
+    describe('check conversion to snake_case',function(){
         it('should convert from lowerCaseVar', function() {
             should(
                 render('{{#snakecase}}{{lowerCaseVar}}{{/snakecase}}')
@@ -166,7 +166,7 @@ async function main(){
         })
     });
 
-    describe('check conersion to PascalCase',function(){
+    describe('check conversion to PascalCase',function(){
         it('should convert from lowerCaseVar', function() {
             should(
                 render('{{#pascalcase}}{{lowerCaseVar}}{{/pascalcase}}')
@@ -204,7 +204,7 @@ async function main(){
         })
     });
 
-    describe('check conersion to camelCase',function(){
+    describe('check conversion to camelCase',function(){
         it('should convert from lowerCaseVar', function() {
             should(
                 render('{{#camelcase}}{{lowerCaseVar}}{{/camelcase}}')
@@ -242,7 +242,7 @@ async function main(){
         })
     });
 
-    describe('check conersion to kebab-case',function(){
+    describe('check conversion to kebab-case',function(){
         it('should convert from lowerCaseVar', function() {
             should(
                 render('{{#kebabcase}}{{lowerCaseVar}}{{/kebabcase}}')
