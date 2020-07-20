@@ -1,6 +1,6 @@
 {
   "name": "openapi-codegen",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "OpenAPI 3.0 CodeGen",
   "main": "local.js",
   "bin": {
