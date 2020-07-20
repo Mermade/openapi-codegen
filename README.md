@@ -1,7 +1,6 @@
 # OpenAPI-CodeGen
 
 [![Build status](https://travis-ci.org/Mermade/openapi-codegen.svg?branch=master)](https://travis-ci.org/Mermade/openapi-codegen)
-[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/openapi-codegen.svg)](https://greenkeeper.io/)
 
 Node.js-based codegen for OpenAPI documents. This project was initially a 24-hour hackathon. The local model adaptor code is entirely original and has been reverse-engineered from the existing documentation and template usage.
 
