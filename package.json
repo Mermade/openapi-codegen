@@ -47,7 +47,7 @@
     "yargs": "^14.0.0"
   },
   "devDependencies": {
-    "ajv": "^6.0.1",
+    "@exodus/schemasafe": "^1.0.0-beta.5",
     "babel-preset-env": "^1.7.0",
     "eslint": "^7.2.0",
     "mocha": "^8.0.1",

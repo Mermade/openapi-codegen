@@ -5,15 +5,10 @@ const util = require('util');
 
 const should = require('should');
 const rf = require('node-readfiles');
-const ajv = require('ajv')({
-    allErrors: true,
-    verbose: true,
-    jsonPointers: true,
-    patternGroups: true,
-    extendRefs: true}); // optional, current default is to 'fail', spec behaviour is to 'ignore'
+const jsv = require('@exodus/schemasafe').validator;
 
 let schema = fs.readFileSync('./schemas/config.json');
-let validator = ajv.compile(JSON.parse(schema));
+let validator = jsv(JSON.parse(schema));
 
 let configs = {};
 let templates = {};
@@ -55,8 +50,7 @@ async function main(){
     describe('validate against schema',function(){
         Object.values(configs).forEach(function(config){
             it('should validate '+config.name,function(){
-                validator(config);
-                should(validator.errors).be.exactly(null);
+                should(validator(config)).be.exactly(true);
             });
         });
     });
