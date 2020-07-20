@@ -271,55 +271,88 @@ function convertOperation(op,verb,path,pathItem,obj,api) {
     operation.bodyParams = [];
     if (op.requestBody) {
         operation.openapi.requestBody = op.requestBody;
-        operation.hasParams = true;
-        operation.hasBodyParam = true;
-        operation.bodyParam = {};
-        operation.bodyParam.isBodyParam = true;
-        operation.bodyParam.isHeaderParam = false;
-        operation.bodyParam.isQueryParam = false;
-        operation.bodyParam.isPathParam = false;
-        operation.bodyParam.isFormParam = false;
-        operation.bodyParam.isDate = false;
-        operation.bodyParam.isDateTime = false;
-        operation.bodyParam.baseName = 'body';
-        operation.bodyParam.paramName = 'body';
-        operation.bodyParam.baseType = 'object';
-        operation.bodyParam.required = op.requestBody.required||false;
-        operation.bodyParam.optional = !operation.bodyParam.required;
-        if (operation.bodyParam.required) operation.hasRequiredParams = true;
-        if (!operation.bodyParam.required) operation.hasOptionalParams = true;
-        operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{}); // can be changed below
-        operation.bodyParam.description = op.requestBody.description||'';
-        operation.bodyParam.schema = {};
-        operation.bodyParam.isEnum = false; // TODO?
-        operation.bodyParam.vendorExtensions = specificationExtensions(op.requestBody);
         if (op.requestBody.content) {
+            const type = Object.keys(op.requestBody.content)[0];
             let contentType = Object.values(op.requestBody.content)[0];
-            let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
-            operation.consumes.push(mt);
-            operation.hasConsumes = true;
-            let tmp = obj.consumes.find(function(e,i,a){
-                return (e.mediaType === mt.mediaType);
-            });
-            if (!tmp) {
-                obj.consumes.push(clone(mt)); // so convertArray works correctly
-                obj.hasConsumes = true;
-            }
-            operation.bodyParam.schema = contentType.schema;
-            operation.bodyParam.example = JSON.stringify(safeSample(contentType.schema,{quiet:true},api));
-            for (let p in schemaProperties) {
-                if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
-            }
-            if (contentType.schema.type) {
-                operation.bodyParam.type = contentType.schema.type;
-                operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema); // this is the below mentioned
+            if (type === 'application/x-www-form-urlencoded') {
+                for (const paramName in contentType.schema.properties) {
+                    const prop = contentType.schema.properties[paramName];
+                    const parameter = {};
+                    parameter.paramName = parameter.baseName = paramName;
+                    parameter.type = parameter.dataType = parameter.datatype = parameter.baseType = prop.type;
+                    parameter.format = parameter.dataFormat = prop.format;
+                    parameter.required = contentType.schema.required && contentType.schema.required.indexOf(paramName) >= 0;
+                    parameter.isBoolean = (parameter.type === 'boolean');
+                    parameter.isDate = (parameter.dataFormat === 'date');
+                    parameter.isDateTime = (parameter.dataFormat === 'date-time');
+                    parameter.isBodyParam = false;
+                    parameter.isFormParam = true;
+                    operation.allParams.push(clone(parameter));
+                    operation.formParams.push(clone(parameter));
+                    if (parameter.required) operation.hasRequiredParams = true;
+                    if (!parameter.required) operation.hasOptionalParams = true;
+                }
+                operation.hasParams = true;
+                operation.hasFormParams = true;
+                let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
+                operation.consumes.push(mt);
+                operation.hasConsumes = true;
+            } else {
+                operation.bodyParam = {};
+                operation.bodyParam.isHeaderParam = false;
+                operation.bodyParam.isQueryParam = false;
+                operation.bodyParam.isPathParam = false;
+                operation.bodyParam.isFormParam = false;
+                operation.bodyParam.isBodyParam = true;
+                operation.bodyParam.isDate = false;
+                operation.bodyParam.isDateTime = false;
+                operation.bodyParam.baseName = 'body';
+                operation.bodyParam.paramName = 'body';
+                operation.bodyParam.baseType = 'object';
+                operation.bodyParam.required = op.requestBody.required||false;
+                operation.bodyParam.optional = !operation.bodyParam.required;
+                if (operation.bodyParam.required) operation.hasRequiredParams = true;
+                if (!operation.bodyParam.required) operation.hasOptionalParams = true;
+                operation.bodyParam.schema = {};
+                operation.bodyParam.isEnum = false; // TODO?
+                operation.bodyParam.vendorExtensions = specificationExtensions(op.requestBody);
+                let mt = { mediaType: Object.keys(op.requestBody.content)[0] };
+                operation.consumes.push(mt);
+                operation.hasConsumes = true;
+                let tmp = obj.consumes.find(function(e,i,a){
+                    return (e.mediaType === mt.mediaType);
+                });
+                if (!tmp) {
+                    obj.consumes.push(clone(mt)); // so convertArray works correctly
+                    obj.hasConsumes = true;
+                }
+                operation.bodyParam.schema = contentType.schema;
+                operation.bodyParam.example = JSON.stringify(safeSample(contentType.schema,{quiet:true},api));
+                for (let p in schemaProperties) {
+                    if (typeof contentType.schema[p] !== 'undefined') operation.bodyParam[p] = contentType.schema[p];
+                }
+                if (contentType.schema["x-oldref"]) {
+                    operation.bodyParam.type = contentType.schema["x-oldref"].replace('#/components/schemas/','');
+                    operation.bodyParam.dataType = operation.bodyParam.type;
+                    operation.bodyParam.baseName = operation.bodyParam.type[0].toLowerCase() + operation.bodyParam.type.substr(1);
+                    operation.bodyParam.paramName = operation.bodyParam.baseName;
+                    operation.bodyParam.isPrimitiveType = false;
+                } else if (contentType.schema.type) {
+                    operation.bodyParam.type = contentType.schema.type;
+                    operation.bodyParam.dataType = typeMap(contentType.schema.type,operation.bodyParam.required,contentType.schema); // this is the below mentioned
+                } else {
+                    operation.bodyParam.dataType = typeMap('object',operation.bodyParam.required,{});
+                    operation.bodyParam.description = op.requestBody.description||'';
+                }
+                operation.bodyParam["%dataType%"] = operation.bodyParam.dataType; // bug in typescript-fetch template?
+                operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
+                operation.bodyParams.push(operation.bodyParam);
+                operation.bodyParam.isFile = false; // TODO
+                operation.hasParams = true;
+                operation.hasBodyParam = true;
+                operation.allParams.push(clone(operation.bodyParam));
             }
         }
-        operation.bodyParam["%dataType%"] = operation.bodyParam.dataType; // bug in typescript-fetch template?
-        operation.bodyParam.jsonSchema = safeJson({schema: operation.bodyParam.schema},null,2);
-        operation.bodyParams.push(operation.bodyParam);
-        operation.bodyParam.isFile = false; // TODO
-        operation.allParams.push(clone(operation.bodyParam));
     }
     operation.tags = op.tags;
     operation.imports = op.tags;
@@ -962,38 +995,42 @@ function transform(api, defaults, callback) {
                         if (typeof schema[p] !== 'undefined') entry[p] = schema[p];
                     }
                     entry.isEnum = !!schema.enum;
+                    entry.isString = schema.type == 'string';
                     entry.isListContainer = schema.type === 'array';
                     entry.isMapContainer = schema.type === 'object';
                     entry.isPrimitiveType = !entry.isListContainer && !entry.isMapContainer;
                     entry.isNotContainer = entry.isPrimitiveType;
                     if (entry.isEnum) entry.isNotContainer = false;
                     entry.isContainer = !entry.isNotContainer;
-                    if ((schema.type === 'object') && schema.properties && schema.properties["x-oldref"]) {
-                        entry.complexType = schema.properties["x-oldref"].replace('#/components/schemas/','');
+                    if ((schema.type === 'object') && schema["x-oldref"]) {
+                        entry.complexType = schema["x-oldref"].replace('#/components/schemas/','');
                     }
                     if ((schema.type === 'array') && schema.items && schema.items["x-oldref"]) {
                         entry.itemsComplexType = schema.items["x-oldref"].replace('#/components/schemas/','');
+                    }
+                    if ((schema.type === 'array') && schema.items && schema.items.type === 'string') {
+                        entry.itemsComplexType = 'string';
                     }
                     entry.dataFormat = schema.format;
                     entry.defaultValue = schema.default;
 
                     if (entry.isEnum) {
-                        model.allowableValues = {};
-                        model.allowableValues.enumVars = [];
-                        model["allowableValues.values"] = schema.enum;
-                        model.allowableValues.values = schema.enum;
+                        model.hasEnums = true;
+                        entry.allowableValues = {};
+                        entry.allowableValues.enumVars = [];
+                        entry["allowableValues.values"] = schema.enum;
+                        entry.allowableValues.values = schema.enum;
                         for (let v of schema.enum) {
                             let e = { name: v, nameInCamelCase: Case.camel(v), value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
-                            model.allowableValues.enumVars.push(e);
+                            entry.allowableValues.enumVars.push(e);
                         }
-                        model.allowableValues.enumVars = convertArray(model.allowableValues.enumVars);
+                        entry.allowableValues.enumVars = convertArray(entry.allowableValues.enumVars);
                     }
 
                     if (entry.name && state.depth<=1) {
                         entry.nameInCamelCase = Case.pascal(entry.name); // for erlang-client
                         entry.datatypeWithEnum = s+'.'+entry.name+'Enum';
                         entry.enumName = entry.name+'Enum';
-                        model.hasEnums = true;
                         model.vars.push(entry);
                     }
                 });

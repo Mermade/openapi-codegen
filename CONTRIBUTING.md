@@ -6,6 +6,13 @@ First of all, many thanks for considering making a contribution to this project.
 
 Please **do not** include any changes to `package-lock.json` in your PRs, even if you are updating `package.json`. These changes are almost impossible to review for security implications. If necessary, `package-lock.json` will be regenerated and committed by a maintainer after your PR is merged.
 
+Please run the test before submitting your pull request.
+
+1. `npm run lint`
+1. `npm test`
+
+The code will run these tests as well as all generators on Travis CI on https://travis-ci.org/github/Mermade/openapi-codegen
+
 ## Configs
 
 The main thing we need is config files which control the process of which files are processed by a particular set of templates. Testing
