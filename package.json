@@ -41,7 +41,7 @@
     "reftools": "^1.1.0",
     "rimraf": "^3.0.0",
     "swagger-tools": "^0.10.4",
-    "swagger2openapi": "^6.0.1",
+    "swagger2openapi": "^7.0.1",
     "uuid": "^8.0.0",
     "yaml": "^1.8.3",
     "yargs": "^14.0.0"
