@@ -97,12 +97,17 @@ function main(o, config, configName, callback) {
                         }
                     }
                 }
-                if (config.apache) {
-                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl({}, '_common', 'LICENSE'),'utf8'),'utf8');
+
+                // generate license by default
+                if (typeof config.license === 'undefined') {
+                    config.license = true;
                 }
-                else {
-                    ff.createFile(path.join(outputDir,subDir,'LICENSE'),ff.readFileSync(tpl({}, '_common', 'UNLICENSE'),'utf8'),'utf8');
+
+                if (config.license) {
+                    const licenseType = config.apache ? 'LICENSE' : 'UNLICENSE';
+                    ff.createFile(path.join(outputDir, subDir, 'LICENSE'), ff.readFileSync(tpl({}, '_common', licenseType), 'utf8'), 'utf8');
                 }
+
                 let outer = model;
 
                 if (config.perApi) {
