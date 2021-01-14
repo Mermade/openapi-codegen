@@ -14,6 +14,10 @@
             "type": "string",
             "description": "Name of the config. Currently unused."
         },
+        "license": {
+            "type": "boolean",
+            "description": "Whether to create a license file"
+        },
         "apache": {
             "type": "boolean",
             "description": "Whether to include the Apache-2.0 license instead of the Unlicense"
