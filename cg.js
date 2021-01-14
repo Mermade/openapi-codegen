@@ -71,11 +71,11 @@ if ((configPath === '.') && (!configStr.startsWith('.'))) {
 }
 if (!configPath) configPath = path.resolve(__dirname,'configs');
 let configFile = path.join(configPath,configName);
-if (!path.extname(configFile)) {
-  configFile += '.json';
+if (path.extname(configFile)) {
+  configName = configName.replace(path.extname(configFile),'');
 }
 else {
-  configName = configName.replace(path.extname(configFile),'');
+  configFile += '.json';
 }
 let config = remoteConfig ? { defaults: {} } : yaml.parse(fs.readFileSync(configFile,'utf8'), {prettyErrors: true});
 let defName = argv._[1] || path.resolve(__dirname,'defs/petstore3.json');
