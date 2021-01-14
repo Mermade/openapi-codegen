@@ -8,7 +8,7 @@ module.exports = {
         fs: "empty"
     },
     entry: {
-        openapiCodeGen: './index.js'
+        openapiCodeGen: './local.js'
     },
     output: {
         filename: '[name].min.js', // Template based on keys in entry above
