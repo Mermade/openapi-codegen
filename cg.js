@@ -66,6 +66,9 @@ let configStr = argv._[0] || 'nodejs';
 let configName = path.basename(configStr);
 let remoteConfig = configName.indexOf(':')>-1;
 let configPath = path.dirname(configStr);
+if ((configPath === '.') && (!configStr.startsWith('.'))) {
+  configPath = '';
+}
 if (!configPath) configPath = path.resolve(__dirname,'configs');
 let configFile = path.join(configPath,configName);
 if (!path.extname(configFile)) {
