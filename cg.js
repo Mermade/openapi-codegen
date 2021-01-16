@@ -9,6 +9,7 @@ const util = require('util');
 
 const yaml = require('yaml');
 const fetch = require('node-fetch');
+const proxyAgent = require('proxy-agent');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
 const stools = require('swagger-tools');
@@ -272,18 +273,13 @@ if (argv.zip) {
 }
 config.defaults.source = defName;
 
-let up = url.parse(defName);
-if (up.protocol && up.protocol.startsWith('http')) {
-    fetch(defName)
-    .then(function (res) {
-        return res.text();
-    }).then(function (body) {
-        main(body);
-    }).catch(function (err) {
-        console.error(err.message);
-    });
-}
-else {
-   let s = fs.readFileSync(defName,'utf8');
-   main(s);
+try {
+    const url = new URL(defName);
+    fetch(url, { agent: proxyAgent() })
+        .then(res => res.text())
+        .then(body => main(body))
+        .catch(err => console.error(err.message));
+} catch (err) {
+    const content = fs.readFileSync(defName, 'utf8');
+    main(content);
 }
