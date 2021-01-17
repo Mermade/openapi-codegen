@@ -216,17 +216,19 @@ function convert12(api){
             var u = (lbase+component.path);
             if (!u.endsWith(extension)) u += extension;
             if (argv.verbose) console.log(u);
-            retrieve.push(fetch(u,options.fetchOptions)
-            .then(res => {
-                if (argv.verbose) console.log(res.status);
-                return res.text();
-            })
-            .then(data => {
-                apiDeclarations.push(yaml.parse(data));
-            })
-            .catch(err => {
-                console.error(util.inspect(err));
-            }));
+            retrieve.push(
+                fetch(u, { agent: getProxyAgent(u) })
+                    .then(res => {
+                        if (argv.verbose) console.log(res.status);
+                        return res.text();
+                    })
+                    .then(data => {
+                        apiDeclarations.push(yaml.parse(data));
+                    })
+                    .catch(err => {
+                        console.error(util.inspect(err));
+                    })
+            );
         }
     }
 
