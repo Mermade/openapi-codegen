@@ -9,7 +9,6 @@ const util = require('util');
 
 const yaml = require('yaml');
 const fetch = require('node-fetch');
-const proxyAgent = require('proxy-agent');
 const co = require('co');
 const swagger2openapi = require('swagger2openapi');
 const stools = require('swagger-tools');
@@ -17,8 +16,25 @@ const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 const admzip = require('adm-zip');
 
+const getProxyForUrl = require('proxy-from-env').getProxyForUrl;
+const simpleProxyAgent = require('simple-proxy-agent');
+
 const processor = require('./local.js');
 const remote = require('./remote.js');
+
+function getProxyAgent(url) {
+    const proxyURL = getProxyForUrl(url);
+    if (!proxyURL) {
+        return null;
+    }
+
+    try {
+        return simpleProxyAgent(proxyURL);
+    } catch (err) {
+        console.error('Failed to instantiate a proxy agent:', err.message);
+        return null;
+    }
+}
 
 async function list(provider, filter) {
     process.exitCode = await remote.list(provider, filter);
@@ -275,7 +291,7 @@ config.defaults.source = defName;
 
 try {
     const url = new URL(defName);
-    fetch(url, { agent: proxyAgent() })
+    fetch(url, { agent: getProxyAgent(url) })
         .then(res => res.text())
         .then(body => main(body))
         .catch(err => console.error(err.message));
