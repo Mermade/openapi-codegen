@@ -840,7 +840,6 @@ function transform(api, defaults, callback) {
         };
     };
     obj.this = function() {
-        console.warn('this called');
         return thisFunc(this.paramName);
     };
     obj.length = function() {
