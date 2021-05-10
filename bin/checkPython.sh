@@ -2,13 +2,13 @@
 
 set -e
 
-python --version
+python2 --version
 
 cd out/python
 cd swagger_client
-python -m py_compile *.py
+python2 -m py_compile *.py
 cd ../../..
 
 cd out/flaskConnexion
-python -m py_compile *.py
+python2 -m py_compile *.py
 cd ../..
