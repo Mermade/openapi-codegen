@@ -25,7 +25,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: apt-get install lua5.2 golang ruby ghc
+    - run: sudo apt-get install lua5.2 golang ruby ghc
     - run: npm ci
     - run: npm run lint
     - run: npm run test
