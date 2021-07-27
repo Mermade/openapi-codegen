@@ -115,23 +115,22 @@ function finishLocal(err,result) {
 function finishRemote(err,result) {
    configName = configName.split(':').pop();
    if (argv.verbose) console.log('Making/cleaning output directories');
-   mkdirp(path.join(config.outputDir,configName),function(){
-       rimraf(path.join(config.outputDir,configName)+'/*',function(){
-           if (argv.zip) {
-              fs.writeFileSync(path.join(config.outputDir,configName,configName+'.zip'),result);
-           }
-           else {
-               const zip = new admzip(result);
-               if (argv.verbose) {
-                   console.log('Unzipping...');
-                   const zipEntries = zip.getEntries(); // an array of ZipEntry records
-                   zipEntries.forEach(function(zipEntry) {
-                       console.log(zipEntry.entryName);
-                   });
-                }
-                zip.extractAllTo(config.outputDir,true);
+   mkdirp.sync(path.join(config.outputDir,configName));
+   rimraf(path.join(config.outputDir,configName)+'/*',function(){
+       if (argv.zip) {
+          fs.writeFileSync(path.join(config.outputDir,configName,configName+'.zip'),result);
+       }
+       else {
+           const zip = new admzip(result);
+           if (argv.verbose) {
+               console.log('Unzipping...');
+               const zipEntries = zip.getEntries(); // an array of ZipEntry records
+               zipEntries.forEach(function(zipEntry) {
+                   console.log(zipEntry.entryName);
+               });
             }
-        });
+            zip.extractAllTo(config.outputDir,true);
+        }
     });
 }
 
