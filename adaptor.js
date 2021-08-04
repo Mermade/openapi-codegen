@@ -1020,7 +1020,12 @@ function transform(api, defaults, callback) {
                         entry["allowableValues.values"] = schema.enum;
                         entry.allowableValues.values = schema.enum;
                         for (let v of schema.enum) {
-                            let e = { name: v, nameInCamelCase: Case.camel(v), value: '"'+v+'"' }; // insane, why aren't the quotes in the template?
+                            let e = {
+                                name: v,
+                                nameInCamelCase: Case.camel(v),
+                                value: '"'+v+'"',
+                                valueRaw: v
+                            };
                             entry.allowableValues.enumVars.push(e);
                         }
                         entry.allowableValues.enumVars = convertArray(entry.allowableValues.enumVars);
