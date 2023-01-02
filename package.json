@@ -49,7 +49,7 @@
   "devDependencies": {
     "@exodus/schemasafe": "^1.0.0-beta.5",
     "babel-preset-env": "^1.7.0",
-    "eslint": "^7.2.0",
+    "eslint": "^8.31.0",
     "mocha": "^9.0.0",
     "node-readfiles": "^0.2.0",
     "should": "^13.1.3",
